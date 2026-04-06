@@ -30,7 +30,7 @@ const FAQ: React.FC = () => {
   };
 
   return (
-    <section className="section py-32 relative overflow-hidden bg-gray-950">
+    <section className="section py-16 sm:py-24 lg:py-32 relative overflow-hidden bg-gray-950">
       {/* Subtle grid pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -46,7 +46,7 @@ const FAQ: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-12 lg:mb-16"
         >
           <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 mb-6 shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
             <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
@@ -82,12 +82,12 @@ const FAQ: React.FC = () => {
                 whileHover={{ borderColor: 'rgba(6,182,212,0.5)' }}
                 whileTap={{ scale: 0.995 }}
               >
-                <div className="p-6 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 group-hover:from-cyan-300 group-hover:to-cyan-500 transition-all duration-300">
+                <div className="p-4 sm:p-5 lg:p-6 flex items-center justify-between gap-3">
+                  <h3 className="text-base sm:text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 group-hover:from-cyan-300 group-hover:to-cyan-500 transition-all duration-300 flex-1">
                     {item.question}
                   </h3>
                   <motion.div 
-                    className="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/40 backdrop-blur-md border border-cyan-500/50 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 flex-shrink-0"
                     animate={{ rotate: openIndex === index ? 180 : 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                   >
@@ -117,10 +117,10 @@ const FAQ: React.FC = () => {
                     >
                       <div 
                         ref={el => { contentRefs.current[index] = el; }}
-                        className="px-6 pb-6"
+                        className="px-4 sm:px-5 lg:px-6 pb-4 sm:pb-5 lg:pb-6"
                       >
-                        <div className="pt-4 border-t border-gray-700/50">
-                          <p className="text-gray-300 leading-relaxed">
+                        <div className="pt-3 sm:pt-4 border-t border-gray-700/50">
+                          <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
                             {item.answer}
                           </p>
                         </div>
@@ -139,22 +139,22 @@ const FAQ: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-16 text-center"
+          className="mt-10 sm:mt-12 lg:mt-16 text-center"
         >
-          <div className="inline-flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto">
             <p className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60">
               Still have questions?
             </p>
-            <Link to="/contact">
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 inline-block">
-                <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+            <Link to="/contact" className="w-full sm:w-auto">
+              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+                <button className="skew-x-[10deg] w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
                   Contact Support
                 </button>
               </div>
             </Link>
-            <Link to="/faq">
-              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 inline-block">
-                <button className="skew-x-[10deg] px-6 py-3 font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
+            <Link to="/faq" className="w-full sm:w-auto">
+              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50">
+                <button className="skew-x-[10deg] w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300">
                   View All FAQs
                 </button>
               </div>

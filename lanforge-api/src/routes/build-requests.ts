@@ -19,6 +19,30 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     });
     await newRequest.save();
 
+    // Send to Zapier webhook
+    try {
+      await fetch('https://hooks.zapier.com/hooks/catch/24621662/un7qsor/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          budget,
+          details,
+          address,
+          usage,
+          preferredBrands,
+          timeline,
+          createdAt: newRequest.createdAt
+        }),
+      });
+    } catch (zapierErr) {
+      console.error('Failed to send build request to Zapier:', zapierErr);
+    }
+
     // Send notification
     try {
       const { sendNotification } = await import('../services/notificationService');

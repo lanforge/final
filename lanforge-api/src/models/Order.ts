@@ -33,9 +33,10 @@ export interface IOrder extends Document {
   billingAddress: IAddress;
   subtotal: number;
   shipping: number;
+  shippingInsurance: number;
   tax: number;
   discount: number;
-  discountCode?: string;
+  appliedDiscount?: mongoose.Types.ObjectId;
   creatorCode?: string; // Links to Partner/Affiliate
   donationCause?: mongoose.Types.ObjectId;
   donationAmount?: number;
@@ -90,9 +91,10 @@ const OrderSchema = new Schema<IOrder>(
     billingAddress: { type: AddressSchema, required: true },
     subtotal: { type: Number, required: true },
     shipping: { type: Number, default: 0 },
+    shippingInsurance: { type: Number, default: 0 },
     tax: { type: Number, default: 0 },
     discount: { type: Number, default: 0 },
-    discountCode: { type: String },
+    appliedDiscount: { type: Schema.Types.ObjectId, ref: 'Discount' },
     creatorCode: { type: String },
     donationCause: { type: Schema.Types.ObjectId, ref: 'DonationCause' },
     donationAmount: { type: Number, default: 0 },

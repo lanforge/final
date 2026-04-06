@@ -11,6 +11,7 @@ import LoyaltyTransaction from '../models/LoyaltyTransaction';
 import DonationCause from '../models/DonationCause';
 import BusinessInfo from '../models/BusinessInfo';
 import Payment from '../models/Payment';
+import PurchasedPC from '../models/PurchasedPC';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -34,7 +35,6 @@ router.post(
     }
 
     try {
-      console.log('req.body:', req.body);
       const { items, shippingAddress, billingAddress, paymentMethod, discountCode, creatorCode, donationCause, donationAmount, customerId, shippingAmount, shippingRates, selectedShippingRate } = req.body;
 
       // Validate items and calculate subtotal
@@ -106,7 +106,8 @@ router.post(
 
       // Apply discount
       let discount = 0;
-      let appliedCode: string | undefined;
+      let appliedDiscountId: any = null;
+      let isFreeShippingDiscount = false;
       if (discountCode) {
         const dc = await Discount.findOne({
           code: discountCode.toUpperCase(),
@@ -116,14 +117,26 @@ router.post(
         if (dc && subtotal >= dc.minOrder) {
           if (dc.type === 'percentage') discount = subtotal * (dc.value / 100);
           else if (dc.type === 'fixed') discount = Math.min(dc.value, subtotal);
-          appliedCode = dc.code;
+          else if (dc.type === 'free_shipping') isFreeShippingDiscount = true;
+          appliedDiscountId = dc._id;
           dc.usedCount += 1;
           await dc.save();
         }
       }
 
-      // Shipping
-      const shipping = typeof shippingAmount === 'number' ? shippingAmount : 29.99;
+      // Shipping and Insurance
+      let shipping = typeof shippingAmount === 'number' ? shippingAmount : 29.99;
+      let shippingInsurance = req.body.shippingInsurance || 0;
+      
+      // Note: The frontend sends the calculated shippingAmount including insurance. 
+      // If it's a free shipping discount, frontend already makes shipping cost 0.
+      // And the new frontend logic makes the insurance cost 0 too.
+      // So shippingAmount passed should already be correct. 
+      // Just to be safe and enforce logic on the backend too:
+      if (isFreeShippingDiscount) {
+        shipping = 0;
+        shippingInsurance = 0;
+      }
 
       // Tax
       const businessInfo = await BusinessInfo.findOne() || {
@@ -135,7 +148,7 @@ router.post(
       
       const tax = isTaxEnabled ? (subtotal - discount + shipping) * taxRateValue : 0;
       const parsedDonationAmount = Number(donationAmount) || 0;
-      const total = subtotal - discount + shipping + tax + parsedDonationAmount;
+      const total = subtotal - discount + shipping + shippingInsurance + tax + parsedDonationAmount;
 
       let lanforgeDonationAmount = 0;
       if (donationCause) {
@@ -258,9 +271,10 @@ router.post(
         billingAddress,
         subtotal,
         shipping,
+        shippingInsurance,
         tax: parseFloat(tax.toFixed(2)),
         discount,
-        discountCode: appliedCode,
+        appliedDiscount: appliedDiscountId || undefined,
         creatorCode: creatorCode ? creatorCode.toUpperCase() : undefined,
         donationCause: donationCause || undefined,
         donationAmount: parsedDonationAmount,
@@ -271,6 +285,104 @@ router.post(
         selectedShippingRate: selectedShippingRate || null,
         loyaltyPointsEarned,
       });
+
+      // Create PurchasedPC records for PCs
+      try {
+        for (const item of validatedItems) {
+          // If the item is a normal product, check if it's a PC
+          if (item.product) {
+            const p = await Product.findById(item.product).populate('parts');
+            if (p) {
+              // We consider it a PC if the category contains 'pc' or if it has computer-like specs.
+              let hasSpecs = false;
+              let rawSpecs: Record<string, string> = {};
+              if (p.specs) {
+                if (p.specs instanceof Map) {
+                  hasSpecs = p.specs.size > 2;
+                  rawSpecs = Object.fromEntries(p.specs);
+                } else if (typeof p.specs === 'object') {
+                  hasSpecs = Object.keys(p.specs).length > 2;
+                  rawSpecs = p.specs as Record<string, string>;
+                }
+              }
+
+              const categoryLower = p.category ? p.category.toLowerCase() : '';
+              const isPC = (
+                categoryLower.includes('pc') || 
+                categoryLower.includes('desktop') || 
+                categoryLower.includes('system') ||
+                hasSpecs // Fallback: if it has many specs, it's likely a complex system
+              );
+              
+              if (isPC) {
+                // Map product parts
+                const partsList: Array<any> = [];
+                if (p.parts && p.parts.length > 0) {
+                  p.parts.forEach((partObj: any) => {
+                    const partName = `${partObj.brand} ${partObj.partModel}`;
+                    partsList.push({
+                      partType: partObj.type || 'Component',
+                      part: partObj._id || undefined,
+                      name: partName,
+                      price: partObj.price || 0
+                    });
+                  });
+                }
+
+                for (let i = 0; i < item.quantity; i++) {
+                  const serialNumber = `LF-PC-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+                  
+                  await PurchasedPC.create({
+                    serialNumber,
+                    order: order._id,
+                    customer: finalCustomerId || undefined,
+                    product: p._id,
+                    name: p.name,
+                    specs: rawSpecs,
+                    parts: partsList,
+                    status: 'building',
+                  });
+                }
+              }
+            }
+          } else if (item.customBuild) {
+            // It's a Custom Build
+            const cb = await CustomBuild.findById(item.customBuild).populate('parts.part');
+            if (cb) {
+              // Map custom build parts
+              const partsList: Array<any> = [];
+              if (cb.parts && cb.parts.length > 0) {
+                cb.parts.forEach((bp: any) => {
+                  const partName = bp.part ? `${bp.part.brand} ${bp.part.partModel}` : bp.partType;
+                  partsList.push({
+                    partType: bp.partType,
+                    part: bp.part?._id || undefined,
+                    name: partName,
+                    price: bp.part?.price || 0
+                  });
+                });
+              }
+
+              for (let i = 0; i < item.quantity; i++) {
+                const serialNumber = `LF-CB-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+                
+                await PurchasedPC.create({
+                  serialNumber,
+                  order: order._id,
+                  customer: finalCustomerId || undefined,
+                  customBuild: cb._id,
+                  name: cb.name || 'Custom Build',
+                  specs: {}, // we store structured parts for custom builds instead of basic specs map
+                  parts: partsList,
+                  status: 'building',
+                });
+              }
+            }
+          }
+        }
+      } catch (pcErr) {
+        console.error('Failed to create PurchasedPCs:', pcErr);
+      }
 
       // Send notification
       try {
@@ -298,8 +410,8 @@ router.get('/track', async (req: Request, res: Response): Promise<void> => {
     }
 
     const order = await Order.findOne({ orderNumber }).select(
-      'orderNumber status paymentStatus items subtotal shipping tax discount total shippingAddress trackingNumber carrier createdAt updatedAt'
-    );
+      'orderNumber status paymentStatus items subtotal shipping tax discount appliedDiscount total shippingAddress trackingNumber carrier createdAt updatedAt'
+    ).populate('appliedDiscount', 'code type value');
 
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
@@ -339,7 +451,8 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       $or: [{ _id: req.params.id }, { orderNumber: req.params.id }],
     })
       .select('-__v')
-      .populate('customer', 'firstName lastName email loyaltyPoints');
+      .populate('customer', 'firstName lastName email loyaltyPoints')
+      .populate('appliedDiscount', 'code type value');
 
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
@@ -390,7 +503,8 @@ router.get('/admin/all', protect, staffOrAdmin, async (req: AuthRequest, res: Re
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('customer', 'firstName lastName email'),
+        .populate('customer', 'firstName lastName email')
+        .populate('appliedDiscount', 'code type value'),
       Order.countDocuments(filter),
     ]);
 
@@ -425,10 +539,9 @@ router.put('/:id/status', protect, staffOrAdmin, async (req: AuthRequest, res: R
     if (carrier) update.carrier = carrier;
     if (notes) update.notes = notes;
 
-    const order = await Order.findByIdAndUpdate(req.params.id, update, { new: true }).populate(
-      'customer',
-      'firstName lastName email'
-    );
+    const order = await Order.findByIdAndUpdate(req.params.id, update, { new: true })
+      .populate('customer', 'firstName lastName email')
+      .populate('appliedDiscount', 'code type value');
 
     if (!order) {
       res.status(404).json({ message: 'Order not found' });
@@ -533,7 +646,7 @@ router.put('/:id/notes', protect, staffOrAdmin, async (req: AuthRequest, res: Re
 // PUT /api/orders/:id — admin/staff: update order details and items
 router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { items, shippingAddress, billingAddress, shipping, donationAmount } = req.body;
+    const { items, shippingAddress, billingAddress, shipping, shippingInsurance, donationAmount } = req.body;
 
     const order = await Order.findById(req.params.id);
     if (!order) {
@@ -544,6 +657,7 @@ router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response
     if (shippingAddress) order.shippingAddress = shippingAddress;
     if (billingAddress) order.billingAddress = billingAddress;
     if (typeof shipping === 'number') order.shipping = shipping;
+    if (typeof shippingInsurance === 'number') order.shippingInsurance = shippingInsurance;
     if (typeof donationAmount === 'number') order.donationAmount = donationAmount;
 
     if (items && Array.isArray(items)) {
@@ -568,13 +682,13 @@ router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response
       order.tax = parseFloat(tax.toFixed(2));
       
       // Recalculate total
-      const total = subtotal - order.discount + order.shipping + order.tax + (order.donationAmount || 0);
+      const total = subtotal - order.discount + order.shipping + order.shippingInsurance + order.tax + (order.donationAmount || 0);
       order.total = parseFloat(total.toFixed(2));
     }
 
     await order.save();
     
-    const updatedOrder = await Order.findById(req.params.id).populate('customer', 'firstName lastName email loyaltyPoints');
+    const updatedOrder = await Order.findById(req.params.id).populate('customer', 'firstName lastName email loyaltyPoints').populate('appliedDiscount', 'code type value');
     res.json({ order: updatedOrder });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

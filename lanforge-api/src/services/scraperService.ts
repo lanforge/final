@@ -2,9 +2,9 @@ import fetch from 'node-fetch';
 import PCPart from '../models/PCPart';
 import Product from '../models/Product';
 import { Agenda } from 'agenda';
+import { MongoBackend } from '@agendajs/mongo-backend';
 
-// @ts-ignore
-const agenda = new Agenda({ db: { address: process.env.MONGODB_URI || 'mongodb://localhost:27017/lanforge' } });
+let agenda: Agenda;
 
 const extractPrice = (priceStr: any): number => {
   if (typeof priceStr === 'number') return priceStr;
@@ -288,6 +288,13 @@ export const scrapeSinglePart = async (part: any): Promise<boolean> => {
 };
 
 export const startPriceScrapingJob = async () => {
+  agenda = new Agenda({
+    backend: new MongoBackend({
+      address: process.env.MONGODB_URI || 'mongodb://localhost:27017/lanforge',
+      collection: 'agendaJobs'
+    })
+  });
+
   agenda.define('scrape pc parts scheduler', async () => {
     const parts = await PCPart.find({ productUrl: { $exists: true, $ne: '' } });
     const totalParts = parts.length;

@@ -127,7 +127,6 @@ const CartPage: React.FC = () => {
           try {
             const data = JSON.parse(event.data);
             if (data.type === 'update') {
-              console.log('SSE: Cart update received, refetching...');
               fetchCart();
               fetchSettings();
             }

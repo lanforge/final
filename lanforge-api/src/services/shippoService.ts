@@ -29,7 +29,6 @@ export const createShipment = async (addressFrom: any, addressTo: any, parcels: 
             weight: String(p.weight || "2"),
             mass_unit: String(p.mass_unit || p.massUnit || "lb")
           };
-          console.log("Shippo Sending Parcel Data:", JSON.stringify(parcelData, null, 2));
           return parcelData;
         }),
         carrier_accounts: [
@@ -40,7 +39,6 @@ export const createShipment = async (addressFrom: any, addressTo: any, parcels: 
     });
 
     const dataText = await response.text();
-    console.log("Shippo Response:", dataText);
 
     if (!response.ok) {
       throw new Error(`Shippo API Error: ${dataText}`);

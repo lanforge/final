@@ -5,6 +5,7 @@ export interface IInvoice extends Document {
   customerName: string;
   customerEmail: string;
   amount: number;
+  shippingInsurance?: number;
   description: string;
   status: 'pending' | 'paid' | 'cancelled';
   paymentId?: string;
@@ -19,6 +20,7 @@ const invoiceSchema = new Schema<IInvoice>(
     customerName: { type: String, required: true },
     customerEmail: { type: String, required: true },
     amount: { type: Number, required: true },
+    shippingInsurance: { type: Number, default: 0 },
     description: { type: String, required: true },
     status: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending' },
     paymentId: { type: String },

@@ -169,7 +169,7 @@ const TradeifyPage: React.FC = () => {
         WORKSTATION SHOWCASE - THE 3 PCs
         ========================================================================
       */}
-      <section id="workstations" className="py-32 relative z-10">
+      <section id="workstations" className="py-16 sm:py-24 lg:py-32 relative z-10">
         <div className="container-narrow px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -358,7 +358,7 @@ const TradeifyPage: React.FC = () => {
         FINAL CTA
         ========================================================================
       */}
-      <section className="py-32 relative z-10 border-t border-gray-900 bg-black">
+      <section className="py-16 sm:py-24 lg:py-32 relative z-10 border-t border-gray-900 bg-black">
         <div className="container-narrow px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 40 }}

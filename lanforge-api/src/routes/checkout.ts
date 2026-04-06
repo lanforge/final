@@ -78,6 +78,7 @@ router.post(
         } else {
           if (dc.type === 'percentage') discountAmount = subtotal * (dc.value / 100);
           else if (dc.type === 'fixed') discountAmount = Math.min(dc.value, subtotal);
+          else if (dc.type === 'free_shipping') discountAmount = 0;
           appliedDiscount = dc;
         }
       }
@@ -116,6 +117,8 @@ router.post(
       const isTaxEnabled = businessInfo.taxEnabled !== false;
       const taxRateValue = (businessInfo.taxRate ?? 8.0) / 100; // Convert 8.0 to 0.08
       
+      const isFreeShippingDiscount = appliedDiscount && appliedDiscount.type === 'free_shipping';
+      
       const tax = isTaxEnabled ? (subtotal - discountAmount + shipping) * taxRateValue : 0;
       const total = subtotal - discountAmount + shipping + tax;
 
@@ -128,7 +131,8 @@ router.post(
           tax,
           total,
           appliedDiscount,
-          appliedCreatorCode
+          appliedCreatorCode,
+          isFreeShippingDiscount
         }
       });
     } catch (error) {

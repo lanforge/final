@@ -12,7 +12,7 @@ export interface ICart extends Document {
   sessionId: string; // for guest users
   customer?: mongoose.Types.ObjectId; // for logged in users
   items: ICartItem[];
-  discountCode?: string;
+  appliedDiscount?: mongoose.Types.ObjectId;
   customDiscountAmount?: number;
   creatorCode?: string;
   donationCause?: mongoose.Types.ObjectId;
@@ -35,7 +35,7 @@ const CartSchema = new Schema<ICart>(
     sessionId: { type: String, required: true },
     customer: { type: Schema.Types.ObjectId, ref: 'Customer' },
     items: [CartItemSchema],
-    discountCode: { type: String },
+    appliedDiscount: { type: Schema.Types.ObjectId, ref: 'Discount' },
     customDiscountAmount: { type: Number, default: 0 },
     creatorCode: { type: String },
     donationCause: { type: Schema.Types.ObjectId, ref: 'DonationCause' },

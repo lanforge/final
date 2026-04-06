@@ -84,12 +84,12 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-gray-950 border-t border-gray-800/50">
-      <div className="w-full px-8">
-        <div className="py-12">
+      <div className="w-full px-4 sm:px-6 md:px-8">
+        <div className="py-8 sm:py-12">
           {/* Full width single row layout */}
-          <div className="flex flex-col md:flex-row items-start justify-between gap-8 w-full">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-6 sm:gap-8 w-full">
             {/* Logo only */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 mb-4 md:mb-0">
               <Link to="/" className="inline-block">
                 <img 
                   src="/logo-2.png" 
@@ -100,9 +100,9 @@ const Footer: React.FC = () => {
             </div>
             
             {/* Navigation columns spanning full width */}
-            <div className="flex-1 flex flex-wrap justify-between gap-8 md:gap-12 w-full">
+            <div className="flex-1 flex flex-wrap justify-between gap-6 sm:gap-8 md:gap-12 w-full">
               {footerColumns.map((column) => (
-                <div key={column.title} className="min-w-[120px]">
+                <div key={column.title} className="min-w-[100px] sm:min-w-[120px]">
                   <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
                     {column.title}
                   </h3>
@@ -122,17 +122,17 @@ const Footer: React.FC = () => {
               ))}
               
               {/* Connect / Contact */}
-              <div className="min-w-[120px]">
+              <div className="min-w-[100px] sm:min-w-[120px]">
                 <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
                   Connect
                 </h3>
                 {businessInfo?.phone && (
-                  <p className="text-sm text-gray-400 mb-2">{businessInfo.phone}</p>
+                  <p className="text-xs sm:text-sm text-gray-400 mb-2 break-words">{businessInfo.phone}</p>
                 )}
                 {businessInfo?.email && (
-                  <p className="text-sm text-gray-400 mb-4">{businessInfo.email}</p>
+                  <p className="text-xs sm:text-sm text-gray-400 mb-4 break-words">{businessInfo.email}</p>
                 )}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                   {socialLinks.map((social) => (
                     <a
                       key={social.label}
@@ -149,18 +149,18 @@ const Footer: React.FC = () => {
               </div>
               
               {/* Newsletter */}
-              <div className="min-w-[200px]">
+              <div className="min-w-full sm:min-w-[200px] w-full sm:w-auto">
                 <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
                   Newsletter
                 </h3>
-                <form onSubmit={handleSubscribe} className="space-y-3">
+                <form onSubmit={handleSubscribe} className="space-y-3 max-w-sm">
                   <input 
                     type="email" 
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full px-3 py-2 text-sm rounded bg-gray-800/50 border border-gray-700/50 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-400/50"
+                    className="w-full px-3 py-2.5 text-sm rounded bg-gray-800/50 border border-gray-700/50 text-white placeholder-gray-500 focus:outline-none focus:border-emerald-400/50"
                   />
                   <button 
                     type="submit" 
@@ -181,17 +181,17 @@ const Footer: React.FC = () => {
         </div>
         
         {/* Bottom bar - full width */}
-        <div className="py-6 border-t border-gray-800/50 w-full">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm w-full">
-            <div className="text-gray-500">
+        <div className="py-4 sm:py-6 border-t border-gray-800/50 w-full">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 text-xs sm:text-sm w-full">
+            <div className="text-gray-500 text-center md:text-left">
               © {new Date().getFullYear()} {businessInfo?.storeName || 'LANForge'} PC Builders. All rights reserved.
             </div>
             
-            <div className="flex items-center gap-6">
+            <div className="flex items-center flex-wrap justify-center gap-3 sm:gap-4 md:gap-6">
               {isEnabled('/privacy') && (
               <Link 
                 to="/privacy" 
-                className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                className="text-gray-400 hover:text-emerald-400 transition-colors duration-300 whitespace-nowrap"
               >
                 Privacy Policy
               </Link>
@@ -199,7 +199,7 @@ const Footer: React.FC = () => {
               {isEnabled('/terms') && (
               <Link 
                 to="/terms" 
-                className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                className="text-gray-400 hover:text-emerald-400 transition-colors duration-300 whitespace-nowrap"
               >
                 Terms of Service
               </Link>
@@ -207,7 +207,7 @@ const Footer: React.FC = () => {
               {isEnabled('/cookies') && (
               <Link 
                 to="/cookies" 
-                className="text-gray-400 hover:text-emerald-400 transition-colors duration-300"
+                className="text-gray-400 hover:text-emerald-400 transition-colors duration-300 whitespace-nowrap"
               >
                 Cookie Policy
               </Link>

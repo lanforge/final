@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import Order from '../models/Order';
 import Invoice from '../models/Invoice';
 import Payment from '../models/Payment';
-import { createPaymentIntent, confirmPaymentIntent, constructWebhookEvent } from '../services/stripeService';
+import stripeService, { createPaymentIntent, confirmPaymentIntent, constructWebhookEvent } from '../services/stripeService';
 import { createPayPalOrder, capturePayPalOrder } from '../services/paypalService';
 import { authorizeAffirmCharge, captureAffirmCharge } from '../services/affirmService';
 import { sendOrderConfirmation } from '../services/emailService';
@@ -23,18 +23,19 @@ router.post('/stripe/create-checkout-intent', async (req: Request, res: Response
 // POST /api/payments/stripe/update-intent
 router.post('/stripe/update-intent', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { clientSecret, metadata } = req.body;
+    const { clientSecret, metadata, amount } = req.body;
     // Extract the intent ID from the client secret (format: pi_xxx_secret_yyy)
     const paymentIntentId = clientSecret.split('_secret_')[0];
     
-    // We need to use the stripe SDK directly to update the intent
-    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-    await stripe.paymentIntents.update(paymentIntentId, {
-      metadata
-    });
+    const updateData: any = {};
+    if (metadata) updateData.metadata = metadata;
+    if (amount !== undefined) updateData.amount = Math.round(Math.max(0.5, amount) * 100);
+
+    await stripeService.paymentIntents.update(paymentIntentId, updateData);
     
     res.json({ success: true });
   } catch (error: any) {
+    console.error('Update intent error:', error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -94,6 +95,7 @@ router.post('/stripe/confirm', async (req: Request, res: Response): Promise<void
             items: order.items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
             subtotal: order.subtotal,
             shipping: order.shipping,
+            shippingInsurance: order.shippingInsurance,
             tax: order.tax,
             discount: order.discount,
             total: order.total,
@@ -136,62 +138,6 @@ router.post('/paypal/create-order', async (req: Request, res: Response): Promise
   }
 });
 
-// POST /api/payments/paypal/capture
-router.post('/paypal/capture', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { paypalOrderId, orderId } = req.body;
-    const capture = await capturePayPalOrder(paypalOrderId);
-
-    if (capture.status === 'COMPLETED') {
-      const captureId = capture.purchase_units[0]?.payments?.captures[0]?.id;
-      const amountValue = capture.purchase_units[0]?.payments?.captures[0]?.amount?.value || 0;
-      const currencyCode = capture.purchase_units[0]?.payments?.captures[0]?.amount?.currency_code || 'USD';
-      
-      const order = await Order.findByIdAndUpdate(
-        orderId,
-        { paymentStatus: 'paid', paymentId: captureId, status: 'order-confirmed' },
-        { new: true }
-      );
-
-      if (order) {
-        await Payment.create({
-          amount: Number(amountValue),
-          currency: currencyCode.toLowerCase(),
-          paymentMethod: 'paypal',
-          gatewayTransactionId: captureId,
-          order: orderId,
-          customer: order.customer,
-          status: 'completed'
-        });
-
-        try {
-          const emailData = {
-            orderNumber: order.orderNumber,
-            customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
-            email: order.shippingAddress.email,
-            items: order.items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
-            subtotal: order.subtotal,
-            shipping: order.shipping,
-            tax: order.tax,
-            discount: order.discount,
-            total: order.total,
-            shippingAddress: order.shippingAddress,
-          };
-          await sendOrderConfirmation(emailData);
-        } catch (e) {
-          console.error('Order confirmation email failed:', e);
-        }
-      }
-
-      res.json({ success: true, order });
-    } else {
-      res.status(400).json({ message: 'PayPal capture failed', status: capture.status });
-    }
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // POST /api/payments/webhook/stripe — raw body required
 router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void> => {
   const sig = req.headers['stripe-signature'] as string;
@@ -205,13 +151,14 @@ router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void
         const isManualInvoice = intent.metadata?.type === 'manual_invoice';
         
         if (orderId) {
-          const order = await Order.findByIdAndUpdate(orderId, {
-            paymentStatus: 'paid',
-            paymentId: intent.id,
-            status: 'order-confirmed',
-          });
+          const order = await Order.findById(orderId);
           
-          if (order) {
+          if (order && order.paymentStatus !== 'paid') {
+            order.paymentStatus = 'paid';
+            order.paymentId = intent.id;
+            order.status = 'order-confirmed';
+            await order.save();
+
             await Payment.create({
               amount: intent.amount / 100, // Stripe amount is in cents
               currency: intent.currency,
@@ -222,8 +169,28 @@ router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void
               status: 'completed',
               metadata: intent.metadata
             });
-          }
-        } else if (isManualInvoice) {
+
+        // Send confirmation email
+        try {
+          const emailData = {
+            orderNumber: order.orderNumber,
+            customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
+            email: order.shippingAddress.email,
+            items: order.items.map((i: any) => ({ name: i.name, quantity: i.quantity, price: i.price })),
+            subtotal: order.subtotal,
+            shipping: order.shipping,
+            shippingInsurance: order.shippingInsurance,
+            tax: order.tax,
+            discount: order.discount,
+            total: order.total,
+            shippingAddress: order.shippingAddress,
+          };
+          await sendOrderConfirmation(emailData);
+        } catch (e) {
+          console.error('Order confirmation email failed (Webhook):', e);
+        }
+      }
+    } else if (isManualInvoice) {
           const invoiceId = intent.metadata?.invoiceId;
           if (invoiceId) {
             const invoice = await Invoice.findByIdAndUpdate(invoiceId, {
@@ -242,9 +209,7 @@ router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void
                 metadata: intent.metadata
               });
             }
-            console.log(`Invoice ${invoiceId} marked as paid`);
           } else {
-            console.log('Manual Invoice Paid (no ID):', intent.metadata);
             await Payment.create({
               amount: intent.amount / 100,
               currency: intent.currency,
@@ -305,70 +270,20 @@ router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void
   }
 });
 
-// POST /api/payments/affirm/authorize
-router.post('/affirm/authorize', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { checkoutToken, orderId } = req.body;
-    const order = await Order.findById(orderId);
-    if (!order) {
-      res.status(404).json({ message: 'Order not found' });
-      return;
-    }
-
-    // 1. Authorize the charge
-    const charge = await authorizeAffirmCharge(checkoutToken, order.orderNumber);
-    
-    // 2. Capture the charge (can also be done later when shipping)
-    const capture = await captureAffirmCharge(charge.id, order.orderNumber);
-
-    // 3. Update the order
-    const updatedOrder = await Order.findByIdAndUpdate(
-      orderId,
-      { paymentStatus: 'paid', paymentId: capture.id, status: 'order-confirmed' },
-      { new: true }
-    );
-
-    if (updatedOrder) {
-      await Payment.create({
-        amount: capture.amount / 100, // Affirm amounts are usually in cents
-        currency: capture.currency || 'usd',
-        paymentMethod: 'affirm',
-        gatewayTransactionId: capture.id,
-        order: orderId,
-        customer: updatedOrder.customer,
-        status: 'completed'
-      });
-
-      try {
-        const emailData = {
-          orderNumber: updatedOrder.orderNumber,
-          customerName: `${updatedOrder.shippingAddress.firstName} ${updatedOrder.shippingAddress.lastName}`,
-          email: updatedOrder.shippingAddress.email,
-          items: updatedOrder.items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
-          subtotal: updatedOrder.subtotal,
-          shipping: updatedOrder.shipping,
-          tax: updatedOrder.tax,
-          discount: updatedOrder.discount,
-          total: updatedOrder.total,
-          shippingAddress: updatedOrder.shippingAddress,
-        };
-        await sendOrderConfirmation(emailData);
-      } catch (e) {
-        console.error('Order confirmation email failed:', e);
-      }
-    }
-
-    res.json({ success: true, order: updatedOrder });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // POST /api/payments (Manual creation)
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
     const { amount, currency, paymentMethod, gatewayTransactionId, orderId, invoiceId, customerId, status, metadata } = req.body;
     
+    // Check if order is already paid to prevent duplicate emails/payments
+    if (orderId) {
+      const existingOrder = await Order.findById(orderId);
+      if (existingOrder && existingOrder.paymentStatus === 'paid') {
+        res.status(200).json({ message: 'Order already paid', order: existingOrder });
+        return;
+      }
+    }
+
     const payment = await Payment.create({
       amount,
       currency: currency || 'usd',
@@ -383,7 +298,29 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
 
     // Optionally update order or invoice status
     if (orderId && status === 'completed') {
-      await Order.findByIdAndUpdate(orderId, { paymentStatus: 'paid', paymentId: payment.gatewayTransactionId, status: 'order-confirmed' });
+      const order = await Order.findByIdAndUpdate(orderId, { paymentStatus: 'paid', paymentId: payment.gatewayTransactionId, status: 'order-confirmed' }, { new: true });
+      
+      if (order) {
+        // Send confirmation email
+        try {
+          const emailData = {
+            orderNumber: order.orderNumber,
+            customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
+            email: order.shippingAddress.email,
+            items: order.items.map((i: any) => ({ name: i.name, quantity: i.quantity, price: i.price })),
+            subtotal: order.subtotal,
+            shipping: order.shipping,
+            shippingInsurance: order.shippingInsurance || 0,
+            tax: order.tax,
+            discount: order.discount,
+            total: order.total,
+            shippingAddress: order.shippingAddress,
+          };
+          await sendOrderConfirmation(emailData);
+        } catch (e) {
+          console.error('Order confirmation email failed (Manual Creation):', e);
+        }
+      }
     } else if (invoiceId && status === 'completed') {
       await Invoice.findByIdAndUpdate(invoiceId, { status: 'paid', paymentId: payment.gatewayTransactionId });
     }

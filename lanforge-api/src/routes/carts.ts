@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import Cart from '../models/Cart';
+import Discount from '../models/Discount';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -78,7 +79,8 @@ router.get('/:sessionId', async (req: Request, res: Response): Promise<void> => 
         path: 'items.customBuild',
         populate: { path: 'parts.part', select: 'name price images type' }
       })
-      .populate('donationCause');
+      .populate('donationCause')
+      .populate('appliedDiscount', 'code type value');
 
     if (!cart) {
       cart = await Cart.create({ sessionId: req.params.sessionId, items: [] });
@@ -100,7 +102,18 @@ router.put('/:sessionId', async (req: Request, res: Response): Promise<void> => 
 
     const update: any = { items, expiresAt };
     if (customerId) update.customer = customerId;
-    if (discountCode !== undefined) update.discountCode = discountCode;
+    
+    if (discountCode !== undefined) {
+      if (discountCode) {
+        const discount = await Discount.findOne({ code: discountCode.toUpperCase(), status: 'active' });
+        if (discount) {
+          update.appliedDiscount = discount._id;
+        }
+      } else {
+        update.appliedDiscount = null;
+      }
+    }
+    
     if (creatorCode !== undefined) update.creatorCode = creatorCode;
     if (donationCause !== undefined) update.donationCause = donationCause;
     if (clearDiscount || (items && items.length === 0)) {
@@ -119,7 +132,8 @@ router.put('/:sessionId', async (req: Request, res: Response): Promise<void> => 
         path: 'items.customBuild',
         populate: { path: 'parts.part', select: 'name price images type' }
       })
-      .populate('donationCause');
+      .populate('donationCause')
+      .populate('appliedDiscount', 'code type value');
 
     res.json({ cart });
   } catch (error) {
@@ -147,7 +161,8 @@ router.get('/admin/all', protect, staffOrAdmin, async (req: AuthRequest, res: Re
         .limit(limit)
         .populate('customer', 'firstName lastName email')
         .populate('items.product', 'name price')
-        .populate('items.customBuild', 'name total'),
+        .populate('items.customBuild', 'name total')
+        .populate('appliedDiscount', 'code type value'),
       Cart.countDocuments(filter),
     ]);
 
@@ -164,14 +179,26 @@ router.put('/admin/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Re
     
     const update: any = {};
     if (items) update.items = items;
-    if (discountCode !== undefined) update.discountCode = discountCode;
+    
+    if (discountCode !== undefined) {
+      if (discountCode) {
+        const discount = await Discount.findOne({ code: discountCode.toUpperCase() });
+        if (discount) {
+          update.appliedDiscount = discount._id;
+        }
+      } else {
+        update.appliedDiscount = null;
+      }
+    }
+    
     if (creatorCode !== undefined) update.creatorCode = creatorCode;
     if (status) update.status = status;
     if (customDiscountAmount !== undefined) update.customDiscountAmount = Number(customDiscountAmount);
 
     const cart = await Cart.findByIdAndUpdate(req.params.id, update, { new: true })
       .populate('customer', 'firstName lastName email')
-      .populate('items.product', 'name price');
+      .populate('items.product', 'name price')
+      .populate('appliedDiscount', 'code type value');
 
     if (!cart) {
       res.status(404).json({ message: 'Cart not found' });

@@ -8,7 +8,6 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import mongoSanitize from 'express-mongo-sanitize';
-import xss from 'xss-clean';
 import connectDB from './config/db';
 import { startPriceScrapingJob } from './services/scraperService';
 import { AppError } from './utils/AppError';
@@ -43,6 +42,7 @@ import newsletterRoutes from './routes/newsletter';
 import rmaRoutes from './routes/rma';
 import giftCardRoutes from './routes/giftcards';
 import businessRoutes from './routes/business';
+import purchasedPcsRoutes from './routes/purchased-pcs';
 import buildRequestRoutes from './routes/build-requests';
 import donationCausesRoutes from './routes/donation-causes';
 import pageStatusRoutes from './routes/page-status';
@@ -63,7 +63,19 @@ connectDB();
 app.use(
   helmet({
     crossOriginResourcePolicy: false,
-    contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : false,
+    contentSecurityPolicy: env.NODE_ENV === 'production' ? undefined : {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"],
+      },
+    },
     xXssProtection: true,
     xFrameOptions: { action: 'deny' },
   })
@@ -108,6 +120,13 @@ const refreshLimiter = rateLimit({
 });
 app.use('/api/auth/refresh', refreshLimiter);
 
+// Strict rate limit for public submission routes
+const publicSubmissionLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10,
+  message: 'Too many submissions, please try again later.',
+});
+
 // Raw body for Stripe webhook (must come before express.json)
 app.use('/api/payments/webhook/stripe', express.raw({ type: 'application/json' }));
 
@@ -117,7 +136,6 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // Sanitize data
 app.use(mongoSanitize());
-app.use(xss());
 
 // HTTP request logging (dev only)
 if (env.NODE_ENV === 'development') {
@@ -133,7 +151,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/payments', paymentRoutes);
-app.use('/api/email', emailRoutes);
+app.use('/api/email', publicSubmissionLimiter, emailRoutes);
 app.use('/api/discounts', discountRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/loyalty', loyaltyRoutes);
@@ -148,14 +166,15 @@ app.use('/api/faqs', faqRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/accessories', accessoryRoutes);
 app.use('/api/partners', partnerRoutes);
-app.use('/api/affiliates', affiliateRoutes);
+app.use('/api/affiliates', publicSubmissionLimiter, affiliateRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/carts', cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
-app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/newsletter', publicSubmissionLimiter, newsletterRoutes);
 app.use('/api/rma', rmaRoutes);
 app.use('/api/giftcards', giftCardRoutes);
 app.use('/api/business', businessRoutes);
+app.use('/api/purchased-pcs', purchasedPcsRoutes);
 app.use('/api/build-requests', buildRequestRoutes);
 app.use('/api/donation-causes', donationCausesRoutes);
 app.use('/api/page-status', pageStatusRoutes);

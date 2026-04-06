@@ -155,8 +155,8 @@ const BuildRequestModal: React.FC<BuildRequestModalProps> = ({ isOpen, onClose }
                           name="phone"
                           value={formData.phone}
                           onChange={handleInputChange}
-                          className="w-full px-4 py-3 bg-[#1a1a1a] border border-white/5 rounded-xl text-white focus:outline-none focus:border-white/20 transition-colors"
-                          placeholder="(555) 123-4567"
+                          className="w-full bg-[#1a1a24] border border-gray-700/50 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all placeholder-gray-500"
+                          placeholder="Phone number"
                         />
                       </div>
                       <div>

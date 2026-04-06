@@ -13,7 +13,7 @@ interface Cart {
   subtotal?: number;
   total?: number;
   updatedAt: string;
-  discountCode?: string;
+  appliedDiscount?: { code: string; type: string; value: number };
   customDiscountAmount?: number;
   creatorCode?: string;
 }
@@ -108,7 +108,7 @@ const AdminCartsPage: React.FC = () => {
 
   const handleEditClick = (cart: Cart) => {
     setSelectedCart(cart);
-    setEditDiscountCode(cart.discountCode || '');
+    setEditDiscountCode(cart.appliedDiscount?.code || '');
     setEditCustomDiscount(cart.customDiscountAmount || 0);
     setEditCreatorCode(cart.creatorCode || '');
     setEditStatus(cart.status);
@@ -415,7 +415,12 @@ const AdminCartsPage: React.FC = () => {
                       <p className="text-gray-500 text-xs font-mono truncate max-w-[150px]">{cart.sessionId}</p>
                     </td>
                     <td className="py-3 px-4 text-gray-300">{calculateCartItemsCount(cart)} items</td>
-                    <td className="py-3 px-4 text-white font-bold">{formatCurrency(calculateCartTotal(cart))}</td>
+                    <td className="py-3 px-4 text-white font-bold">
+                      {formatCurrency(calculateCartTotal(cart))}
+                      {cart.appliedDiscount && (
+                        <div className="text-xs text-emerald-400 mt-1">{cart.appliedDiscount.code}</div>
+                      )}
+                    </td>
                     <td className="py-3 px-4 text-gray-400 text-sm">
                       {new Date(cart.updatedAt).toLocaleString()}
                     </td>

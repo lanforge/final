@@ -122,7 +122,6 @@ const TechSupportPage: React.FC = () => {
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-      console.log('Support booked:', { selectedDate, selectedTime, name, email, issue });
     }, 1000);
   };
 

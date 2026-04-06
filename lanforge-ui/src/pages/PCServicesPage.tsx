@@ -135,15 +135,6 @@ const PCServicesPage: React.FC = () => {
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSubmitted(true);
-      console.log('Service booked:', {
-        services: selectedServices,
-        date: selectedDate,
-        time: selectedTime,
-        name,
-        email,
-        address,
-        total: calculateTotal()
-      });
     }, 1500);
   };
 

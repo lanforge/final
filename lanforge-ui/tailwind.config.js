@@ -54,6 +54,17 @@ module.exports = {
         display: ['lato', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
+      fontWeight: {
+        thin: '900',
+        extralight: '900',
+        light: '900',
+        normal: '900',
+        medium: '900',
+        semibold: '900',
+        bold: '900',
+        extrabold: '900',
+        black: '900',
+      },
       fontSize: {
         'display-2xl': ['4.5rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
         'display-xl': ['3.75rem', { lineHeight: '1', letterSpacing: '-0.02em' }],

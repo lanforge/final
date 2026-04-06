@@ -43,7 +43,11 @@ interface Order {
   shipping: number;
   tax: number;
   discount: number;
-  discountCode?: string;
+  appliedDiscount?: {
+    code: string;
+    type: string;
+    value: number;
+  };
   donationAmount: number;
   total: number;
   status: string;
@@ -72,6 +76,7 @@ const AdminOrderDetailsPage: React.FC = () => {
 
   const [order, setOrder] = useState<Order | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [purchasedPCs, setPurchasedPCs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
@@ -108,6 +113,13 @@ const AdminOrderDetailsPage: React.FC = () => {
         setPayments(paymentsResponse.data);
       } catch (paymentErr) {
         console.error('Failed to fetch payments:', paymentErr);
+      }
+
+      try {
+        const pcsResponse = await api.get(`/purchased-pcs/order/${id}`);
+        setPurchasedPCs(pcsResponse.data.pcs || []);
+      } catch (pcErr) {
+        console.error('Failed to fetch purchased PCs:', pcErr);
       }
     } catch (err: any) {
       console.error('Failed to fetch order details:', err);
@@ -308,6 +320,39 @@ const AdminOrderDetailsPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Purchased PCs section */}
+          {purchasedPCs.length > 0 && (
+            <div className="card p-6">
+              <h2 className="text-lg font-bold text-white mb-4">Purchased PCs</h2>
+              <div className="space-y-4">
+                {purchasedPCs.map((pc: any, idx: number) => (
+                  <div key={idx} className="flex flex-col gap-2 p-4 border border-gray-800 rounded-lg bg-gray-900/50">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-white">{pc.name}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        pc.status === 'delivered' ? 'bg-emerald-500/10 text-emerald-400' :
+                        pc.status === 'shipped' ? 'bg-blue-500/10 text-blue-400' :
+                        pc.status === 'cancelled' || pc.status === 'returned' ? 'bg-red-500/10 text-red-400' :
+                        'bg-amber-500/10 text-amber-400'
+                      }`}>
+                        {pc.status}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-400">Serial Number:</span>
+                      <button 
+                        onClick={() => navigate(`/admin/purchased-pcs/${pc._id}`)}
+                        className="text-blue-400 hover:text-blue-300 underline font-mono"
+                      >
+                        {pc.serialNumber}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Totals */}
           <div className="card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Order Totals</h2>
@@ -335,7 +380,7 @@ const AdminOrderDetailsPage: React.FC = () => {
               </div>
               {order.discount > 0 && (
                 <div className="flex justify-between text-emerald-400">
-                  <span>Discount {order.discountCode ? `(${order.discountCode})` : ''}</span>
+                  <span>Discount {order.appliedDiscount ? `(${order.appliedDiscount.code})` : ''}</span>
                   <span>-{formatCurrency(order.discount)}</span>
                 </div>
               )}

@@ -97,9 +97,11 @@ const OrderStatusPage: React.FC = () => {
   };
 
   const [orderItems, setOrderItems] = useState<any[]>([]);
-  const [shippingCost, setShippingCost] = useState(49.99);
+  const [shippingCost, setShippingCost] = useState(0);
+  const [shippingInsurance, setShippingInsurance] = useState(0);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [taxCost, setTaxCost] = useState(0);
+  const [discountAmount, setDiscountAmount] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
   const [activeDonationCauses, setActiveDonationCauses] = useState<any[]>([]);
 
@@ -120,9 +122,12 @@ const OrderStatusPage: React.FC = () => {
             quantity: item.quantity
           }));
           setOrderItems(mapped);
-          setShippingCost(data.order.shippingCost || 49.99);
+          setShippingCost(data.order.shipping || data.order.shippingCost || 0);
+          setShippingInsurance(data.order.shippingInsurance || 0);
           setTaxCost(data.order.tax || 0);
-          setTotalCost(data.order.total);
+          setDiscountAmount(data.order.discount || 0);
+          // Only use total from API if it exists, but ensure we don't accidentally ignore missing breakdown parts
+          setTotalCost(data.order.total || 0);
           setCustomerInfo({
              firstName: data.order.customer?.firstName || 'Customer',
              lastName: data.order.customer?.lastName || '',
@@ -168,7 +173,9 @@ const OrderStatusPage: React.FC = () => {
 
   const calculateTotal = () => {
     if (totalCost > 0) return totalCost;
-    return orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) + taxCost + shippingCost;
+    // We don't have access to the raw data discount in calculateTotal if it wasn't saved in state. Let's make sure it's accurate.
+    // If totalCost is 0, we'll just sum what we know.
+    return orderItems.reduce((total, item) => total + (item.price * item.quantity), 0) + taxCost + shippingCost + shippingInsurance - discountAmount;
   };
 
   return (
@@ -293,18 +300,28 @@ const OrderStatusPage: React.FC = () => {
                 <span>Subtotal</span>
                 <span>${orderItems.reduce((total, item) => total + (item.price * item.quantity), 0).toFixed(2)}</span>
               </div>
-              <div className="total-row">
-                <span>Shipping</span>
-                <span>$49.99</span>
-              </div>
-              <div className="total-row">
-                <span>Shipping Insurance</span>
-                <span>$29.99</span>
-              </div>
+              {shippingCost > 0 && (
+                <div className="total-row">
+                  <span>Shipping</span>
+                  <span>${shippingCost.toFixed(2)}</span>
+                </div>
+              )}
+              {shippingInsurance > 0 && (
+                <div className="total-row">
+                  <span>Shipping Insurance</span>
+                  <span>${shippingInsurance.toFixed(2)}</span>
+                </div>
+              )}
               {taxCost > 0 && (
                 <div className="total-row">
                   <span>Tax</span>
                   <span>${taxCost.toFixed(2)}</span>
+                </div>
+              )}
+              {discountAmount > 0 && (
+                <div className="total-row" style={{ color: '#00ff9d' }}>
+                  <span>Discount</span>
+                  <span>-${discountAmount.toFixed(2)}</span>
                 </div>
               )}
               <div className="total-row grand-total">

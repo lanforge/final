@@ -27,7 +27,7 @@ const Header: React.FC = () => {
               <img 
                 src="/logo-2.png" 
                 alt="LANForge" 
-                className="h-12 w-auto transition-transform duration-300 group-hover:scale-105"
+                className="h-10 sm:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute -inset-2 bg-gradient-neon rounded-full opacity-0 blur-xl group-hover:opacity-20 transition-opacity duration-300" />
             </div>
@@ -242,11 +242,11 @@ const Header: React.FC = () => {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {isEnabled('/cart') && (
             <Link to="/cart" className="relative">
-              <button className="inline-flex items-center justify-center p-2 rounded-xl text-gray-500 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300 ease-out cursor-pointer">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button className="inline-flex items-center justify-center p-2 sm:p-2.5 rounded-xl text-gray-500 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300 ease-out cursor-pointer min-w-[44px] min-h-[44px]">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </button>
@@ -266,10 +266,10 @@ const Header: React.FC = () => {
 
             {/* Mobile Menu Button */}
             <button 
-              className="lg:hidden p-2 rounded-xl text-gray-500 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300"
+              className="lg:hidden p-2 sm:p-2.5 rounded-xl text-gray-500 hover:text-emerald-400 hover:bg-emerald-400/5 transition-all duration-300 min-w-[44px] min-h-[44px]"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -290,8 +290,8 @@ const Header: React.FC = () => {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="py-6 border-t border-gray-800/50">
-                <div className="space-y-4">
+              <div className="py-4 sm:py-6 border-t border-gray-800/50">
+                <div className="space-y-2">
                   {isEnabled('/') && (
                     <Link 
                       to="/" 
@@ -304,17 +304,15 @@ const Header: React.FC = () => {
                   
                   {(isEnabled('/pcs') || isEnabled('/configurator') || isEnabled('/accessories')) && (
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between py-2 text-text-secondary font-medium">
+                    <button 
+                      className="w-full flex items-center justify-between py-2 text-text-secondary font-medium hover:text-accent-neon transition-colors duration-300"
+                      onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
+                    >
                       <span>Products</span>
-                      <button 
-                        className="p-1"
-                        onClick={() => setProductsDropdownOpen(!productsDropdownOpen)}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={productsDropdownOpen ? "M19 9l-7 7-7-7" : "M9 5l7 7-7 7"} />
-                        </svg>
-                      </button>
-                    </div>
+                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={productsDropdownOpen ? "M19 9l-7 7-7-7" : "M9 5l7 7-7 7"} />
+                      </svg>
+                    </button>
                     {productsDropdownOpen && (
                       <div className="pl-4 space-y-2">
                         {isEnabled('/pcs') && (
@@ -361,17 +359,15 @@ const Header: React.FC = () => {
 
                   {(isEnabled('/partners') || isEnabled('/press') || isEnabled('/affiliate-application')) && (
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between py-2 text-text-secondary font-medium">
+                    <button 
+                      className="w-full flex items-center justify-between py-2 text-text-secondary font-medium hover:text-accent-neon transition-colors duration-300"
+                      onClick={() => setPartnersDropdownOpen(!partnersDropdownOpen)}
+                    >
                       <span>Partners</span>
-                      <button 
-                        className="p-1"
-                        onClick={() => setPartnersDropdownOpen(!partnersDropdownOpen)}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={partnersDropdownOpen ? "M19 9l-7 7-7-7" : "M9 5l7 7-7 7"} />
-                        </svg>
-                      </button>
-                    </div>
+                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={partnersDropdownOpen ? "M19 9l-7 7-7-7" : "M9 5l7 7-7 7"} />
+                      </svg>
+                    </button>
                     {partnersDropdownOpen && (
                       <div className="pl-4 space-y-2">
                         {isEnabled('/partners') && (
@@ -408,17 +404,15 @@ const Header: React.FC = () => {
 
                   {(isEnabled('/contact') || isEnabled('/tech-support') || isEnabled('/pc-services')) && (
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between py-2 text-text-secondary font-medium">
+                    <button 
+                      className="w-full flex items-center justify-between py-2 text-text-secondary font-medium hover:text-accent-neon transition-colors duration-300"
+                      onClick={() => setSupportDropdownOpen(!supportDropdownOpen)}
+                    >
                       <span>Support</span>
-                      <button 
-                        className="p-1"
-                        onClick={() => setSupportDropdownOpen(!supportDropdownOpen)}
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={supportDropdownOpen ? "M19 9l-7 7-7-7" : "M9 5l7 7-7 7"} />
-                        </svg>
-                      </button>
-                    </div>
+                      <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={supportDropdownOpen ? "M19 9l-7 7-7-7" : "M9 5l7 7-7 7"} />
+                      </svg>
+                    </button>
                     {supportDropdownOpen && (
                       <div className="pl-4 space-y-2">
                         {isEnabled('/contact') && (

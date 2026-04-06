@@ -40,6 +40,7 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminOrderDetailsPage from './pages/AdminOrderDetailsPage';
+import AdminPurchasedPCDetailsPage from './pages/AdminPurchasedPCDetailsPage';
 import AdminProductsPage from './pages/AdminProductsPage';
 import AdminAddProductPage from './pages/AdminAddProductPage';
 import AdminInventoryPage from './pages/AdminInventoryPage';
@@ -434,6 +435,7 @@ function App() {
             <Route path="/admin/orders" element={<AdminOrdersPage />} />
             <Route path="/admin/orders/add" element={<AdminAddOrderPage />} />
             <Route path="/admin/orders/:id" element={<AdminOrderDetailsPage />} />
+            <Route path="/admin/purchased-pcs/:id" element={<AdminPurchasedPCDetailsPage />} />
             <Route path="/admin/products" element={<AdminProductsPage />} />
             <Route path="/admin/products/add" element={<AdminAddProductPage />} />
             <Route path="/admin/products/edit/:id" element={<AdminAddProductPage />} />

@@ -227,7 +227,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
           try {
             const data = JSON.parse(event.data);
             if (data.type === 'update') {
-              console.log('SSE: Cart update received, refetching...');
               fetchCart();
               fetchSettings();
             }
@@ -300,6 +299,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
     return cost;
   };
   const calculateInsurance = () => {
+    if (appliedDiscount && appliedDiscount.type === 'free_shipping') return 0;
     if (!shippingInsurance) return 0;
     return Math.max(0, calculateSubtotal() - customDiscountAmount + calculateShipping()) * 0.0125;
   };
@@ -596,6 +596,26 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   const isSectionCompleted = (section: string) => completedSections.has(section);
   const isSectionActive = (section: string) => activeSection === section;
 
+  React.useEffect(() => {
+    if (activeSection === 'payment') {
+      const total = calculateTotal();
+      if (total > 0 && clientSecret) {
+        fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/update-intent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clientSecret,
+            amount: total
+          })
+        }).catch(err => console.error('Failed to update payment intent amount:', err));
+      }
+    }
+  }, [
+    activeSection, clientSecret, cartItems, shippingMethod, 
+    customDonation, donationOption, appliedDiscount, 
+    customDiscountAmount, shippingInsurance, storeSettings
+  ]);
+
   return (
     <div className="checkout-page relative">
       <div className="container">
@@ -711,30 +731,35 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                   ) : (
                     <div className="shipping-options">
                       {shippoRates.length > 0 ? (
-                        shippoRates.map((rate) => (
-                          <label key={rate.objectId} className={`shipping-option ${shippingMethod === rate.objectId ? 'selected' : ''}`}>
-                            <input 
-                              type="radio" 
-                              name="shippingMethod" 
-                              value={rate.objectId} 
-                              checked={shippingMethod === rate.objectId} 
-                              onChange={(e) => { setShippingMethod(e.target.value); setShippingMethodCost(parseFloat(rate.amount)); }} 
-                            />
-                            <div className="option-content">
-                              <div className="option-header">
-                                <span className="option-title">{rate.title || rate.displayName || `${rate.provider} ${rate.servicelevel?.name}`}</span>
-                                <span className="option-price">${parseFloat(rate.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                        shippoRates.map((rate) => {
+                          const title = (rate.title || rate.displayName || rate.provider || '').toLowerCase();
+                          const isRateGround = title.includes('ground') || title.includes('standard');
+                          const isFree = appliedDiscount && appliedDiscount.type === 'free_shipping' && isRateGround;
+                          return (
+                            <label key={rate.objectId} className={`shipping-option ${shippingMethod === rate.objectId ? 'selected' : ''}`}>
+                              <input 
+                                type="radio" 
+                                name="shippingMethod" 
+                                value={rate.objectId} 
+                                checked={shippingMethod === rate.objectId} 
+                                onChange={(e) => { setShippingMethod(e.target.value); setShippingMethodCost(parseFloat(rate.amount)); }} 
+                              />
+                              <div className="option-content">
+                                <div className="option-header">
+                                  <span className="option-title">{rate.title || rate.displayName || `${rate.provider} ${rate.servicelevel?.name}`}</span>
+                                  <span className="option-price">{isFree ? 'FREE' : `$${parseFloat(rate.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span>
+                                </div>
+                                <p className="option-description">Estimated delivery: {rate.estimatedDays || '3-5'} {String(rate.estimatedDays) === '1' ? 'business day' : 'business days'}</p>
                               </div>
-                              <p className="option-description">Estimated delivery: {rate.estimatedDays || '3-5'} {String(rate.estimatedDays) === '1' ? 'business day' : 'business days'}</p>
-                            </div>
-                          </label>
-                        ))
+                            </label>
+                          );
+                        })
                       ) : (
                         <>
                           <label className={`shipping-option ${shippingMethod === 'standard' ? 'selected' : ''}`}>
                             <input type="radio" name="shippingMethod" value="standard" checked={shippingMethod === 'standard'} onChange={(e) => { setShippingMethod(e.target.value); setShippingMethodCost(49.99); }} />
                             <div className="option-content">
-                              <div className="option-header"><span className="option-title">Standard Shipping</span><span className="option-price">$49.99</span></div>
+                              <div className="option-header"><span className="option-title">Standard Shipping</span><span className="option-price">{appliedDiscount && appliedDiscount.type === 'free_shipping' ? 'FREE' : '$49.99'}</span></div>
                               <p className="option-description">5-7 business days</p>
                             </div>
                           </label>
@@ -757,8 +782,8 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                     </div>
                   )}
                   <label className="checkbox-label insurance-checkbox mb-4">
-                    <input type="checkbox" checked={shippingInsurance} onChange={(e) => setShippingInsurance(e.target.checked)} />
-                    <div><span className="checkbox-title">Add Shipping Insurance</span><span className="checkbox-price">+ ${(Math.max(0, calculateSubtotal() - customDiscountAmount + calculateShipping()) * 0.0125).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span><p className="checkbox-description">Protect your order during shipping</p></div>
+                    <input type="checkbox" checked={shippingInsurance || (appliedDiscount && appliedDiscount.type === 'free_shipping')} disabled={appliedDiscount && appliedDiscount.type === 'free_shipping'} onChange={(e) => setShippingInsurance(e.target.checked)} />
+                    <div><span className="checkbox-title">Add Shipping Insurance</span><span className="checkbox-price">{appliedDiscount && appliedDiscount.type === 'free_shipping' ? 'FREE' : `+ $${(Math.max(0, calculateSubtotal() - customDiscountAmount + calculateShipping()) * 0.0125).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span><p className="checkbox-description">Protect your order during shipping</p></div>
                   </label>
                   
                   <div className="mt-4 p-3 bg-gray-900/50 border border-gray-800 rounded-lg text-xs text-gray-400">
@@ -885,8 +910,15 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                 <div className="total-row"><span>Subtotal</span><span>${calculateSubtotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
                 {hasSelectedShippingMethod && (
                   <>
-                    <div className="total-row"><span>Shipping</span><span>${calculateShipping().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
-                    <div className="total-row"><span>Shipping Insurance</span><span>${calculateInsurance().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
+                    <div className="total-row">
+                      <span>Shipping</span>
+                      <span>
+                        {calculateShipping() === 0 && appliedDiscount && appliedDiscount.type === 'free_shipping' 
+                          ? 'FREE' 
+                          : `$${calculateShipping().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                      </span>
+                    </div>
+                    <div className="total-row"><span>Shipping Insurance</span><span>{calculateInsurance() === 0 && appliedDiscount && appliedDiscount.type === 'free_shipping' ? 'FREE' : `$${calculateInsurance().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</span></div>
                   </>
                 )}
               {storeSettings.taxEnabled && storeSettings.taxRate > 0 && (
@@ -961,14 +993,40 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
 const CheckoutPageWrapper: React.FC = () => {
   const [clientSecret, setClientSecret] = useState<string>('');
 
-  // We need to initialize a dummy intent to get a client secret to render the PaymentElement.
-  // In a full production app, this intent is updated whenever the cart total changes.
+  // We fetch the cart to initialize the intent with the real amount
+  // This intent is updated whenever the cart total changes later in the form.
   React.useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/create-checkout-intent`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: 1000 }) // Dummy amount to initialize UI
-    })
+    let sessionId = localStorage.getItem('cartSessionId');
+    if (!sessionId) {
+      sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('cartSessionId', sessionId);
+    }
+    
+    fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
+      .then(res => res.json())
+      .then(data => {
+        let initialAmount = 0;
+        if (data.cart && data.cart.items) {
+          initialAmount = data.cart.items.reduce((total: number, item: any) => {
+            const product = item.product || item.pcPart || item.accessory;
+            const customBuild = item.customBuild;
+            let price = item.price || 0;
+            if (customBuild) price = item.price || customBuild.total || 0;
+            else if (product) price = item.price || product.price || 0;
+            return total + (price * (item.quantity || 1));
+          }, 0);
+          initialAmount -= (data.cart.customDiscountAmount || 0);
+        }
+        
+        // Ensure we meet Stripe's minimum amount requirement
+        if (initialAmount < 0.5) initialAmount = 0.5;
+
+        return fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/create-checkout-intent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: initialAmount })
+        });
+      })
       .then(res => res.json())
       .then(data => {
         setClientSecret(data.clientSecret);
