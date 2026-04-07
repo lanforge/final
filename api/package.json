@@ -1,5 +1,5 @@
 {
-  "name": "lanforge-api",
+  "name": "api",
   "version": "1.0.0",
   "description": "LANForge backend API server",
   "main": "dist/index.js",
