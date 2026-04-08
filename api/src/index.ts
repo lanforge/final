@@ -48,6 +48,7 @@ import donationCausesRoutes from './routes/donation-causes';
 import pageStatusRoutes from './routes/page-status';
 import settingsRoutes from './routes/settings';
 import invoicesRoutes from './routes/invoices';
+import sitemapRoutes from './routes/sitemap';
 
 const app = express();
 
@@ -93,7 +94,7 @@ app.use(
 // Rate limiting — general
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30000, // Increased drastically for stress testing
+  max: 3000, // Increased drastically for stress testing
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -183,6 +184,9 @@ app.use('/api/donation-causes', donationCausesRoutes);
 app.use('/api/page-status', pageStatusRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/invoices', invoicesRoutes);
+
+// Sitemap
+app.use('/sitemap.xml', sitemapRoutes);
 
 // Health check
 app.get('/api/health', (_req: Request, res: Response) => {

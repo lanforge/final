@@ -34,3 +34,26 @@
 [0mGET /api/pc-parts/admin/all?search=&page=1&limit=20 [36m304[0m 119.534 ms - -[0m
 [0mGET /api/pc-parts/admin/all?search=&page=1&limit=20 [36m304[0m 118.393 ms - -[0m
 [0mGET /api/page-status/public [32m200[0m 1219.164 ms - 4952[0m
+[Scraper] Successfully updated MSI MAG X870: New Cost: $219.99, New Price: $241.99
+[0mGET /api/page-status/public [32m200[0m 1209.767 ms - 4952[0m
+[0mGET /api/products?limit=100 [36m304[0m 89.351 ms - -[0m
+[0mGET /api/products?limit=100 [36m304[0m 92.503 ms - -[0m
+[0mGET /api/page-status/public [32m200[0m 1146.763 ms - 4952[0m
+[0mGET /api/pc-parts?type=case&limit=50 [36m304[0m 43.617 ms - -[0m
+[0mGET /api/pc-parts?type=case&limit=50 [36m304[0m 42.952 ms - -[0m
+[0mGET /api/page-status/public [32m200[0m 1201.632 ms - 4952[0m
+[0mGET /api/products?limit=100 [36m304[0m 131.280 ms - -[0m
+[0mGET /api/products?limit=100 [36m304[0m 144.680 ms - -[0m
+[0mGET /api/page-status/public [32m200[0m 1680.231 ms - 4952[0m
+[Scraper] Successfully updated ASUS ROG STRIX X870-A: New Cost: $290.99, New Price: $320.99
+[Scraper] Successfully updated ASUS ROG STRIX X870E-E: New Cost: $394.99, New Price: $434.99
+[0mGET /api/faqs [36m304[0m 41.792 ms - -[0m
+[0mGET /api/faqs [36m304[0m 41.437 ms - -[0m
+[0mGET /api/page-status/public [32m200[0m 1162.242 ms - 4952[0m
+[0mGET /api/faqs [36m304[0m 36.072 ms - -[0m
+[0mGET /api/faqs [36m304[0m 50.347 ms - -[0m
+[0mGET /api/reviews?limit=3 [36m304[0m 56.851 ms - -[0m
+[0mGET /api/reviews?limit=3 [36m304[0m 53.284 ms - -[0m
+[0mGET /api/products?limit=100 [36m304[0m 92.280 ms - -[0m
+[0mGET /api/products?limit=100 [36m304[0m 93.664 ms - -[0m
+[0mGET /api/page-status/public [32m200[0m 1166.468 ms - 4952[0m
