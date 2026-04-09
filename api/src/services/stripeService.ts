@@ -13,7 +13,7 @@ export const createPaymentIntent = async (
     amount: Math.round(amount * 100), // cents
     currency,
     metadata,
-    automatic_payment_methods: { enabled: true },
+    payment_method_types: ['card', 'affirm'],
   });
 };
 

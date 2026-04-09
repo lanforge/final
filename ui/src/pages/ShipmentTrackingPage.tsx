@@ -34,7 +34,10 @@ const ShipmentTrackingPage: React.FC = () => {
           return;
         }
 
-        const carrier = order.carrier || 'shippo';
+        let carrier = order.carrier ? order.carrier.toLowerCase() : 'shippo';
+        if (carrier === 'unknown' || carrier === '') {
+          carrier = 'shippo';
+        }
         
         // Fetch tracking info from our backend
         const trackRes = await fetch(`${process.env.REACT_APP_API_URL}/shipping/track/${carrier}/${order.trackingNumber}`);
@@ -89,8 +92,8 @@ const ShipmentTrackingPage: React.FC = () => {
     );
   }
 
-  const trackingHistory = trackingData?.tracking_history || [];
-  const trackingStatus = trackingData?.tracking_status || {};
+  const trackingHistory = trackingData?.trackingHistory || trackingData?.tracking_history || [];
+  const trackingStatus = trackingData?.trackingStatus || trackingData?.tracking_status || {};
   const currentStatus = trackingStatus.status || 'UNKNOWN';
 
   return (
@@ -103,7 +106,7 @@ const ShipmentTrackingPage: React.FC = () => {
           transition={{ duration: 0.3 }}
         >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', marginBottom: '1rem' }}>
-            <div style={{ position: 'absolute', left: '0' }}>
+            <div style={{ position: 'absolute', left: 'calc(50% - 50vw + 2rem)' }}>
               <Link to={`/order-status?id=${orderId}`} className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <FontAwesomeIcon icon={faBox} /> Order Status
               </Link>
@@ -112,14 +115,37 @@ const ShipmentTrackingPage: React.FC = () => {
           </div>
           
           <div className="order-id-display" style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center' }}>
-            <div>
-              <span className="order-id-label">Tracking Number:</span>
-              <span className="order-id-value" style={{ color: '#00ff9d', fontSize: '1.2rem' }}>{trackingData?.tracking_number || orderData?.trackingNumber}</span>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span className="order-id-label" style={{ marginRight: '0.5rem' }}>Tracking Number:</span>
+              {(() => {
+                const carrierName = trackingData?.carrier || orderData?.carrier || '';
+                const trackingNum = trackingData?.trackingNumber || trackingData?.tracking_number || orderData?.trackingNumber;
+                
+                if (carrierName.toLowerCase() === 'ups') {
+                  return (
+                    <a 
+                      href={`https://www.ups.com/track?tracknum=${trackingNum}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-outline"
+                      style={{ padding: '0.25rem 1rem', fontSize: '1.1rem' }}
+                    >
+                      {trackingNum} <FontAwesomeIcon icon={faBox} style={{ marginLeft: '0.25rem' }} />
+                    </a>
+                  );
+                }
+                
+                return (
+                  <span className="order-id-value" style={{ color: '#00ff9d', fontSize: '1.2rem' }}>{trackingNum}</span>
+                );
+              })()}
             </div>
-            {orderData?.carrier && (
+            {(trackingData?.carrier || orderData?.carrier) && (
               <div>
                 <span className="order-id-label">Carrier:</span>
-                <span className="order-id-value" style={{ textTransform: 'uppercase' }}>{orderData.carrier}</span>
+                <span className="order-id-value" style={{ textTransform: 'uppercase' }}>
+                  {trackingData?.carrier || orderData?.carrier}
+                </span>
               </div>
             )}
           </div>
@@ -138,13 +164,13 @@ const ShipmentTrackingPage: React.FC = () => {
                 backgroundColor: currentStatus === 'DELIVERED' ? '#00ff9d' : '#3b82f6',
                 color: currentStatus === 'DELIVERED' ? '#000' : '#fff'
               }}>
-                {trackingStatus.status_details || currentStatus}
+                {trackingStatus.statusDetails || trackingStatus.status_details || currentStatus}
               </div>
             </div>
 
-            {trackingStatus.status_date && (
+            {(trackingStatus.statusDate || trackingStatus.status_date) && (
               <p style={{ color: 'rgba(255,255,255,0.7)', margin: '1rem 0' }}>
-                Last Updated: {new Date(trackingStatus.status_date).toLocaleString()}
+                Last Updated: {new Date(trackingStatus.statusDate || trackingStatus.status_date).toLocaleString()}
               </p>
             )}
             
@@ -170,10 +196,10 @@ const ShipmentTrackingPage: React.FC = () => {
                       }} />
                       <div>
                         <p style={{ margin: '0 0 0.25rem 0', fontWeight: 'bold', color: index === 0 ? 'white' : 'rgba(255,255,255,0.8)' }}>
-                          {event.status_details || event.status}
+                          {event.statusDetails || event.status_details || event.status}
                         </p>
                         <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>
-                          {new Date(event.status_date).toLocaleString()}
+                          {new Date(event.statusDate || event.status_date).toLocaleString()}
                         </p>
                         {event.location && (event.location.city || event.location.state) && (
                           <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>

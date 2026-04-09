@@ -46,8 +46,25 @@ interface OrderStatusUpdateData {
 
 export const sendOrderStatusUpdate = async (data: OrderStatusUpdateData): Promise<void> => {
   const formattedStatus = data.status.replace(/-/g, ' ').toUpperCase();
-  const subject = `Order Status Updated: ${formattedStatus} - LANForge`;
+  let subject = `Order Status Updated: ${formattedStatus} - LANForge`;
   
+  let personableMessage = `The status of your order <strong>#${escapeHtml(data.orderNumber)}</strong> has been updated.`;
+  let personableTitle = `Order Update`;
+  
+  if (data.status === 'shipped') {
+    personableMessage = `Great news! Your order <strong>#${escapeHtml(data.orderNumber)}</strong> has been shipped and is on its way.`;
+    personableTitle = `Your order has shipped! 📦`;
+    subject = `Your LANForge order #${data.orderNumber} has shipped! 📦`;
+  } else if (data.status === 'out-for-delivery') {
+    personableMessage = `Get ready! Your order <strong>#${escapeHtml(data.orderNumber)}</strong> is out for delivery and will be arriving soon.`;
+    personableTitle = `Out for Delivery! 🚚`;
+    subject = `Your LANForge order #${data.orderNumber} is out for delivery! 🚚`;
+  } else if (data.status === 'delivered') {
+    personableMessage = `It's here! Your order <strong>#${escapeHtml(data.orderNumber)}</strong> has been delivered. We hope you enjoy your new build!`;
+    personableTitle = `Delivered! 🎉`;
+    subject = `Your LANForge order #${data.orderNumber} has been delivered! 🎉`;
+  }
+
   let trackingHtml = '';
   if (data.trackingNumber) {
     trackingHtml = `
@@ -76,13 +93,13 @@ export const sendOrderStatusUpdate = async (data: OrderStatusUpdateData): Promis
           <!-- Header -->
           <div style="background:linear-gradient(135deg, #064e3b 0%, #10b981 100%);padding:30px 20px;text-align:center;box-sizing:border-box;">
             <img src="${FRONTEND_URL}/logo-2.png" alt="LANForge Logo" style="max-height:60px;width:auto;max-width:100%;display:block;margin:0 auto;">
-            <p style="color:#d1fae5;margin:16px 0 0;font-size:18px;font-weight:500;">Order Update</p>
+            <p style="color:#d1fae5;margin:16px 0 0;font-size:18px;font-weight:500;">${personableTitle}</p>
           </div>
           
           <div style="padding:30px 20px;box-sizing:border-box;word-break:break-word;">
             <h2 style="color:#f8fafc;margin:0 0 16px;font-size:24px;">Hi ${escapeHtml(data.customerName)},</h2>
             <p style="color:#94a3b8;margin:0 0 32px;font-size:16px;line-height:1.6;">
-              The status of your order <strong>#${escapeHtml(data.orderNumber)}</strong> has been updated.
+              ${personableMessage}
             </p>
             
             <div style="text-align:center;padding:24px 15px;border:1px solid #10b981;border-radius:12px;background-color:rgba(16, 185, 129, 0.1);margin-bottom:32px;box-sizing:border-box;">
@@ -93,7 +110,7 @@ export const sendOrderStatusUpdate = async (data: OrderStatusUpdateData): Promis
             
             <!-- Action Button -->
             <div style="text-align:center;margin-top:40px;">
-              <a href="${FRONTEND_URL}/order-status?order=${data.orderNumber}" 
+              <a href="${FRONTEND_URL}/order-status?id=${data.orderNumber}" 
                  style="display:inline-block;background-color:#10b981;color:#ffffff;padding:16px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 4px 6px -1px rgba(16, 185, 129, 0.4);max-width:100%;box-sizing:border-box;">
                 Track Your Order Live
               </a>
@@ -110,7 +127,7 @@ export const sendOrderStatusUpdate = async (data: OrderStatusUpdateData): Promis
       </body>
       </html>
     `,
-    text: `Order Status Update: ${formattedStatus}\n\nHi ${data.customerName},\nYour order #${data.orderNumber} is now: ${formattedStatus}\n\n${data.trackingNumber ? `Tracking: ${data.trackingNumber} (${data.carrier || ''})\n\n` : ''}Track live: ${FRONTEND_URL}/order-status?order=${encodeURIComponent(data.orderNumber)}`,
+    text: `Order Status Update: ${formattedStatus}\n\nHi ${data.customerName},\nYour order #${data.orderNumber} is now: ${formattedStatus}\n\n${data.trackingNumber ? `Tracking: ${data.trackingNumber} (${data.carrier || ''})\n\n` : ''}Track live: ${FRONTEND_URL}/order-status?id=${encodeURIComponent(data.orderNumber)}`,
   });
 
   if (error) {
@@ -220,7 +237,7 @@ export const sendOrderConfirmation = async (data: OrderEmailData): Promise<void>
             
             <!-- Action Button -->
             <div style="text-align:center;margin-top:48px;">
-              <a href="${FRONTEND_URL}/order-status?order=${data.orderNumber}" 
+              <a href="${FRONTEND_URL}/order-status?id=${data.orderNumber}" 
                  style="display:inline-block;background-color:#10b981;color:#ffffff;padding:16px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 4px 6px -1px rgba(16, 185, 129, 0.4);max-width:100%;box-sizing:border-box;">
                 Track Your Order
               </a>
@@ -237,7 +254,7 @@ export const sendOrderConfirmation = async (data: OrderEmailData): Promise<void>
       </body>
       </html>
     `,
-    text: `Order Confirmation #${data.orderNumber}\n\nHi ${data.customerName},\nThank you for your order!\n\nTotal: $${data.total.toFixed(2)}\n\nTrack your order: ${FRONTEND_URL}/order-status?order=${encodeURIComponent(data.orderNumber)}`,
+    text: `Order Confirmation #${data.orderNumber}\n\nHi ${data.customerName},\nThank you for your order!\n\nTotal: $${data.total.toFixed(2)}\n\nTrack your order: ${FRONTEND_URL}/order-status?id=${encodeURIComponent(data.orderNumber)}`,
   });
 
   if (error) {
@@ -343,7 +360,7 @@ export const sendShippingNotification = async (
             
             <!-- Action Button -->
             <div style="text-align:center;margin-top:40px;">
-              <a href="${FRONTEND_URL}/order-status?order=${encodeURIComponent(orderNumber)}" 
+              <a href="${FRONTEND_URL}/order-status?id=${encodeURIComponent(orderNumber)}" 
                  style="display:inline-block;background-color:#3b82f6;color:#ffffff;padding:16px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;box-shadow:0 4px 6px -1px rgba(59, 130, 246, 0.4);max-width:100%;box-sizing:border-box;">
                 Track Order
               </a>

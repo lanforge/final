@@ -82,7 +82,7 @@ router.post(
         const nameToMatch = (rate.title || rate.servicelevel?.name || '').toLowerCase();
 
         if (nameToMatch.includes('ground')) {
-          displayTitle = 'UPS Ground';
+          displayTitle = 'UPS GROUND (NO SAVER)';
           estimatedDays = '3-5';
         } else if (nameToMatch.includes('2nd day') || nameToMatch.includes('2 day')) {
           displayTitle = 'UPS 2 Day Air';
@@ -100,7 +100,7 @@ router.post(
         // Keep the cheapest rate for each category if there are duplicates
         if (!existingRate || parseFloat(existingRate.amount) > currentAmount) {
           // Explicitly assign the correct estimatedDays regardless of what Shippo returns
-          const finalEstimatedDays = displayTitle.includes('Ground') ? '3-5' : displayTitle.includes('2 Day') ? '2' : '1';
+          const finalEstimatedDays = displayTitle.includes('GROUND') ? '3-5' : displayTitle.includes('2 Day') ? '2' : '1';
 
           rateCategories.set(displayTitle, {
             ...rate,
@@ -152,8 +152,76 @@ router.post(
         return;
       }
 
+      // Recreate shipment to get fresh rates
+      // The rate in the database may have expired (Shippo rates expire)
+      let activeRateObjectId = rateObjectId;
+      
+      try {
+        const addressTo = order.shippingAddress;
+        const cleanAddressTo = {
+          name: `${addressTo.firstName} ${addressTo.lastName}`,
+          street1: addressTo.address,
+          city: addressTo.city,
+          state: addressTo.state,
+          zip: addressTo.zip,
+          country: addressTo.country || 'US',
+        };
+
+        const defaultLineItems = [
+          {
+            currency: 'USD',
+            manufacture_country: 'US',
+            quantity: 1,
+            sku: 'PC-BUILD-1',
+            title: 'Custom PC Build',
+            total_price: String(order.subtotal || 1000),
+            weight: '50',
+            weight_unit: 'lb'
+          }
+        ];
+
+        const parcels = [{
+          length: '24',
+          width: '16',
+          height: '24',
+          distance_unit: 'in',
+          distanceUnit: 'in',
+          weight: '50',
+          mass_unit: 'lb',
+          massUnit: 'lb'
+        }];
+
+        const shipment: any = await createShipment(
+          { ...defaultLineItems[0], name: 'LANForge', street1: '88 Sabal Creek Trl', city: 'Ponte Vedra', state: 'FL', zip: '32081', country: 'US' },
+          cleanAddressTo,
+          parcels
+        );
+
+        if (shipment && shipment.rates) {
+          const oldRate = order.shippingRates?.find((r: any) => r.objectId === rateObjectId);
+          if (oldRate) {
+            // Match the newly generated rate with the old rate by title
+            const matchingNewRate = shipment.rates.find((r: any) => {
+              let displayTitle = '';
+              const nameToMatch = (r.title || r.servicelevel?.name || '').toLowerCase();
+              if (nameToMatch.includes('ground')) displayTitle = 'UPS Ground';
+              else if (nameToMatch.includes('2nd day') || nameToMatch.includes('2 day')) displayTitle = 'UPS 2 Day Air';
+              else if (nameToMatch.includes('next day')) displayTitle = 'UPS Next Day Air';
+              
+              return displayTitle === oldRate.title;
+            });
+            
+            if (matchingNewRate) {
+              activeRateObjectId = matchingNewRate.object_id || matchingNewRate.objectId;
+            }
+          }
+        }
+      } catch (rateErr) {
+        console.warn('Failed to refresh shipping rates, attempting purchase with original rate ID:', rateErr);
+      }
+
       const { insurance } = req.body;
-      const transaction = await purchaseLabel(rateObjectId, insurance ? order.total : undefined);
+      const transaction = await purchaseLabel(activeRateObjectId, insurance ? order.total : undefined);
       
       // Update order tracking
       order.trackingNumber = transaction.trackingNumber || (transaction as any).tracking_number;

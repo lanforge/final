@@ -107,7 +107,7 @@ export const purchaseLabel = async (rateObjectId: string, insuranceAmount?: numb
 
 export const trackShipment = async (carrier: string, trackingNumber: string) => {
   try {
-    return await shippo.trackingStatus.get(carrier, trackingNumber);
+    return await shippo.trackingStatus.get(trackingNumber, carrier);
   } catch (error: any) {
     throw new Error(`Failed to track shipment: ${error.message}`);
   }
