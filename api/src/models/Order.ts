@@ -45,7 +45,7 @@ export interface IOrder extends Document {
   total: number;
   status: 'order-confirmed' | 'building' | 'benchmarking' | 'shipped' | 'out-for-delivery' | 'delivered' | 'returned' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
-  paymentMethod: 'stripe' | 'paypal' | 'affirm';
+  paymentMethod: 'stripe' | 'paypal' | 'affirm' | 'none' | '';
   paymentId?: string;
   trackingNumber?: string;
   carrier?: string;
@@ -57,6 +57,7 @@ export interface IOrder extends Document {
   notes?: string;
   loyaltyPointsEarned: number;
   loyaltyPointsUsed: number;
+  isAdminCreated: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -124,7 +125,7 @@ const OrderSchema = new Schema<IOrder>(
       enum: ['pending', 'paid', 'failed', 'refunded'],
       default: 'pending',
     },
-    paymentMethod: { type: String, enum: ['stripe', 'paypal', 'affirm'], required: true },
+    paymentMethod: { type: String, enum: ['stripe', 'paypal', 'affirm', 'none', ''], required: false },
     paymentId: { type: String },
     trackingNumber: { type: String },
     carrier: { type: String },
@@ -136,6 +137,7 @@ const OrderSchema = new Schema<IOrder>(
     notes: { type: String },
     loyaltyPointsEarned: { type: Number, default: 0 },
     loyaltyPointsUsed: { type: Number, default: 0 },
+    isAdminCreated: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

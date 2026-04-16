@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 
+import { Link } from 'react-router-dom';
+
 const AdminDashboardPage: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -197,10 +200,7 @@ const AdminDashboardPage: React.FC = () => {
             <div className="relative w-full">
               <button
                 className="w-full flex items-center justify-between px-4 py-3 bg-gray-700/50 hover:bg-gray-700 rounded-xl transition-colors border border-gray-600"
-                onClick={() => {
-                  const dropdown = document.getElementById('quick-actions-dropdown');
-                  if (dropdown) dropdown.classList.toggle('hidden');
-                }}
+                onClick={() => setIsQuickActionsOpen(!isQuickActionsOpen)}
               >
                 <div className="flex items-center space-x-3">
                   <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,26 +213,28 @@ const AdminDashboardPage: React.FC = () => {
                 </svg>
               </button>
 
-              <div id="quick-actions-dropdown" className="hidden absolute top-full left-0 w-full mt-2 bg-gray-800 border border-gray-700 rounded-xl shadow-lg z-10 overflow-hidden">
-                <a href="/admin/products/add" className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 transition-colors">
-                  <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                  </svg>
-                  <span className="text-gray-200">Add Product</span>
-                </a>
-                <a href="/admin/parts/add" className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 transition-colors border-t border-gray-700">
-                  <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span className="text-gray-200">Add Part</span>
-                </a>
-                <a href="/admin/orders/add" className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 transition-colors border-t border-gray-700">
-                  <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                  <span className="text-gray-200">Create Order</span>
-                </a>
-              </div>
+              {isQuickActionsOpen && (
+                <div id="quick-actions-dropdown" className="absolute top-full left-0 w-full mt-2 bg-gray-800 border border-gray-700 rounded-xl shadow-lg z-10 overflow-hidden">
+                  <Link to="/admin/products/add" className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 transition-colors">
+                    <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                    <span className="text-gray-200">Add Product</span>
+                  </Link>
+                  <Link to="/admin/parts/add" className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 transition-colors border-t border-gray-700">
+                    <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-gray-200">Add Part</span>
+                  </Link>
+                  <Link to="/admin/orders/add" className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 transition-colors border-t border-gray-700">
+                    <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span className="text-gray-200">Create Order</span>
+                  </Link>
+                </div>
+              )}
             </div>
             
             <div className="mt-6 flex flex-col items-center justify-center p-6 bg-amber-500/10 rounded-xl border border-amber-500/20">

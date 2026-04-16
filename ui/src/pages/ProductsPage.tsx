@@ -4,6 +4,7 @@ import { faDesktop } from '@fortawesome/free-solid-svg-icons';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
+import { trackEvent } from '../utils/analytics';
 
 interface Part {
   _id: string;
@@ -78,6 +79,7 @@ const ProductsPage: React.FC = () => {
           quantity: 1,
           notes: `Case Color: ${selectedColor}`
         });
+        trackEvent('add_to_cart', window.location.pathname + window.location.search, product._id);
         return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Toast, { ToastType } from '../components/Toast';
 import SEO from '../components/SEO';
+import { trackEvent } from '../utils/analytics';
 
 const CustomBuildPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -63,6 +64,7 @@ const CustomBuildPage: React.FC = () => {
         customBuild: build._id,
         quantity: 1
       });
+      trackEvent('add_to_cart', window.location.pathname + window.location.search, build._id.toString());
 
       await fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
         method: 'PUT',

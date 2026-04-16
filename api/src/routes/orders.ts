@@ -14,7 +14,7 @@ import Payment from '../models/Payment';
 import PurchasedPC from '../models/PurchasedPC';
 import Partner from '../models/Partner';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
-import { sendOrderStatusUpdate } from '../services/emailService';
+import { sendOrderStatusUpdate, sendOrderConfirmation } from '../services/emailService';
 
 const FROM_EMAIL = process.env.POSTMARK_FROM_EMAIL || 'support@lanforge.co';
 const FROM_NAME = process.env.POSTMARK_FROM_NAME || 'LANForge';
@@ -573,7 +573,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 
     const order = await Order.findOne(query)
       .select('-__v')
-      .populate('customer', 'firstName lastName email loyaltyPoints')
+      .populate('customer', 'firstName lastName email loyaltyPoints addresses phone')
       .populate('appliedDiscount', 'code type value');
 
     if (!order) {
@@ -581,7 +581,39 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.json({ order });
+    // Apply active customer addresses dynamically for admin-created orders
+    let orderObj = order.toObject();
+    const cust: any = orderObj.customer;
+    if (orderObj.isAdminCreated && cust && cust.addresses && cust.addresses.length > 0) {
+      const shipAddr = cust.addresses.find((a: any) => a.type === 'shipping') || cust.addresses[0];
+      const billAddr = cust.addresses.find((a: any) => a.type === 'billing') || cust.addresses[0];
+      
+      orderObj.shippingAddress = {
+        firstName: shipAddr.firstName || cust.firstName,
+        lastName: shipAddr.lastName || cust.lastName,
+        email: cust.email,
+        phone: cust.phone || orderObj.shippingAddress?.phone || 'N/A',
+        address: shipAddr.street,
+        city: shipAddr.city,
+        state: shipAddr.state,
+        zip: shipAddr.zip,
+        country: shipAddr.country || 'US',
+      };
+
+      orderObj.billingAddress = {
+        firstName: billAddr.firstName || cust.firstName,
+        lastName: billAddr.lastName || cust.lastName,
+        email: cust.email,
+        phone: cust.phone || orderObj.billingAddress?.phone || 'N/A',
+        address: billAddr.street,
+        city: billAddr.city,
+        state: billAddr.state,
+        zip: billAddr.zip,
+        country: billAddr.country || 'US',
+      };
+    }
+
+    res.json({ order: orderObj });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -832,6 +864,246 @@ router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response
     const updatedOrder = await Order.findById(req.params.id).populate('customer', 'firstName lastName email loyaltyPoints').populate('appliedDiscount', 'code type value');
     res.json({ order: updatedOrder });
   } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /api/orders/admin — admin: manual order creation
+router.post('/admin', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { customer, items, status, paymentStatus, paymentMethod, subtotal, shipping, shippingInsurance, tax, total } = req.body;
+    
+    // Minimal validation
+    if (!items || !items.length) {
+      res.status(400).json({ message: 'Items are required' });
+      return;
+    }
+
+    // Generate random order number
+    let orderNumber = `LAN-${Math.floor(100000 + Math.random() * 900000)}`;
+    while (await Order.exists({ orderNumber })) {
+      orderNumber = `LAN-${Math.floor(100000 + Math.random() * 900000)}`;
+    }
+
+    // Look up customer to get their address if possible
+    let shippingAddress = {
+      firstName: 'Manual',
+      lastName: 'Order',
+      email: 'manual@order.local',
+      phone: 'N/A',
+      address: 'N/A',
+      city: 'N/A',
+      state: 'N/A',
+      zip: '00000',
+      country: 'US'
+    };
+
+    if (customer) {
+      const cust = await Customer.findById(customer);
+      if (cust) {
+        shippingAddress = {
+          firstName: cust.firstName || 'Manual',
+          lastName: cust.lastName || 'Order',
+          email: cust.email || 'manual@order.local',
+          phone: cust.phone || 'N/A',
+          address: cust.addresses?.[0]?.street || 'N/A',
+          city: cust.addresses?.[0]?.city || 'N/A',
+          state: cust.addresses?.[0]?.state || 'N/A',
+          zip: cust.addresses?.[0]?.zip || '00000',
+          country: cust.addresses?.[0]?.country || 'US'
+        };
+      }
+    }
+
+    // Force N/A for empty strings
+    if (!shippingAddress.phone || shippingAddress.phone.trim() === '') shippingAddress.phone = 'N/A';
+    if (!shippingAddress.address || shippingAddress.address.trim() === '') shippingAddress.address = 'N/A';
+    if (!shippingAddress.city || shippingAddress.city.trim() === '') shippingAddress.city = 'N/A';
+    if (!shippingAddress.state || shippingAddress.state.trim() === '') shippingAddress.state = 'N/A';
+    if (!shippingAddress.zip || shippingAddress.zip.trim() === '') shippingAddress.zip = '00000';
+
+    const order = new Order({
+      orderNumber,
+      customer: customer || undefined,
+      guestEmail: shippingAddress.email,
+      items,
+      shippingAddress,
+      billingAddress: shippingAddress,
+      subtotal,
+      isAdminCreated: true,
+      shipping,
+      shippingInsurance,
+      tax,
+      discount: 0,
+      total,
+      status,
+      paymentStatus,
+      paymentMethod,
+    });
+
+    console.log('Creating Admin Order with shippingAddress:', shippingAddress);
+    await order.save();
+
+    // Create PurchasedPC for custom line items and assign Custom Builds
+    try {
+      for (const item of items) {
+        // If inline custom build parts are provided, create the CustomBuild document on the fly
+        if (item.sku === 'CUSTOM-BUILD' && !item.customBuild && item.customBuildParts) {
+          const crypto = await import('crypto');
+          const CustomBuild = (await import('../models/CustomBuild')).default;
+          
+          const buildId = crypto.randomBytes(4).toString('hex').toUpperCase();
+          
+          let cbSerialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+          while (await CustomBuild.exists({ serialNumber: cbSerialNumber })) {
+            cbSerialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+          }
+
+          const cb = await CustomBuild.create({
+            buildId,
+            name: item.name || 'Custom Build',
+            customer: customer || undefined,
+            guestEmail: shippingAddress.email,
+            parts: item.customBuildParts,
+            subtotal: item.price,
+            laborFee: 99.99,
+            total: item.price,
+            status: 'purchased',
+            order: order._id,
+            serialNumber: cbSerialNumber
+          });
+          
+          item.customBuild = cb._id;
+          
+          // Also link it into the order item just in case
+          const orderItemIndex = order.items.findIndex((i: any) => i.sku === 'CUSTOM-BUILD' && i.name === item.name);
+          if (orderItemIndex !== -1) {
+            order.items[orderItemIndex].customBuild = cb._id;
+            await order.save();
+          }
+        }
+
+        if (item.sku === 'CUSTOM') {
+          for (let i = 0; i < item.quantity; i++) {
+            let serialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+            while (await PurchasedPC.exists({ serialNumber })) {
+              serialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+            }
+
+            await PurchasedPC.create({
+              serialNumber,
+              order: order._id,
+              customer: customer || undefined,
+              name: item.name || 'Custom Build',
+              specs: {},
+              parts: [],
+              status: 'building',
+            });
+          }
+        } else if (item.customBuild) {
+          // If this was an imported custom build, update its status and assign order
+          const build = await CustomBuild.findById(item.customBuild).populate('parts.part');
+          if (build) {
+            build.order = order._id;
+            build.status = 'purchased';
+            if (!build.serialNumber) {
+              let sn = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+              while (await CustomBuild.exists({ serialNumber: sn })) {
+                sn = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+              }
+              build.serialNumber = sn;
+            }
+            await build.save();
+
+            // Map custom build parts
+            const partsList: Array<any> = [];
+            if (build.parts && build.parts.length > 0) {
+              build.parts.forEach((bp: any) => {
+                const partName = bp.part ? `${bp.part.brand} ${bp.part.partModel}` : `No ${bp.partType.charAt(0).toUpperCase() + bp.partType.slice(1)} Selected`;
+                partsList.push({
+                  partType: bp.partType,
+                  part: bp.part?._id || undefined,
+                  name: partName,
+                  price: bp.part?.price || 0
+                });
+              });
+            }
+
+            for (let i = 0; i < item.quantity; i++) {
+              let serialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+              while (await PurchasedPC.exists({ serialNumber })) {
+                serialNumber = `LAN-CB-${Math.floor(100000 + Math.random() * 900000)}`;
+              }
+              
+              let color: string | undefined = undefined;
+              const notesStr = build.notes || item.notes || '';
+              if (notesStr && notesStr.includes('Case Color:')) {
+                const match = notesStr.match(/Case Color:\s*([^\n,]+)/i);
+                if (match) {
+                  color = match[1].trim();
+                }
+              }
+
+              await PurchasedPC.create({
+                serialNumber,
+                order: order._id,
+                customer: customer || undefined,
+                customBuild: build._id,
+                name: build.name || 'Custom Build',
+                color,
+                specs: {},
+                parts: partsList,
+                status: 'building',
+              });
+            }
+          }
+        }
+      }
+    } catch (pcErr) {
+      console.error('Failed to process custom items for admin order:', pcErr);
+    }
+
+    // Send Notification
+    try {
+      const { sendNotification } = await import('../services/notificationService');
+      await sendNotification(`Manual Order Created: ${orderNumber}\nTotal: $${total.toFixed(2)}\nCustomer: ${shippingAddress.firstName} ${shippingAddress.lastName} (${shippingAddress.email})\nPayment Method: ${paymentMethod}`);
+    } catch (notifErr) {
+      console.error('Failed to send notification for admin order:', notifErr);
+    }
+
+    // Send Email
+    try {
+      if (shippingAddress.email && shippingAddress.email !== 'manual@order.local') {
+        const orderPlain = order.toObject();
+        // Format items for email
+        const formattedItems = orderPlain.items.map((i: any) => ({
+          name: i.name,
+          quantity: i.quantity,
+          price: i.price,
+          image: i.image || 'https://lanforge.co/lanforge.png'
+        }));
+        
+        await sendOrderConfirmation({
+          email: shippingAddress.email,
+          orderNumber: order.orderNumber,
+          customerName: shippingAddress.firstName,
+          items: formattedItems,
+          total: order.total,
+          subtotal: order.subtotal,
+          shipping: order.shipping,
+          tax: order.tax,
+          shippingAddress: order.shippingAddress,
+          shippingInsurance: order.shippingInsurance,
+          discount: order.discount,
+        });
+      }
+    } catch (emailErr) {
+      console.error('Failed to send confirmation email for admin order:', emailErr);
+    }
+
+    res.status(201).json(order);
+  } catch (error) {
+    console.error('Failed to create admin order', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

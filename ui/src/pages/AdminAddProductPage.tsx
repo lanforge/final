@@ -59,7 +59,7 @@ const AdminAddProductPage: React.FC = () => {
         setAvailableParts(partsRes.data.parts || []);
         
         if (isEditing && id) {
-          const productRes = await api.get(`/products/${id}`);
+          const productRes = await api.get(`/products/admin/${id}`);
           const p = productRes.data.product;
           
           setFormData({

@@ -107,6 +107,32 @@ router.get('/search', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+// ─── ADMIN ROUTES ─────────────────────────────────────────────────────────────
+
+// GET /api/products/admin/all — admin/staff, includes cost and stock
+router.get('/admin/all', protect, staffOrAdmin, async (_req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json({ products });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// GET /api/products/admin/:id — admin/staff, gets a specific product regardless of active status and includes all fields
+router.get('/admin/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const product = await Product.findById(req.params.id).populate('parts', 'name type brand partModel cost price');
+    if (!product) {
+      res.status(404).json({ message: 'Product not found' });
+      return;
+    }
+    res.json({ product });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // GET /api/products/:id — public (by id or slug)
 router.get('/:id', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -132,18 +158,6 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       .limit(4);
 
     res.json({ product, related });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// ─── ADMIN ROUTES ─────────────────────────────────────────────────────────────
-
-// GET /api/products/admin/all — admin/staff, includes cost and stock
-router.get('/admin/all', protect, staffOrAdmin, async (_req: AuthRequest, res: Response): Promise<void> => {
-  try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    res.json({ products });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

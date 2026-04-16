@@ -4,6 +4,7 @@ import { faDesktop, faWrench, faBolt, faShieldHalved } from '@fortawesome/free-s
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { trackEvent } from '../utils/analytics';
 
 interface Product {
   id: number;
@@ -283,6 +284,7 @@ const PCsPage: React.FC = () => {
                               quantity: 1,
                               notes: `Case Color: ${color}`
                             });
+                            trackEvent('add_to_cart', window.location.pathname + window.location.search, product.id.toString());
                             return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
                               method: 'PUT',
                               headers: { 'Content-Type': 'application/json' },

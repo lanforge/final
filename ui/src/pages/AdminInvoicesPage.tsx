@@ -129,7 +129,7 @@ const AdminInvoicesPage: React.FC = () => {
                     <div className="text-white">{invoice.customerName}</div>
                     <div className="text-xs">{invoice.customerEmail}</div>
                   </td>
-                  <td className="px-6 py-4">{invoice.description}</td>
+                  <td className="px-6 py-4 whitespace-pre-wrap">{invoice.description}</td>
                   <td className="px-6 py-4 text-emerald-400 font-bold">${invoice.amount.toFixed(2)}</td>
                   <td className="px-6 py-4">
                     <span className={`px-2 py-1 rounded text-xs font-bold ${

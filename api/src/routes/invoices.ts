@@ -7,7 +7,12 @@ const router = Router();
 // GET all invoices (admin only)
 router.get('/', protect, adminOnly, async (req: Request, res: Response): Promise<void> => {
   try {
-    const invoices = await Invoice.find().sort({ createdAt: -1 });
+    const { relatedOrderId } = req.query;
+    const filter: any = {};
+    if (relatedOrderId) {
+      filter.relatedOrderId = relatedOrderId;
+    }
+    const invoices = await Invoice.find(filter).sort({ createdAt: -1 });
     res.json(invoices);
   } catch (error: any) {
     res.status(500).json({ message: error.message });

@@ -16,7 +16,15 @@ export interface IBuildRequest extends Document {
   usage?: string;
   preferredBrands?: string;
   timeline?: string;
-  status: 'pending' | 'reviewed' | 'contacted' | 'completed';
+  status: 'pending' | 'reviewed' | 'contacted' | 'completed' | 'unbuildable';
+  rejectionReason?: string;
+  quote?: {
+    parts: { partId: mongoose.Types.ObjectId; name: string; price: number; quantity: number }[];
+    laborCost: number;
+    shipping: { provider: string; serviceLevel: string; amount: number };
+    totalPrice: number;
+    sentAt?: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,9 +48,28 @@ const BuildRequestSchema = new Schema<IBuildRequest>(
     timeline: { type: String },
     status: {
       type: String,
-      enum: ['pending', 'reviewed', 'contacted', 'completed'],
+      enum: ['pending', 'reviewed', 'contacted', 'completed', 'unbuildable'],
       default: 'pending',
     },
+    rejectionReason: { type: String },
+    quote: {
+      parts: [
+        {
+          partId: { type: Schema.Types.ObjectId, ref: 'PCPart' },
+          name: { type: String },
+          price: { type: Number },
+          quantity: { type: Number, default: 1 }
+        }
+      ],
+      laborCost: { type: Number, default: 0 },
+      shipping: {
+        provider: { type: String },
+        serviceLevel: { type: String },
+        amount: { type: Number }
+      },
+      totalPrice: { type: Number },
+      sentAt: { type: Date }
+    }
   },
   { timestamps: true }
 );

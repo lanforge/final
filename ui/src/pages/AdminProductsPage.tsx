@@ -154,7 +154,7 @@ const AdminProductsPage: React.FC = () => {
             Recalculate Pricing
           </button>
           <button 
-            onClick={() => window.location.href = '/admin/products/add'}
+            onClick={() => navigate('/admin/products/add')}
             className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium"
           >
             + Add Product

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 
 interface InventoryItem {
@@ -17,6 +18,7 @@ interface InventoryItem {
 }
 
 const AdminInventoryPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [stockFilter, setStockFilter] = useState('all');
@@ -87,8 +89,8 @@ const AdminInventoryPage: React.FC = () => {
           <p className="text-gray-400 mt-1">Track and manage product stock levels</p>
         </div>
         <div className="flex items-center space-x-4">
-          <button 
-            onClick={() => window.location.href = '/admin/parts/add'}
+          <button
+            onClick={() => navigate('/admin/parts/add')}
             className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors font-medium"
           >
             + Add Part

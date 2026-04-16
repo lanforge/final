@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 
 interface OrderItem {
@@ -24,6 +25,7 @@ interface Order {
 }
 
 const AdminOrdersPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [orders, setOrders] = useState<Order[]>([]);
@@ -102,7 +104,7 @@ const AdminOrdersPage: React.FC = () => {
         </div>
         <div className="flex items-center space-x-4">
           <button 
-            onClick={() => window.location.href = '/admin/orders/add'}
+            onClick={() => navigate('/admin/orders/add')}
             className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-medium"
           >
             + Create Order
@@ -226,7 +228,7 @@ const AdminOrdersPage: React.FC = () => {
                   </td>
                   <td className="py-3 px-4">
                     <button 
-                      onClick={() => window.location.href = `/admin/orders/${order._id}`}
+                      onClick={() => navigate(`/admin/orders/${order._id}`)}
                       className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors" 
                       title="View Details"
                     >

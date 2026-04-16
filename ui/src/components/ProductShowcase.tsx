@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDesktop } from '@fortawesome/free-solid-svg-icons';
+import { trackEvent } from '../utils/analytics';
 
 interface Product {
   id: number;
@@ -259,6 +260,7 @@ const ProductShowcase: React.FC = () => {
                                       quantity: 1,
                                       notes: `Case Color: ${color}`
                                     });
+                                    trackEvent('add_to_cart', window.location.pathname + window.location.search, product.id.toString());
                                     return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
                                       method: 'PUT',
                                       headers: { 'Content-Type': 'application/json' },

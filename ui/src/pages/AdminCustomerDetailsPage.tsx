@@ -61,6 +61,10 @@ const AdminCustomerDetailsPage: React.FC = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState<Partial<Customer>>({});
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -74,6 +78,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
     try {
       const response = await api.get(`/customers/${id}`);
       setCustomer(response.data.customer);
+      setEditForm(response.data.customer);
       setOrders(response.data.orders || []);
       setPayments(response.data.payments || []);
     } catch (err: any) {
@@ -89,6 +94,47 @@ const AdminCustomerDetailsPage: React.FC = () => {
       style: 'currency',
       currency: 'USD',
     }).format(amount || 0);
+  };
+
+  const handleSaveCustomer = async () => {
+    try {
+      setIsSaving(true);
+      setError('');
+      const response = await api.put(`/customers/${id}`, editForm);
+      setCustomer(response.data.customer);
+      setIsEditing(false);
+    } catch (err: any) {
+      console.error('Failed to update customer:', err);
+      setError(err.response?.data?.message || 'Failed to update customer.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const addAddress = () => {
+    setEditForm(prev => ({
+      ...prev,
+      addresses: [
+        ...(prev.addresses || []),
+        { type: 'shipping', street: '', city: '', state: '', zip: '', country: 'US' }
+      ]
+    }));
+  };
+
+  const updateAddress = (index: number, field: keyof Address, value: string) => {
+    setEditForm(prev => {
+      const newAddresses = [...(prev.addresses || [])];
+      newAddresses[index] = { ...newAddresses[index], [field]: value };
+      return { ...prev, addresses: newAddresses };
+    });
+  };
+
+  const removeAddress = (index: number) => {
+    setEditForm(prev => {
+      const newAddresses = [...(prev.addresses || [])];
+      newAddresses.splice(index, 1);
+      return { ...prev, addresses: newAddresses };
+    });
   };
 
   if (isLoading) {
@@ -115,7 +161,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <button 
+          <button
             onClick={() => navigate('/admin/customers')}
             className="p-2 bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors"
           >
@@ -137,6 +183,35 @@ const AdminCustomerDetailsPage: React.FC = () => {
             </p>
           </div>
         </div>
+        <div>
+          {isEditing ? (
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => { setIsEditing(false); setEditForm(customer); }}
+                className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors text-sm"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSaveCustomer}
+                disabled={isSaving}
+                className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors text-sm font-medium"
+              >
+                {isSaving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+              </svg>
+              Edit Profile
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -145,87 +220,240 @@ const AdminCustomerDetailsPage: React.FC = () => {
           {/* Customer Overview */}
           <div className="card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Overview</h2>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Email Address</p>
-                <div className="flex items-center gap-2 text-white">
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  {customer.email}
-                </div>
-              </div>
-              
-              {customer.phone && (
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Phone Number</p>
-                  <div className="flex items-center gap-2 text-white">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                    {customer.phone}
+            {isEditing ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">First Name</label>
+                    <input 
+                      type="text" 
+                      value={editForm.firstName || ''} 
+                      onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
+                      className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">Last Name</label>
+                    <input 
+                      type="text" 
+                      value={editForm.lastName || ''} 
+                      onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
+                      className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    />
                   </div>
                 </div>
-              )}
-
-              <div className="pt-4 border-t border-gray-800 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Total Spent</p>
-                  <p className="text-xl font-bold text-white">{formatCurrency(customer.totalSpent)}</p>
+                  <label className="block text-xs text-gray-500 mb-1">Email Address</label>
+                  <input 
+                    type="email" 
+                    value={editForm.email || ''} 
+                    onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                    className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                  />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Total Orders</p>
-                  <p className="text-xl font-bold text-white">{customer.totalOrders}</p>
+                  <label className="block text-xs text-gray-500 mb-1">Phone Number</label>
+                  <input 
+                    type="text" 
+                    value={editForm.phone || ''} 
+                    onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
+                    className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                  />
                 </div>
               </div>
-
-              <div className="pt-4 border-t border-gray-800">
-                <p className="text-sm text-gray-500 mb-1">Loyalty Tier & Points</p>
-                <div className="flex items-center gap-3 mt-2">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    customer.loyaltyTier === 'Platinum' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/50' :
-                    customer.loyaltyTier === 'Gold' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50' :
-                    customer.loyaltyTier === 'Silver' ? 'bg-gray-300/20 text-gray-300 border border-gray-400/50' :
-                    'bg-amber-700/20 text-amber-600 border border-amber-700/50'
-                  }`}>
-                    {customer.loyaltyTier}
-                  </span>
-                  <span className="text-white font-medium">{customer.loyaltyPoints} pts</span>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Email Address</p>
+                  <div className="flex items-center gap-2 text-white">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    {customer.email}
+                  </div>
                 </div>
+
+                {customer.phone && (
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Phone Number</p>
+                    <div className="flex items-center gap-2 text-white">
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      {customer.phone}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="pt-4 mt-4 border-t border-gray-800 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Total Spent</p>
+                <p className="text-xl font-bold text-white">{formatCurrency(customer.totalSpent)}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">Total Orders</p>
+                <p className="text-xl font-bold text-white">{customer.totalOrders}</p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-800 mt-4">
+              <p className="text-sm text-gray-500 mb-1">Loyalty Tier & Points</p>
+              <div className="flex items-center gap-3 mt-2">
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  customer.loyaltyTier === 'Platinum' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/50' :
+                  customer.loyaltyTier === 'Gold' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50' :
+                  customer.loyaltyTier === 'Silver' ? 'bg-gray-300/20 text-gray-300 border border-gray-400/50' :
+                  'bg-amber-700/20 text-amber-600 border border-amber-700/50'
+                }`}>
+                  {customer.loyaltyTier}
+                </span>
+                <span className="text-white font-medium">{customer.loyaltyPoints} pts</span>
               </div>
             </div>
           </div>
 
           {/* Addresses */}
           <div className="card p-6">
-            <h2 className="text-lg font-bold text-white mb-4">Saved Addresses</h2>
-            <div className="space-y-4">
-              {customer.addresses && customer.addresses.length > 0 ? (
-                customer.addresses.map((address, idx) => (
-                  <div key={idx} className="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
-                    <div className="flex justify-between items-start mb-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">
-                        {address.type}
-                      </span>
-                    </div>
-                    <div className="text-sm text-gray-300 space-y-1">
-                      <p className="font-medium text-white">{address.firstName || customer.firstName} {address.lastName || customer.lastName}</p>
-                      <p>{address.street}</p>
-                      <p>{address.city}, {address.state} {address.zip}</p>
-                      <p>{address.country}</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 italic text-sm">No saved addresses</p>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-white">Saved Addresses</h2>
+              {isEditing && (
+                <button 
+                  onClick={addAddress}
+                  className="text-xs px-2 py-1 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded transition-colors"
+                >
+                  + Add Address
+                </button>
               )}
             </div>
+            
+            {isEditing ? (
+              <div className="space-y-4">
+                {editForm.addresses && editForm.addresses.length > 0 ? (
+                  editForm.addresses.map((address, idx) => (
+                    <div key={idx} className="bg-gray-900/50 p-4 rounded-lg border border-gray-800 space-y-3 relative">
+                      <button 
+                        onClick={() => removeAddress(idx)}
+                        className="absolute top-2 right-2 p-1 text-gray-500 hover:text-red-400 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                      
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Type</label>
+                        <select 
+                          value={address.type}
+                          onChange={(e) => updateAddress(idx, 'type', e.target.value)}
+                          className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                        >
+                          <option value="shipping">Shipping</option>
+                          <option value="billing">Billing</option>
+                          <option value="both">Both</option>
+                        </select>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">First Name</label>
+                          <input 
+                            type="text" 
+                            value={address.firstName || ''} 
+                            onChange={(e) => updateAddress(idx, 'firstName', e.target.value)}
+                            placeholder={editForm.firstName}
+                            className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Last Name</label>
+                          <input 
+                            type="text" 
+                            value={address.lastName || ''} 
+                            onChange={(e) => updateAddress(idx, 'lastName', e.target.value)}
+                            placeholder={editForm.lastName}
+                            className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs text-gray-500 mb-1">Street</label>
+                        <input 
+                          type="text" 
+                          value={address.street || ''} 
+                          onChange={(e) => updateAddress(idx, 'street', e.target.value)}
+                          className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">City</label>
+                          <input 
+                            type="text" 
+                            value={address.city || ''} 
+                            onChange={(e) => updateAddress(idx, 'city', e.target.value)}
+                            className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="w-1/2">
+                            <label className="block text-xs text-gray-500 mb-1">State</label>
+                            <input 
+                              type="text" 
+                              value={address.state || ''} 
+                              onChange={(e) => updateAddress(idx, 'state', e.target.value)}
+                              className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            />
+                          </div>
+                          <div className="w-1/2">
+                            <label className="block text-xs text-gray-500 mb-1">Zip</label>
+                            <input 
+                              type="text" 
+                              value={address.zip || ''} 
+                              onChange={(e) => updateAddress(idx, 'zip', e.target.value)}
+                              className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic text-sm">No saved addresses</p>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {customer.addresses && customer.addresses.length > 0 ? (
+                  customer.addresses.map((address, idx) => (
+                    <div key={idx} className="bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">
+                          {address.type}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-300 space-y-1">
+                        <p className="font-medium text-white">{address.firstName || customer.firstName} {address.lastName || customer.lastName}</p>
+                        <p>{address.street}</p>
+                        <p>{address.city}, {address.state} {address.zip}</p>
+                        <p>{address.country}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 italic text-sm">No saved addresses</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         {/* Right Column: Orders & Payments */}
         <div className="space-y-6 lg:col-span-2">
-          
+
           {/* Orders History */}
           <div className="card overflow-hidden">
             <div className="p-6 border-b border-gray-800">

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faBox } from '@fortawesome/free-solid-svg-icons';
 import BuildRequestModal from './BuildRequestModal';
 import Toast, { ToastType } from './Toast';
+import { trackEvent } from '../utils/analytics';
 
 interface ComponentOption {
   id: string | number;
@@ -1363,6 +1364,7 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
                           customBuild: buildData.customBuild._id,
                           quantity: 1
                         });
+                        trackEvent('add_to_cart', window.location.pathname + window.location.search, buildData.customBuild._id.toString());
                         
                         return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
                           method: 'PUT',

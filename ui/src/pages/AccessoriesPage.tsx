@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faComputerMouse, faDesktop, faHeadphones, faKeyboard } from '@fortawesome/free-solid-svg-icons';
 import SEO from '../components/SEO';
+import { trackEvent } from '../utils/analytics';
 
 interface Accessory {
   id: number;
@@ -291,6 +292,7 @@ const AccessoriesPage: React.FC = () => {
                                   accessory: accessory.id,
                                   quantity: 1
                                 });
+                                trackEvent('add_to_cart', window.location.pathname + window.location.search, accessory.id.toString());
                                 return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
                                   method: 'PUT',
                                   headers: { 'Content-Type': 'application/json' },
@@ -495,6 +497,7 @@ const AccessoriesPage: React.FC = () => {
                               accessory: selectedAccessory.id,
                               quantity: 1
                             });
+                            trackEvent('add_to_cart', window.location.pathname + window.location.search, selectedAccessory.id.toString());
                             return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
                               method: 'PUT',
                               headers: { 'Content-Type': 'application/json' },

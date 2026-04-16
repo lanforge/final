@@ -49,6 +49,8 @@ import pageStatusRoutes from './routes/page-status';
 import settingsRoutes from './routes/settings';
 import invoicesRoutes from './routes/invoices';
 import sitemapRoutes from './routes/sitemap';
+import analyticsRoutes from './routes/analytics';
+import showcasesRoutes from './routes/showcases';
 
 const app = express();
 
@@ -184,6 +186,8 @@ app.use('/api/donation-causes', donationCausesRoutes);
 app.use('/api/page-status', pageStatusRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/invoices', invoicesRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/showcases', showcasesRoutes);
 
 // Sitemap
 app.use('/sitemap.xml', sitemapRoutes);

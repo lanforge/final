@@ -127,6 +127,107 @@ router.post(
   }
 );
 
+// GET /api/shipping/order/:orderId/rates — admin/staff
+router.get(
+  '/order/:orderId/rates',
+  protect,
+  staffOrAdmin,
+  async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const order = await Order.findById(req.params.orderId);
+      if (!order) {
+        res.status(404).json({ message: 'Order not found' });
+        return;
+      }
+
+      const addressTo = order.shippingAddress;
+      const cleanAddressTo = {
+        name: `${addressTo.firstName} ${addressTo.lastName}`,
+        street1: addressTo.address,
+        city: addressTo.city,
+        state: addressTo.state,
+        zip: addressTo.zip,
+        country: addressTo.country || 'US',
+      };
+
+      const defaultLineItems = [
+        {
+          currency: 'USD',
+          manufacture_country: 'US',
+          quantity: 1,
+          sku: 'PC-BUILD-1',
+          title: 'Custom PC Build',
+          total_price: String(order.subtotal || 1000),
+          weight: '50',
+          weight_unit: 'lb'
+        }
+      ];
+
+      const parcels = [{
+        length: '24',
+        width: '16',
+        height: '24',
+        distance_unit: 'in',
+        distanceUnit: 'in',
+        weight: '50',
+        mass_unit: 'lb',
+        massUnit: 'lb'
+      }];
+
+      const shipment: any = await createShipment(
+        { ...defaultLineItems[0], name: 'LANForge', street1: '88 Sabal Creek Trl', city: 'Ponte Vedra', state: 'FL', zip: '32081', country: 'US' },
+        cleanAddressTo,
+        parcels
+      );
+
+      console.log('Shippo shipment response:', JSON.stringify(shipment, null, 2));
+
+      const rates = shipment.rates || [];
+      const rateCategories = new Map<string, any>();
+
+      for (const rate of rates) {
+        let displayTitle = '';
+        let estimatedDays: string = String(rate.estimated_days);
+        const nameToMatch = (rate.title || rate.servicelevel?.name || '').toLowerCase();
+
+        if (nameToMatch.includes('ground')) {
+          displayTitle = 'UPS Ground';
+          estimatedDays = '3-5';
+        } else if (nameToMatch.includes('2nd day') || nameToMatch.includes('2 day')) {
+          displayTitle = 'UPS 2 Day Air';
+          estimatedDays = '2';
+        } else if (nameToMatch.includes('next day')) {
+          displayTitle = 'UPS Next Day Air';
+          estimatedDays = '1';
+        } else {
+          continue; // Filter out other methods
+        }
+
+        const currentAmount = parseFloat(rate.amount);
+        const existingRate = rateCategories.get(displayTitle);
+
+        if (!existingRate || parseFloat(existingRate.amount) > currentAmount) {
+          rateCategories.set(displayTitle, {
+            ...rate,
+            objectId: rate.object_id || rate.objectId,
+            title: displayTitle,
+            estimatedDays: estimatedDays,
+            amount: currentAmount
+          });
+        }
+      }
+
+      const finalRates = Array.from(rateCategories.values());
+      finalRates.sort((a, b) => parseFloat(a.amount) - parseFloat(b.amount));
+
+      res.json({ rates: finalRates });
+    } catch (error: any) {
+      console.error('Fetch order rates error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+);
+
 // POST /api/shipping/purchase — admin/staff
 router.post(
   '/purchase',

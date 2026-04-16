@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Intercom from '@intercom/messenger-js-sdk';
 import api from './utils/api';
+import { usePageTracking } from './utils/analytics';
 import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -16,6 +17,7 @@ import TermsOfServicePage from './pages/TermsOfServicePage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import CookiePolicyPage from './pages/CookiePolicyPage';
 import ContactPage from './pages/ContactPage';
+import ShowcasePage from './pages/ShowcasePage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderStatusPage from './pages/OrderStatusPage';
@@ -60,9 +62,15 @@ import AdminPartnersPage from './pages/AdminPartnersPage';
 import AdminPartnerDetailsPage from './pages/AdminPartnerDetailsPage';
 import AdminCartsPage from './pages/AdminCartsPage';
 import AdminCustomBuildsPage from './pages/AdminCustomBuildsPage';
+import AdminCustomBuildDetailsPage from './pages/AdminCustomBuildDetailsPage';
 import AdminBuildRequestsPage from './pages/AdminBuildRequestsPage';
+import AdminBuildRequestDetailsPage from './pages/AdminBuildRequestDetailsPage';
+import AdminShowcasesPage from './pages/AdminShowcasesPage';
+import AdminShowcaseDetailsPage from './pages/AdminShowcaseDetailsPage';
 import AdminReviewsPage from './pages/AdminReviewsPage';
 import AdminInvoicesPage from './pages/AdminInvoicesPage';
+import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
+import AdminSessionDetailsPage from './pages/AdminSessionDetailsPage';
 
 export const PageStatusContext = React.createContext<string[]>([]);
 
@@ -136,6 +144,7 @@ const MaintenancePage = ({ reopenAt }: { reopenAt?: string | Date }) => {
 };
 
 const AppContent = ({ children }: { children: React.ReactNode }) => {
+  usePageTracking();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [maintenance, setMaintenance] = useState<{enabled: boolean, reopenAt?: Date} | null>(null);
@@ -442,6 +451,13 @@ function App() {
           } />
           <Route path="/discount/:code" element={<DiscountRedirectPage />} />
           <Route path="/ref" element={<DiscountRedirectPage />} />
+          <Route path="/partner/:code" element={
+            <>
+              <Header />
+              <ShowcasePage />
+              <Footer />
+            </>
+          } />
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route element={<AdminLayout />}>
@@ -466,10 +482,16 @@ function App() {
             <Route path="/admin/partners/:id" element={<AdminPartnerDetailsPage />} />
             <Route path="/admin/carts" element={<AdminCartsPage />} />
             <Route path="/admin/custom-builds" element={<AdminCustomBuildsPage />} />
+            <Route path="/admin/custom-builds/:id" element={<AdminCustomBuildDetailsPage />} />
             <Route path="/admin/build-requests" element={<AdminBuildRequestsPage />} />
+            <Route path="/admin/build-requests/:id" element={<AdminBuildRequestDetailsPage />} />
+            <Route path="/admin/showcases" element={<AdminShowcasesPage />} />
+            <Route path="/admin/showcases/:id" element={<AdminShowcaseDetailsPage />} />
             <Route path="/admin/reviews" element={<AdminReviewsPage />} />
             <Route path="/admin/invoices" element={<AdminInvoicesPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
+            <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
+            <Route path="/admin/analytics/session/:id" element={<AdminSessionDetailsPage />} />
           </Route>
 
           {/* 404 Not Found Route */}

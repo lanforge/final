@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 
 interface CustomBuild {
@@ -13,6 +14,7 @@ interface CustomBuild {
 }
 
 const AdminCustomBuildsPage: React.FC = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [builds, setBuilds] = useState<CustomBuild[]>([]);
@@ -181,7 +183,10 @@ const AdminCustomBuildsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-4 px-6 text-right">
-                      <button className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors border border-gray-700">
+                      <button 
+                        onClick={() => navigate(`/admin/custom-builds/${build.buildId}`)}
+                        className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors border border-gray-700"
+                      >
                         View Details
                       </button>
                     </td>
