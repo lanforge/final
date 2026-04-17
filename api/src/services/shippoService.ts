@@ -75,13 +75,17 @@ export const getLiveRates = async (addressTo: any, lineItems: any[]) => {
   }
 };
 
-export const purchaseLabel = async (rateObjectId: string, insuranceAmount?: number) => {
+export const purchaseLabel = async (rateObjectId: string, insuranceAmount?: number, metadata?: string) => {
   try {
     const payload: any = {
       rate: rateObjectId,
       label_file_type: 'PDF',
       async: false,
     };
+
+    if (metadata) {
+      payload.metadata = metadata;
+    }
 
     const response = await fetch('https://api.goshippo.com/transactions/', {
       method: 'POST',

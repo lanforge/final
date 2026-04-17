@@ -138,14 +138,21 @@ router.get('/:buildId', async (req: Request, res: Response): Promise<void> => {
   try {
     const build = await CustomBuild.findOne({ buildId: req.params.buildId })
       .populate('parts.part', 'name slug brand partModel sku price images type stock')
-      .populate('customer', 'firstName lastName email');
+      // Only populate firstName to avoid leaking PII (email, lastName, etc)
+      .populate('customer', 'firstName');
 
     if (!build) {
       res.status(404).json({ message: 'Custom build not found' });
       return;
     }
 
-    res.json({ build });
+    // Omit guestEmail from the response for public endpoints
+    const buildObj = build.toObject();
+    if (buildObj.guestEmail) {
+      delete buildObj.guestEmail;
+    }
+
+    res.json({ build: buildObj });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -182,8 +189,14 @@ router.put('/:buildId/status', async (req: Request, res: Response): Promise<void
 });
 
 // GET /api/custom-builds/customer/:customerId — get a customer's saved builds
-router.get('/customer/:customerId', async (req: Request, res: Response): Promise<void> => {
+router.get('/customer/:customerId', protect, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    // Only allow users to view their own builds, unless they are staff/admin
+    if (req.user?.role !== 'admin' && req.user?.role !== 'staff' && req.user?._id?.toString() !== req.params.customerId) {
+      res.status(403).json({ message: 'Not authorized to view these builds' });
+      return;
+    }
+
     const builds = await CustomBuild.find({ customer: req.params.customerId })
       .sort({ createdAt: -1 })
       .populate('parts.part', 'name brand partModel price images');

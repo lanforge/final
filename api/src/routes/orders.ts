@@ -542,15 +542,33 @@ router.get('/track', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.json({ order });
+    let orderObj = order.toObject();
+
+    // Mask sensitive shipping information to prevent brute-forcing order numbers for PII
+    if (orderObj.shippingAddress) {
+      orderObj.shippingAddress = {
+        city: orderObj.shippingAddress.city,
+        state: orderObj.shippingAddress.state,
+        country: orderObj.shippingAddress.country,
+        // Omit firstName, lastName, email, phone, address, zip
+      } as any;
+    }
+
+    res.json({ order: orderObj });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }
 });
 
 // GET /api/orders/customer/:customerId — frontend: customer's orders
-router.get('/customer/:customerId', async (req: Request, res: Response): Promise<void> => {
+router.get('/customer/:customerId', protect, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    // Only allow users to view their own orders, unless they are staff/admin
+    if (req.user?.role !== 'admin' && req.user?.role !== 'staff' && req.user?._id?.toString() !== req.params.customerId) {
+      res.status(403).json({ message: 'Not authorized to view these orders' });
+      return;
+    }
+
     const orders = await Order.find({ customer: req.params.customerId })
       .sort({ createdAt: -1 })
       .select('orderNumber status paymentStatus items total createdAt trackingNumber carrier');
@@ -571,9 +589,9 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       ? { $or: [{ _id: id }, { orderNumber: id }] }
       : { orderNumber: id };
 
+    // We do NOT populate customer here to avoid leaking PII on public endpoints
     const order = await Order.findOne(query)
-      .select('-__v')
-      .populate('customer', 'firstName lastName email loyaltyPoints addresses phone')
+      .select('-__v -billingAddress')
       .populate('appliedDiscount', 'code type value');
 
     if (!order) {
@@ -581,36 +599,16 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Apply active customer addresses dynamically for admin-created orders
     let orderObj = order.toObject();
-    const cust: any = orderObj.customer;
-    if (orderObj.isAdminCreated && cust && cust.addresses && cust.addresses.length > 0) {
-      const shipAddr = cust.addresses.find((a: any) => a.type === 'shipping') || cust.addresses[0];
-      const billAddr = cust.addresses.find((a: any) => a.type === 'billing') || cust.addresses[0];
-      
+    
+    // Mask sensitive shipping information for public endpoint
+    if (orderObj.shippingAddress) {
       orderObj.shippingAddress = {
-        firstName: shipAddr.firstName || cust.firstName,
-        lastName: shipAddr.lastName || cust.lastName,
-        email: cust.email,
-        phone: cust.phone || orderObj.shippingAddress?.phone || 'N/A',
-        address: shipAddr.street,
-        city: shipAddr.city,
-        state: shipAddr.state,
-        zip: shipAddr.zip,
-        country: shipAddr.country || 'US',
-      };
-
-      orderObj.billingAddress = {
-        firstName: billAddr.firstName || cust.firstName,
-        lastName: billAddr.lastName || cust.lastName,
-        email: cust.email,
-        phone: cust.phone || orderObj.billingAddress?.phone || 'N/A',
-        address: billAddr.street,
-        city: billAddr.city,
-        state: billAddr.state,
-        zip: billAddr.zip,
-        country: billAddr.country || 'US',
-      };
+        city: orderObj.shippingAddress.city,
+        state: orderObj.shippingAddress.state,
+        country: orderObj.shippingAddress.country,
+        // Omit firstName, lastName, email, phone, address, zip
+      } as any;
     }
 
     res.json({ order: orderObj });

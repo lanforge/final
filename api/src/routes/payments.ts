@@ -6,6 +6,7 @@ import stripeService, { createPaymentIntent, confirmPaymentIntent, constructWebh
 import { createPayPalOrder, capturePayPalOrder } from '../services/paypalService';
 import { authorizeAffirmCharge, captureAffirmCharge } from '../services/affirmService';
 import { sendOrderConfirmation } from '../services/emailService';
+import { protect, staffOrAdmin } from '../middleware/auth';
 
 const router = Router();
 
@@ -349,7 +350,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
 });
 
 // GET /api/payments/:id
-router.get('/:id', async (req: Request, res: Response): Promise<void> => {
+router.get('/:id', protect, async (req: Request, res: Response): Promise<void> => {
   try {
     const payment = await Payment.findById(req.params.id)
       .populate('order', 'orderNumber status total customer')
@@ -368,7 +369,7 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 });
 
 // POST /api/payments/:id/refund
-router.post('/:id/refund', async (req: Request, res: Response): Promise<void> => {
+router.post('/:id/refund', protect, async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
     const { amount, reason, forceLocal } = req.body;
@@ -428,7 +429,7 @@ router.post('/:id/refund', async (req: Request, res: Response): Promise<void> =>
 });
 
 // GET /api/payments
-router.get('/', async (req: Request, res: Response): Promise<void> => {
+router.get('/', protect, async (req: Request, res: Response): Promise<void> => {
   try {
     const { order, invoice, status, paymentMethod } = req.query;
     const query: any = {};

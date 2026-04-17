@@ -67,7 +67,7 @@ router.get('/track/:rmaNumber', async (req: Request, res: Response): Promise<voi
   try {
     const rma = await RMA.findOne({ rmaNumber: req.params.rmaNumber })
       .populate('order', 'orderNumber status')
-      .select('-__v');
+      .select('-__v -guestEmail -customer');
 
     if (!rma) {
       res.status(404).json({ message: 'RMA not found' });

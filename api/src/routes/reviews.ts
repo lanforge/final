@@ -28,7 +28,11 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     }
 
     const [reviews, total] = await Promise.all([
-      Review.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Review.find(filter)
+        .select('-customerEmail')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
       Review.countDocuments(filter)
     ]);
 

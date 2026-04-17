@@ -21,7 +21,8 @@ router.get('/:creatorCode', async (req: Request, res: Response): Promise<void> =
       partner = showcases[0].partner;
     } else {
       // Try to find partner anyway in case they have no builds
-      partner = await Partner.findOne({ creatorCode: new RegExp('^' + creatorCode + '$', 'i') }).select('-password');
+      partner = await Partner.findOne({ creatorCode: new RegExp('^' + creatorCode + '$', 'i') })
+        .select('name creatorCode partnerType website logo description customerDiscountType customerDiscountValue twitter twitch youtube instagram tiktok');
     }
 
     res.json({ showcases, partner });

@@ -9,7 +9,9 @@ const router = Router();
 // GET /api/partners — public
 router.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
-    const partners = await Partner.find({ isActive: true }).sort({ sortOrder: 1, createdAt: -1 });
+    const partners = await Partner.find({ isActive: true })
+      .select('name creatorCode partnerType website logo description customerDiscountType customerDiscountValue twitter twitch youtube instagram tiktok sortOrder')
+      .sort({ sortOrder: 1, createdAt: -1 });
     res.json({ partners });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

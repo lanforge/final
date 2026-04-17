@@ -322,7 +322,7 @@ router.post(
       }
 
       const { insurance } = req.body;
-      const transaction = await purchaseLabel(activeRateObjectId, insurance ? order.total : undefined);
+      const transaction = await purchaseLabel(activeRateObjectId, insurance ? order.total : undefined, `Order ${order.orderNumber}`);
       
       // Update order tracking
       order.trackingNumber = transaction.trackingNumber || (transaction as any).tracking_number;
@@ -368,57 +368,74 @@ router.post('/webhook', async (req: Request, res: Response): Promise<void> => {
     if (event && event.event === 'track_updated') {
       const trackingStatus = event.data;
       const trackingNumber = trackingStatus.tracking_number;
-      const statusStr = trackingStatus.tracking_status?.status || trackingStatus.tracking_status?.substatus?.status || trackingStatus.tracking_status?.status_details;
+      const metadata = trackingStatus.metadata;
+      
+      const statusStr = trackingStatus.tracking_status?.status || '';
+      const substatusCode = trackingStatus.tracking_status?.substatus?.code || '';
+
+      let order = null;
 
       if (trackingNumber) {
-        const order = await Order.findOne({ trackingNumber });
-        if (order) {
-          const upperStatus = statusStr ? statusStr.toString().toUpperCase() : '';
+        order = await Order.findOne({ trackingNumber });
+      }
+
+      if (!order && metadata) {
+        // Try to find by metadata, e.g. "Order 000123"
+        const metadataStr = metadata.toString();
+        const match = metadataStr.match(/(?:Order\s+)?([A-Z0-9-]+)/i);
+        if (match && match[1]) {
+          const orderNum = match[1];
+          order = await Order.findOne({ orderNumber: orderNum });
+        }
+      }
+
+      if (order) {
+        const upperStatus = statusStr.toUpperCase();
+        const upperSubstatus = substatusCode.toUpperCase();
+        
+        let changed = false;
+        if (upperStatus === 'DELIVERED' && order.status !== 'delivered') {
+          order.status = 'delivered';
+          changed = true;
+        } else if ((upperStatus === 'OUT_FOR_DELIVERY' || upperSubstatus === 'OUT_FOR_DELIVERY') && order.status !== 'out-for-delivery' && order.status !== 'delivered') {
+          order.status = 'out-for-delivery';
+          changed = true;
+        } else if (upperStatus === 'TRANSIT' && order.status !== 'shipped' && order.status !== 'out-for-delivery' && order.status !== 'delivered') {
+          order.status = 'shipped';
+          changed = true;
+        } else if (upperStatus === 'RETURNED' && order.status !== 'returned') {
+          order.status = 'returned';
+          changed = true;
+        }
+
+        if (changed) {
+          await order.save();
           
-          let changed = false;
-          if (upperStatus === 'DELIVERED' && order.status !== 'delivered') {
-            order.status = 'delivered';
-            changed = true;
-          } else if (upperStatus === 'OUT_FOR_DELIVERY' && order.status !== 'out-for-delivery') {
-            order.status = 'out-for-delivery';
-            changed = true;
-          } else if (upperStatus === 'TRANSIT' && order.status !== 'shipped' && order.status !== 'out-for-delivery' && order.status !== 'delivered') {
-            order.status = 'shipped';
-            changed = true;
-          } else if (upperStatus === 'RETURNED' && order.status !== 'returned') {
-            order.status = 'returned';
-            changed = true;
-          }
-
-          if (changed) {
-            await order.save();
+          // If delivered, we should update loyalty points for the customer
+          if (order.status === 'delivered' && order.customer) {
+            const Customer = (await import('../models/Customer')).default;
+            const LoyaltyTransaction = (await import('../models/LoyaltyTransaction')).default;
             
-            // If delivered, we should update loyalty points for the customer
-            if (order.status === 'delivered' && order.customer) {
-              const Customer = (await import('../models/Customer')).default;
-              const LoyaltyTransaction = (await import('../models/LoyaltyTransaction')).default;
-              
-              const customer = await Customer.findById(order.customer);
-              if (customer) {
-                const before = customer.loyaltyPoints;
-                if (order.loyaltyPointsEarned > 0) {
-                  customer.loyaltyPoints += order.loyaltyPointsEarned;
-                }
-                customer.totalSpent += order.total;
-                customer.totalOrders += 1;
-                await customer.save();
+            const customer = await Customer.findById(order.customer);
+            if (customer) {
+              const before = customer.loyaltyPoints;
+              if (order.loyaltyPointsEarned > 0) {
+                customer.loyaltyPoints += order.loyaltyPointsEarned;
+              }
+              customer.totalSpent += order.total;
+              customer.totalOrders += 1;
+              await customer.save();
 
-                if (order.loyaltyPointsEarned > 0) {
-                  await LoyaltyTransaction.create({
-                    customer: customer._id,
-                    order: order._id,
-                    points: order.loyaltyPointsEarned,
-                    type: 'earn',
-                    reason: `Order ${order.orderNumber} delivered`,
-                    balanceBefore: before,
-                    balanceAfter: customer.loyaltyPoints,
-                  });
-                }
+              if (order.loyaltyPointsEarned > 0) {
+                await LoyaltyTransaction.create({
+                  customer: customer._id,
+                  order: order._id,
+                  points: order.loyaltyPointsEarned,
+                  type: 'earn',
+                  reason: `Order ${order.orderNumber} delivered`,
+                  balanceBefore: before,
+                  balanceAfter: customer.loyaltyPoints,
+                });
               }
             }
           }

@@ -137,7 +137,8 @@ router.post('/checkout-init', async (req: Request, res: Response): Promise<void>
       });
     }
     
-    res.json({ customer });
+    // Only return the ID to prevent PII leakage (addresses, full name, phone)
+    res.json({ customer: { _id: customer._id } });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
