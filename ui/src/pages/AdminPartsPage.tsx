@@ -370,16 +370,16 @@ const AdminPartsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Part Name</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Type & Brand</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Price</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Cost</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Stock</th>
-                <th className="text-center py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Part Name</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Type & Brand</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Price</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Cost</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Stock</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">Loading parts...</td></tr>
               ) : parts.length === 0 ? (
@@ -388,8 +388,8 @@ const AdminPartsPage: React.FC = () => {
                 const status = getStockStatus(part.stock);
 
                 return (
-                  <tr key={part._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={part._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                    <td className="py-4 px-6">
                       <div className="flex items-center space-x-3 mb-1">
                         <input
                           type="checkbox"
@@ -428,25 +428,25 @@ const AdminPartsPage: React.FC = () => {
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-6">
                       <p className="text-slate-200">{part.type}</p>
                       <p className="text-slate-500 text-xs">{part.brand}</p>
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-200 font-medium">
+                    <td className="py-4 px-6 text-right text-slate-200 font-medium">
                       ${part.price?.toFixed(2)}
                     </td>
-                    <td className="py-3 px-4 text-right text-emerald-500 font-medium">
+                    <td className="py-4 px-6 text-right text-emerald-500 font-medium">
                       {typeof part.cost === 'number' ? `$${part.cost.toFixed(2)}` : 'N/A'}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-200 font-medium">
+                    <td className="py-4 px-6 text-right text-slate-200 font-medium">
                       {part.stock}
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-4 px-6 text-center">
                       <span className={`admin-badge ${part.isActive ? status.color : 'bg-gray-500/10 text-slate-400 border-gray-500/20'}`}>
                         {part.isActive ? status.text : 'Inactive'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <button 
                           onClick={() => navigate(`/admin/parts/edit/${part._id}`)}

@@ -140,16 +140,16 @@ const AdminCustomBuildsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Build ID</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Customer</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Price</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Margin</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Last Updated</th>
-                <th className="text-center py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Build ID</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Price</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Margin</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Last Updated</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">Loading builds...</td></tr>
               ) : builds.length === 0 ? (
@@ -159,30 +159,30 @@ const AdminCustomBuildsPage: React.FC = () => {
                 const marginPct = build.total > 0 ? (margin / build.total) * 100 : 0;
 
                 return (
-                  <tr key={build._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={build._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                    <td className="py-4 px-6">
                       <span className="text-emerald-500 font-mono text-xs">{build.buildId}</span>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-6">
                       <p className="text-slate-200 font-medium">{build.customer ? `${build.customer.firstName} ${build.customer.lastName}` : 'Guest'}</p>
                       {build.customer && <p className="text-slate-500 text-xs">{build.customer.email}</p>}
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-200 font-medium">
+                    <td className="py-4 px-6 text-right text-slate-200 font-medium">
                       {formatCurrency(build.total)}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <p className={`font-medium text-xs ${margin > 0 ? 'text-emerald-500' : 'text-slate-500'}`}>{formatCurrency(margin)}</p>
                       <p className="text-[10px] text-slate-600">{marginPct.toFixed(1)}%</p>
                     </td>
-                    <td className="py-3 px-4 text-slate-500 text-xs">
+                    <td className="py-4 px-6 text-slate-500 text-xs">
                       {new Date(build.updatedAt).toLocaleDateString()}
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-4 px-6 text-center">
                       <span className={`admin-badge ${getStatusColor(build.status)}`}>
                         {build.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <button 
                         onClick={() => navigate(`/admin/custom-builds/${build.buildId}`)}
                         className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors"

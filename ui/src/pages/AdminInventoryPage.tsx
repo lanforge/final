@@ -210,16 +210,16 @@ const AdminInventoryPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Product Name</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">SKU / Location</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">In Stock</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Reserved</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Available</th>
-                <th className="text-center py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
-                <th className="text-right py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Product Name</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">SKU / Location</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">In Stock</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Reserved</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Available</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">Loading inventory...</td></tr>
               ) : filteredInventory.length === 0 ? (
@@ -229,32 +229,32 @@ const AdminInventoryPage: React.FC = () => {
                 const status = getStockStatus(item);
 
                 return (
-                  <tr key={item._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={item._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                    <td className="py-4 px-6">
                       <p className="text-slate-200 font-medium">{item.name}</p>
                       <p className="text-slate-500 text-xs">{item.category}</p>
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-6">
                       <p className="text-slate-400 font-mono text-xs">{item.sku}</p>
                       <p className="text-slate-500 text-[10px] mt-1">{item.location || 'No location set'}</p>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <span className="text-slate-200 font-medium">{item.stock}</span>
                     </td>
-                    <td className="py-3 px-4 text-right text-slate-500">
+                    <td className="py-4 px-6 text-right text-slate-500">
                       {item.reserved || 0}
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <span className={`font-medium ${available <= (item.reorderPoint || 0) ? 'text-amber-500' : 'text-emerald-500'}`}>
                         {available}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-4 px-6 text-center">
                       <span className={`admin-badge ${status.color}`}>
                         {status.text}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <button 
                         className="px-2.5 py-1 text-xs bg-[#1f2233]/50 hover:bg-[#1f2233] text-slate-300 rounded-md transition-colors"
                         onClick={() => {

@@ -184,39 +184,39 @@ const AdminCustomersPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Customer ID</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Name</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Email</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Join Date</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Orders</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Total Spent</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Tier</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer ID</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Join Date</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Orders</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Spent</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tier</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-500 text-sm">Loading customers...</td></tr>
               ) : customers.length === 0 ? (
                 <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-500 text-sm">No customers found.</td></tr>
               ) : customers.map((customer) => (
-                <tr key={customer._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                  <td className="py-3 px-4">
+                <tr key={customer._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                  <td className="py-4 px-6">
                     <span className="font-medium text-slate-200">{customer._id.slice(-6).toUpperCase()}</span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <p className="text-slate-200 font-medium">{customer.firstName} {customer.lastName}</p>
                   </td>
-                  <td className="py-3 px-4 text-slate-400">{customer.email}</td>
-                  <td className="py-3 px-4 text-slate-400">{new Date(customer.createdAt).toLocaleDateString()}</td>
-                  <td className="py-3 px-4 text-slate-400">{customer.totalOrders || 0}</td>
-                  <td className="py-3 px-4 text-slate-200 font-medium">{formatCurrency(customer.totalSpent || 0)}</td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6 text-slate-400">{customer.email}</td>
+                  <td className="py-4 px-6 text-slate-400">{new Date(customer.createdAt).toLocaleDateString()}</td>
+                  <td className="py-4 px-6 text-slate-400">{customer.totalOrders || 0}</td>
+                  <td className="py-4 px-6 text-slate-200 font-medium">{formatCurrency(customer.totalSpent || 0)}</td>
+                  <td className="py-4 px-6">
                     <span className={`admin-badge ${getTierColor(customer.loyaltyTier || 'bronze')}`}>
                       {(customer.loyaltyTier || 'bronze')}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <div className="flex items-center space-x-2">
                       <button onClick={() => navigate(`/admin/customers/${customer._id}`)} className="p-1.5 text-slate-500 hover:text-white hover:bg-[#1f2233] rounded-md transition-colors" title="View">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

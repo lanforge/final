@@ -85,29 +85,29 @@ const AdminShowcasesPage: React.FC = () => {
 
       <div className="admin-card overflow-hidden">
         <table className="w-full text-left text-sm text-slate-300">
-          <thead className="border-b border-white/5 bg-[#050505] text-xs uppercase text-slate-300">
+          <thead className="bg-[#11141d] border-b border-[#1f2233]">
             <tr>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Creator</th>
-              <th className="px-6 py-3">Code</th>
-              <th className="px-6 py-3">Total</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3 text-right">Actions</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Creator</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Code</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-[#1f2233]">
             {showcases.map((sc) => (
-              <tr key={sc._id} className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-6 py-4">{sc.name}</td>
-                <td className="px-6 py-4">{sc.creatorName}</td>
-                <td className="px-6 py-4">{sc.creatorCode}</td>
-                <td className="px-6 py-4">${sc.total.toFixed(2)}</td>
-                <td className="px-6 py-4">
+              <tr key={sc._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                <td className="py-4 px-6">{sc.name}</td>
+                <td className="py-4 px-6">{sc.creatorName}</td>
+                <td className="py-4 px-6">{sc.creatorCode}</td>
+                <td className="py-4 px-6">${sc.total.toFixed(2)}</td>
+                <td className="py-4 px-6">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${sc.isActive ? 'bg-emerald-500/10 text-emerald-400' : 'bg-[#11141d] text-slate-400'}`}>
                     {sc.isActive ? 'Active' : 'Draft'}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right">
+                <td className="py-4 px-6 text-right">
                   <Link
                     to={`/admin/showcases/${sc._id}`}
                     className="text-emerald-400 hover:text-emerald-300 mr-4"

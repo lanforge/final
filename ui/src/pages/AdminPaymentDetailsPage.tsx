@@ -264,14 +264,14 @@ const AdminPaymentDetailsPage: React.FC = () => {
               <table className="w-full text-left">
                 <thead>
                   <tr className="text-slate-400 border-b border-[#1f2233]">
-                    <th className="pb-3 font-medium">Date</th>
-                    <th className="pb-3 font-medium">Amount</th>
-                    <th className="pb-3 font-medium">Reason</th>
-                    <th className="pb-3 font-medium">Status</th>
-                    <th className="pb-3 font-medium">Refund ID</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Reason</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Refund ID</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-800/50">
+                <tbody className="divide-y divide-[#1f2233]">
                   {payment.metadata.refunds.map((refund: any, idx: number) => (
                     <tr key={idx} className="text-slate-300">
                       <td className="py-3">{new Date(refund.createdAt).toLocaleString()}</td>

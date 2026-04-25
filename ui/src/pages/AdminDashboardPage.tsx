@@ -154,27 +154,27 @@ const AdminDashboardPage: React.FC = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#11141d]">
-                  <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500">Order</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500">Customer</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500">Status</th>
-                  <th className="px-4 py-2.5 text-left text-xs font-medium text-slate-500">Amount</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-[#1f2233]">
                 {recentOrders.map((order) => (
-                  <tr key={order._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                    <td className="px-4 py-3 whitespace-nowrap text-slate-300">
+                  <tr key={order._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                    <td className="py-4 px-6 whitespace-nowrap text-slate-300">
                       {order.orderNumber || order._id.substring(0, 8).toUpperCase()}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-slate-400">
+                    <td className="py-4 px-6 whitespace-nowrap text-slate-400">
                       {order.customer?.firstName} {order.customer?.lastName}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
+                    <td className="py-4 px-6 whitespace-nowrap">
                       <span className={`px-2 py-0.5 inline-flex text-[10px] uppercase tracking-wider font-medium rounded-sm border ${getStatusColor(order.paymentStatus)}`}>
                         {order.paymentStatus}
                       </span>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-slate-300">
+                    <td className="py-4 px-6 whitespace-nowrap text-slate-300">
                       {formatCurrency(order.total)}
                     </td>
                   </tr>

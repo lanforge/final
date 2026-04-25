@@ -316,15 +316,15 @@ const AdminProductsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Product</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Category</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Price</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Stock</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Product</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Category</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Price</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Stock</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500 text-sm">Loading products...</td></tr>
               ) : filteredProducts.length === 0 ? (
@@ -332,8 +332,8 @@ const AdminProductsPage: React.FC = () => {
               ) : filteredProducts.map((product) => {
                 const statusInfo = getStatusInfo(product);
                 return (
-                <tr key={product._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                  <td className="py-3 px-4">
+                <tr key={product._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                  <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
                       <input
                         type="checkbox"
@@ -347,8 +347,8 @@ const AdminProductsPage: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-slate-400">{product.category}</td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6 text-slate-400">{product.category}</td>
+                  <td className="py-4 px-6">
                     <div className="flex flex-col">
                       <span className="text-slate-200 font-medium">{formatCurrency(product.price)}</span>
                       <span className={`text-xs ${product.price - (product.cost || 0) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
@@ -356,19 +356,19 @@ const AdminProductsPage: React.FC = () => {
                       </span>
                     </div>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <div className="flex items-center">
                       <span className={`text-xs font-medium ${product.stock > (product.reorderPoint || 5) ? 'text-emerald-500' : product.stock > 0 ? 'text-amber-500' : 'text-red-500'}`}>
                         {product.stock} units
                       </span>
                     </div>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <span className={`admin-badge ${statusInfo.color}`}>
                       {statusInfo.text}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <div className="flex items-center space-x-2">
                       <button 
                         className="p-1.5 text-slate-500 hover:text-white hover:bg-[#1f2233] rounded-md transition-colors" 

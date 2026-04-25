@@ -199,34 +199,34 @@ const AdminPromotionsPage: React.FC = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Code</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Type</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Value</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Usage</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Expires</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Code</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Type</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Value</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Usage</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Expires</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-[#1f2233]">
                 {isLoading ? (
                   <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">Loading discounts...</td></tr>
                 ) : discounts.length === 0 ? (
                   <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">No discounts found</td></tr>
                 ) : (
                   discounts.map(d => (
-                    <tr key={d._id} className="hover:bg-[#1f2233]/50">
-                      <td className="py-3 px-4 font-mono text-emerald-500 font-medium">{d.code}</td>
-                      <td className="py-3 px-4 text-slate-400 capitalize">{d.type.replace('_', ' ')}</td>
-                      <td className="py-3 px-4 text-slate-200">
+                    <tr key={d._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                      <td className="py-4 px-6 font-mono text-emerald-500 font-medium">{d.code}</td>
+                      <td className="py-4 px-6 text-slate-400 capitalize">{d.type.replace('_', ' ')}</td>
+                      <td className="py-4 px-6 text-slate-200">
                         {d.type === 'percentage' ? `${d.value}%` : d.type === 'fixed' ? `$${d.value}` : 'Free'}
                       </td>
-                      <td className="py-3 px-4 text-slate-400">
+                      <td className="py-4 px-6 text-slate-400">
                         {d.usedCount} / {d.usageLimit || '∞'}
                       </td>
-                      <td className="py-3 px-4 text-slate-400">
+                      <td className="py-4 px-6 text-slate-400">
                         {d.expiresAt ? new Date(d.expiresAt).toLocaleDateString() : 'Never'}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6">
                         <span className={`admin-badge ${
                           d.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-gray-500/10 text-slate-400 border-gray-500/20'
                         }`}>
@@ -395,30 +395,30 @@ const AdminPromotionsPage: React.FC = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Member</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Email</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Points</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Tier</th>
-                  <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Total Spent</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Member</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Points</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tier</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Spent</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-[#1f2233]">
                 {isLoading ? (
                   <tr><td colSpan={5} className="p-4 text-center text-slate-500 text-sm">Loading members...</td></tr>
                 ) : members.length === 0 ? (
                   <tr><td colSpan={5} className="p-4 text-center text-slate-500 text-sm">No members found</td></tr>
                 ) : (
                   members.map(m => (
-                    <tr key={m._id} className="hover:bg-[#1f2233]/50">
-                      <td className="py-3 px-4 text-slate-200 font-medium">{m.firstName} {m.lastName}</td>
-                      <td className="py-3 px-4 text-slate-400">{m.email}</td>
-                      <td className="py-3 px-4 text-emerald-500 font-medium">{m.loyaltyPoints}</td>
-                      <td className="py-3 px-4">
+                    <tr key={m._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                      <td className="py-4 px-6 text-slate-200 font-medium">{m.firstName} {m.lastName}</td>
+                      <td className="py-4 px-6 text-slate-400">{m.email}</td>
+                      <td className="py-4 px-6 text-emerald-500 font-medium">{m.loyaltyPoints}</td>
+                      <td className="py-4 px-6">
                         <span className={`admin-badge ${getTierColor(m.loyaltyTier)}`}>
                           {(m.loyaltyTier || 'Bronze')}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-slate-200">${m.totalSpent?.toFixed(2) || '0.00'}</td>
+                      <td className="py-4 px-6 text-slate-200">${m.totalSpent?.toFixed(2) || '0.00'}</td>
                     </tr>
                   ))
                 )}

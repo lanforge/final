@@ -463,14 +463,14 @@ const AdminCustomerDetailsPage: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-[#0a0c13]">
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Order</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Payment</th>
-                    <th className="text-right py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Total</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Payment</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-800">
+                <tbody className="divide-y divide-[#1f2233]">
                   {orders.length > 0 ? (
                     orders.map(order => (
                       <tr key={order._id} className="hover:bg-[#1f2233]/30 cursor-pointer transition-colors" onClick={() => navigate(`/admin/orders/${order._id}`)}>
@@ -516,14 +516,14 @@ const AdminCustomerDetailsPage: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-[#0a0c13]">
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Transaction ID</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Method</th>
-                    <th className="text-left py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
-                    <th className="text-right py-3 px-6 text-xs font-medium text-slate-400 uppercase tracking-wider">Amount</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Transaction ID</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Method</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Amount</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-800">
+                <tbody className="divide-y divide-[#1f2233]">
                   {payments.length > 0 ? (
                     payments.map(payment => (
                       <tr key={payment._id} className="hover:bg-[#1f2233]/30 transition-colors">

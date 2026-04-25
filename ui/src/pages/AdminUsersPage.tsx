@@ -127,12 +127,12 @@ const AdminUsersPage: React.FC = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#1f2233]">
-                <th className="text-left py-3 px-4 text-slate-400 font-medium">User ID</th>
-                <th className="text-left py-3 px-4 text-slate-400 font-medium">Name</th>
-                <th className="text-left py-3 px-4 text-slate-400 font-medium">Email</th>
-                <th className="text-left py-3 px-4 text-slate-400 font-medium">Role</th>
-                <th className="text-left py-3 px-4 text-slate-400 font-medium">Status</th>
-                <th className="text-left py-3 px-4 text-slate-400 font-medium">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">User ID</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Role</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -142,10 +142,10 @@ const AdminUsersPage: React.FC = () => {
                 <tr><td colSpan={6} className="px-6 py-4 text-center text-slate-400">No users found.</td></tr>
               ) : users.map((user) => (
                 <tr key={user._id} className="border-b border-[#1f2233]/50 hover:bg-[#1f2233]/30 transition-colors">
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <span className="text-white font-medium">{user._id.slice(-6).toUpperCase()}</span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-emerald-500/20 rounded-full flex items-center justify-center">
                         <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -158,20 +158,20 @@ const AdminUsersPage: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <p className="text-slate-300">{user.email}</p>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(user.role)}`}>
                       {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(user.isActive)}`}>
                       {user.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <div className="flex items-center space-x-2">
                       <button className="p-1.5 text-slate-400 hover:text-white hover:bg-[#11141d] rounded-lg transition-colors" title="Edit">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

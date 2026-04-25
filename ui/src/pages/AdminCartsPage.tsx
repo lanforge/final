@@ -419,42 +419,42 @@ const AdminCartsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Session/User</th>
-                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Items</th>
-                <th className="py-3 px-4 text-right text-slate-500 font-medium text-xs">Value</th>
-                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Last Active</th>
-                <th className="py-3 px-4 text-center text-slate-500 font-medium text-xs">Status</th>
-                <th className="py-3 px-4 text-right text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Session/User</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Items</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Value</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Last Active</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">Loading carts...</td></tr>
               ) : carts.length === 0 ? (
                 <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">No carts found</td></tr>
               ) : (
                 carts.map(cart => (
-                  <tr key={cart._id} className="hover:bg-[#1f2233]/50">
-                    <td className="py-3 px-4">
+                  <tr key={cart._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                    <td className="py-4 px-6">
                       <p className="text-slate-200 font-medium">{cart.user ? `${cart.user.firstName} ${cart.user.lastName}` : 'Guest'}</p>
                       <p className="text-slate-500 text-[10px] font-mono truncate max-w-[150px]">{cart.sessionId}</p>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">{calculateCartItemsCount(cart)} items</td>
-                    <td className="py-3 px-4 text-right font-medium text-slate-200">
+                    <td className="py-4 px-6 text-slate-400">{calculateCartItemsCount(cart)} items</td>
+                    <td className="py-4 px-6 text-right font-medium text-slate-200">
                       {formatCurrency(calculateCartTotal(cart))}
                       {cart.appliedDiscount && (
                         <div className="text-[10px] text-emerald-500 mt-1">{cart.appliedDiscount.code}</div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-slate-500 text-xs">
+                    <td className="py-4 px-6 text-slate-500 text-xs">
                       {new Date(cart.updatedAt).toLocaleString()}
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-4 px-6 text-center">
                       <span className={`admin-badge ${getStatusColor(cart.status)}`}>
                         {cart.status}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <button 
                           onClick={() => handleEditClick(cart)}

@@ -350,19 +350,19 @@ const AdminPartnerDetailsPage: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
-                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Order</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Customer</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Date</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Total</th>
-                  <th className="py-3 px-6 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-800">
+              <tbody className="divide-y divide-[#1f2233]">
                 {orders.length === 0 ? (
                   <tr><td colSpan={5} className="py-4 px-6 text-center text-slate-500">No orders found with this creator code.</td></tr>
                 ) : (
                   orders.map(order => (
-                    <tr key={order._id} className="hover:bg-[#1f2233]/30">
+                    <tr key={order._id} className="hover:bg-[#1f2233]/30 transition-colors">
                       <td className="py-3 px-6">
                         <Link to={`/admin/orders/${order._id}`} className="text-emerald-400 hover:underline font-medium">
                           {order.orderNumber}

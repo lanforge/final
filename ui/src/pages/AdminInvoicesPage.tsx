@@ -119,31 +119,31 @@ const AdminInvoicesPage: React.FC = () => {
 
       <div className="admin-card overflow-hidden">
         <table className="w-full text-left text-sm text-slate-400">
-          <thead className="border-b border-white/5 bg-[#050505] text-xs uppercase text-slate-300">
+          <thead className="bg-[#11141d] border-b border-[#1f2233]">
             <tr>
-              <th className="px-6 py-3">Invoice #</th>
-              <th className="px-6 py-3">Customer</th>
-              <th className="px-6 py-3">Description</th>
-              <th className="px-6 py-3">Amount</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3 text-right">Actions</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Invoice #</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Description</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-[#1f2233]">
             {invoices.length > 0 ? invoices.map((invoice) => (
               <React.Fragment key={invoice._id}>
                 <tr 
                   className={`hover:bg-white/[0.02] cursor-pointer transition-colors ${expandedInvoiceId === invoice._id ? 'bg-[#1f2233]/30' : ''}`}
                   onClick={() => toggleInvoiceExpand(invoice._id)}
                 >
-                  <td className="px-6 py-4 font-medium text-white">{invoice.invoiceNumber}</td>
-                  <td className="px-6 py-4">
+                  <td className="py-4 px-6 font-medium text-white">{invoice.invoiceNumber}</td>
+                  <td className="py-4 px-6">
                     <div className="text-white">{invoice.customerName}</div>
                     <div className="text-xs">{invoice.customerEmail}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-pre-wrap">{invoice.description}</td>
-                  <td className="px-6 py-4 text-emerald-400 font-medium">${invoice.amount.toFixed(2)}</td>
-                  <td className="px-6 py-4">
+                  <td className="py-4 px-6 whitespace-pre-wrap">{invoice.description}</td>
+                  <td className="py-4 px-6 text-emerald-400 font-medium">${invoice.amount.toFixed(2)}</td>
+                  <td className="py-4 px-6">
                     <span className={`px-2 py-1 rounded text-xs font-medium ${
                       invoice.status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 
                       invoice.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'
@@ -151,7 +151,7 @@ const AdminInvoicesPage: React.FC = () => {
                       {invoice.status.toUpperCase()}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="py-4 px-6 text-right">
                     {invoice.status !== 'paid' && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleMarkPaid(invoice._id); }} 
@@ -174,7 +174,7 @@ const AdminInvoicesPage: React.FC = () => {
                   </td>
                 </tr>
                 {expandedInvoiceId === invoice._id && (
-                  <tr className="bg-black/20 border-b border-white/5">
+                  <tr className="bg-black/20 border-b border-[#1f2233]">
                     <td colSpan={6} className="px-6 py-4">
                       <div className="bg-[#0a0c13] rounded-lg p-4 border border-[#1f2233]">
                         <h4 className="text-sm font-medium text-white mb-3">Payment History</h4>

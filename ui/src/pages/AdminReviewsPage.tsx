@@ -117,23 +117,23 @@ const AdminReviewsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Rating / Item</th>
-                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Customer</th>
-                <th className="py-3 px-4 text-left text-slate-500 font-medium text-xs">Review</th>
-                <th className="py-3 px-4 text-center text-slate-500 font-medium text-xs">Date</th>
-                <th className="py-3 px-4 text-center text-slate-500 font-medium text-xs">Status</th>
-                <th className="py-3 px-4 text-right text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Rating / Item</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Review</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Date</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">Loading reviews...</td></tr>
               ) : reviews.length === 0 ? (
                 <tr><td colSpan={6} className="p-4 text-center text-slate-500 text-sm">No reviews found</td></tr>
               ) : (
                 reviews.map(review => (
-                  <tr key={review._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                    <td className="py-3 px-4">
+                  <tr key={review._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                    <td className="py-4 px-6">
                       <div className="flex items-center space-x-1 mb-1">
                         {renderStars(review.rating)}
                       </div>
@@ -141,20 +141,20 @@ const AdminReviewsPage: React.FC = () => {
                         {review.product?.name || review.pcPart?.name || review.accessory?.name || 'Unknown Item'}
                       </p>
                     </td>
-                    <td className="py-3 px-4 text-slate-200 font-medium">{review.customerName}</td>
-                    <td className="py-3 px-4">
+                    <td className="py-4 px-6 text-slate-200 font-medium">{review.customerName}</td>
+                    <td className="py-4 px-6">
                       <p className="text-slate-200 font-medium text-sm mb-0.5">{review.title}</p>
                       <p className="text-slate-500 text-xs truncate max-w-[300px]">{review.comment}</p>
                     </td>
-                    <td className="py-3 px-4 text-slate-500 text-center text-xs">
+                    <td className="py-4 px-6 text-slate-500 text-center text-xs">
                       {new Date(review.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="py-3 px-4 text-center">
+                    <td className="py-4 px-6 text-center">
                       <span className={`admin-badge ${review.isApproved ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'}`}>
                         {review.isApproved ? 'Approved' : 'Pending'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right">
+                    <td className="py-4 px-6 text-right">
                       <button 
                         onClick={() => toggleApproval(review._id, review.isApproved)}
                         className={`px-2.5 py-1 text-xs rounded-md transition-colors border ${review.isApproved ? 'bg-[#1f2233]/50 border-[#1f2233] hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-slate-300' : 'bg-white hover:bg-gray-200 text-black border-transparent font-medium'}`}

@@ -154,23 +154,23 @@ const AdminPartnersPage: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Order</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Partner Name</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Type</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Website</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium">Status</th>
-                  <th className="py-3 px-4 text-right text-slate-400 font-medium">Actions</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Partner Name</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Type</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Website</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-800">
+              <tbody className="divide-y divide-[#1f2233]">
                 {isLoadingPartners ? (
                   <tr><td colSpan={6} className="p-6 text-center text-slate-500">Loading partners...</td></tr>
                 ) : partners.length === 0 ? (
                   <tr><td colSpan={6} className="p-6 text-center text-slate-500">No partners found</td></tr>
                 ) : (
                   partners.map((p, index) => (
-                    <tr key={p._id} className="hover:bg-[#1f2233]/30">
-                      <td className="py-3 px-4">
+                    <tr key={p._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                      <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1 w-6">
                           <button
                             onClick={() => handleReorder(index, 'up')}
@@ -192,7 +192,7 @@ const AdminPartnersPage: React.FC = () => {
                           </button>
                         </div>
                       </td>
-                      <td className="py-3 px-4 text-white font-medium flex items-center space-x-3 mt-1.5">
+                      <td className="py-4 px-6 text-white font-medium flex items-center space-x-3 mt-1.5">
                         {p.logo ? (
                           <img src={p.logo} alt={p.name} className="w-8 h-8 object-contain bg-white rounded p-1" />
                         ) : (
@@ -204,22 +204,22 @@ const AdminPartnersPage: React.FC = () => {
                           {p.name}
                         </Link>
                       </td>
-                      <td className="py-3 px-4 text-slate-300 text-sm capitalize">
+                      <td className="py-4 px-6 text-slate-300 text-sm capitalize">
                         {(p as any).partnerType || (p.isActive ? 'partner' : 'affiliate')}
                       </td>
-                      <td className="py-3 px-4 text-emerald-400 text-sm">
+                      <td className="py-4 px-6 text-emerald-400 text-sm">
                         {p.website ? (
                           <a href={p.website} target="_blank" rel="noreferrer" className="hover:underline">{p.website}</a>
                         ) : (
                           <span className="text-slate-500">-</span>
                         )}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${p.isActive ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-gray-500/10 text-slate-400 border-gray-500/30'}`}>
                           {p.isActive ? 'Active' : 'Hidden'}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-4 px-6 text-right">
                         <Link to={`/admin/partners/${p._id}`} className="p-1.5 text-slate-400 hover:text-white hover:bg-[#11141d] rounded-lg transition-colors inline-block" title="View Details">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -268,41 +268,41 @@ const AdminPartnersPage: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Applicant</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Audience Size</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Socials</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Date</th>
-                  <th className="py-3 px-4 text-left text-slate-400 font-medium text-sm">Status</th>
-                  <th className="py-3 px-4 text-right text-slate-400 font-medium text-sm">Actions</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Applicant</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Audience Size</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Socials</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-800">
+              <tbody className="divide-y divide-[#1f2233]">
                 {isLoadingAffiliates ? (
                   <tr><td colSpan={6} className="p-6 text-center text-slate-500">Loading applications...</td></tr>
                 ) : affiliates.length === 0 ? (
                   <tr><td colSpan={6} className="p-6 text-center text-slate-500">No applications found</td></tr>
                 ) : (
                   affiliates.map(app => (
-                    <tr key={app._id} className="hover:bg-[#1f2233]/30">
-                      <td className="py-3 px-4">
+                    <tr key={app._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                      <td className="py-4 px-6">
                         <p className="text-white font-medium">{app.name}</p>
                         <p className="text-slate-400 text-sm">{app.email}</p>
                       </td>
-                      <td className="py-3 px-4 text-slate-300">{app.audienceSize}</td>
-                      <td className="py-3 px-4 text-blue-400 text-sm">
+                      <td className="py-4 px-6 text-slate-300">{app.audienceSize}</td>
+                      <td className="py-4 px-6 text-blue-400 text-sm">
                         {app.socialLinks.map((link, idx) => (
                           <a key={idx} href={link} target="_blank" rel="noreferrer" className="block hover:underline truncate max-w-[150px]">{link}</a>
                         ))}
                       </td>
-                      <td className="py-3 px-4 text-slate-400 text-sm">
+                      <td className="py-4 px-6 text-slate-400 text-sm">
                         {new Date(app.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="py-3 px-4">
+                      <td className="py-4 px-6">
                         <span className={`px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(app.status)}`}>
                           {app.status.toUpperCase()}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="py-4 px-6 text-right">
                         <button className="px-3 py-1.5 text-sm bg-[#11141d] hover:bg-[#1f2233] text-white rounded-lg transition-colors border border-[#1f2233]">
                           Review
                         </button>

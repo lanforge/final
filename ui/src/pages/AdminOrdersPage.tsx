@@ -185,48 +185,48 @@ const AdminOrdersPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Order Number</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Customer</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Date</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Status</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Payment</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Total</th>
-                <th className="text-left py-3 px-4 text-slate-500 font-medium text-xs">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order Number</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Payment</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-[#1f2233]">
               {isLoading ? (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">Loading orders...</td></tr>
               ) : orders.length === 0 ? (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500 text-sm">No orders found.</td></tr>
               ) : orders.map((order) => (
-                <tr key={order._id} className="hover:bg-[#1f2233]/50 transition-colors">
-                  <td className="py-3 px-4 text-slate-300">
+                <tr key={order._id} className="hover:bg-[#1f2233]/30 transition-colors">
+                  <td className="py-4 px-6 text-slate-300">
                     <span className="font-medium">{order.orderNumber || order._id.slice(-8).toUpperCase()}</span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <div>
                       <p className="text-slate-300">{order.customer ? `${order.customer.firstName} ${order.customer.lastName}` : 'Guest'}</p>
                       <p className="text-slate-500 text-xs">{order.customer?.email}</p>
                     </div>
                   </td>
-                  <td className="py-3 px-4 text-slate-400">
+                  <td className="py-4 px-6 text-slate-400">
                     {new Date(order.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <span className={`px-2 py-0.5 rounded-sm text-[10px] uppercase tracking-wider font-medium border ${getStatusColor(order.status)}`}>
                       {(order.status || 'unknown').replace(/-/g, ' ')}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <span className={`px-2 py-0.5 rounded-sm text-[10px] uppercase tracking-wider font-medium border ${getPaymentColor(order.paymentStatus)}`}>
                       {(order.paymentStatus || 'unknown')}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-slate-300 font-medium">
+                  <td className="py-4 px-6 text-slate-300 font-medium">
                     {formatCurrency(order.total)}
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-4 px-6">
                     <button 
                       onClick={() => navigate(`/admin/orders/${order._id}`)}
                       className="p-1.5 text-slate-500 hover:text-white hover:bg-[#1f2233] rounded-md transition-colors" 

@@ -167,11 +167,7 @@
 
   /* Admin specific styles */
   .admin-card {
-    @apply bg-[#11141d]/80 border border-[#1f2233] rounded-xl shadow-lg shadow-black/40 backdrop-blur-xl transition-all duration-300 relative overflow-hidden;
-  }
-  
-  .admin-card::after {
-    @apply content-[''] absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none;
+    @apply bg-[#0a0c13] border border-[#1f2233] rounded-xl overflow-hidden transition-all duration-200;
   }
 
   .admin-input {
