@@ -199,12 +199,12 @@ const AdminPromotionsPage: React.FC = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Code</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Type</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Value</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Usage</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Expires</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Code</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Type</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Value</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Usage</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Expires</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#1f2233]">
@@ -395,11 +395,11 @@ const AdminPromotionsPage: React.FC = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Member</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Points</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Tier</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Spent</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Member</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Email</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Points</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Tier</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Total Spent</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#1f2233]">

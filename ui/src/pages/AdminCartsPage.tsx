@@ -419,10 +419,10 @@ const AdminCartsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Session/User</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Items</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Session/User</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Items</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Value</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Last Active</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Last Active</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
               </tr>

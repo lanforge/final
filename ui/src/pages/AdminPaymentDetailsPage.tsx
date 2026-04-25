@@ -264,11 +264,11 @@ const AdminPaymentDetailsPage: React.FC = () => {
               <table className="w-full text-left">
                 <thead>
                   <tr className="text-slate-400 border-b border-[#1f2233]">
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Reason</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Refund ID</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Date</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Amount</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Reason</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Refund ID</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1f2233]">

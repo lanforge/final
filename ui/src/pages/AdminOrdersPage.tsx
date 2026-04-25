@@ -185,13 +185,13 @@ const AdminOrdersPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order Number</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Payment</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Order Number</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Customer</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Date</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Payment</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Total</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1f2233]">

@@ -127,12 +127,12 @@ const AdminUsersPage: React.FC = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#1f2233]">
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">User ID</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Email</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Role</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">User ID</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Name</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Email</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Role</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Actions</th>
               </tr>
             </thead>
             <tbody>

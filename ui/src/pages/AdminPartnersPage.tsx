@@ -154,11 +154,11 @@ const AdminPartnersPage: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Partner Name</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Type</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Website</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Order</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Partner Name</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Type</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Website</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
                   <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
@@ -268,11 +268,11 @@ const AdminPartnersPage: React.FC = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#0a0c13]">
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Applicant</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Audience Size</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Socials</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Applicant</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Audience Size</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Socials</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Date</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
                   <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>

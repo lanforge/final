@@ -370,8 +370,8 @@ const AdminPartsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Part Name</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Type & Brand</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Part Name</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Type & Brand</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Price</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Cost</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Stock</th>

@@ -117,9 +117,9 @@ const AdminReviewsPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Rating / Item</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Review</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Rating / Item</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Customer</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Review</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Date</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-center">Status</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>

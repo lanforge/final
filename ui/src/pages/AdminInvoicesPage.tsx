@@ -121,11 +121,11 @@ const AdminInvoicesPage: React.FC = () => {
         <table className="w-full text-left text-sm text-slate-400">
           <thead className="bg-[#11141d] border-b border-[#1f2233]">
             <tr>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Invoice #</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Description</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Invoice #</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Customer</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Description</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Amount</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
               <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>

@@ -87,11 +87,11 @@ const AdminShowcasesPage: React.FC = () => {
         <table className="w-full text-left text-sm text-slate-300">
           <thead className="bg-[#11141d] border-b border-[#1f2233]">
             <tr>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Creator</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Code</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</th>
-              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Name</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Creator</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Code</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Total</th>
+              <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
               <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>

@@ -154,10 +154,10 @@ const AdminDashboardPage: React.FC = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[#1f2233] bg-[#11141d]">
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Amount</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Order</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Customer</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
+                  <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#1f2233]">

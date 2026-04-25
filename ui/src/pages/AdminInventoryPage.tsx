@@ -210,8 +210,8 @@ const AdminInventoryPage: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#1f2233] bg-[#07090e]">
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Product Name</th>
-                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">SKU / Location</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Product Name</th>
+                <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">SKU / Location</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">In Stock</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Reserved</th>
                 <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Available</th>

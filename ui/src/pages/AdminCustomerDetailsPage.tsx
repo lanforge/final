@@ -463,10 +463,10 @@ const AdminCustomerDetailsPage: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-[#0a0c13]">
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Order</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Payment</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Order</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Date</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Payment</th>
                     <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Total</th>
                   </tr>
                 </thead>
@@ -516,10 +516,10 @@ const AdminCustomerDetailsPage: React.FC = () => {
               <table className="w-full">
                 <thead>
                   <tr className="bg-[#0a0c13]">
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Transaction ID</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Date</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Method</th>
-                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Transaction ID</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Date</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Method</th>
+                    <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-left">Status</th>
                     <th className="py-4 px-6 text-xs font-semibold text-slate-400 uppercase tracking-wider text-right">Amount</th>
                   </tr>
                 </thead>
