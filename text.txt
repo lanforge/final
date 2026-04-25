@@ -1,2 +1,4 @@
-[Error] Failed to load resource: the server responded with a status of 404 (Not Found) (all, line 0)
-[Error] Failed to load resource: the server responded with a status of 404 (Not Found) (all, line 0)
+[Error] Failed to load resource: the server responded with a status of 500 () (69e6b4342314dbddf6e79423, line 0)
+[Error] Failed to update order: – AxiosError: Request failed with status code 500
+AxiosError: Request failed with status code 500
+	(anonymous function) (main.a2a84c37.js:2:1540597)

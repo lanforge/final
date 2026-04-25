@@ -849,11 +849,17 @@ router.put('/:id', protect, staffOrAdmin, async (req: AuthRequest, res: Response
       const isTaxEnabled = businessInfo.taxEnabled !== false;
       const taxRateValue = (businessInfo.taxRate ?? 8.0) / 100;
       
-      const tax = isTaxEnabled ? (subtotal - order.discount + order.shipping) * taxRateValue : 0;
+      const discount = order.discount || 0;
+      const shipping = order.shipping || 0;
+      const shippingInsurance = order.shippingInsurance || 0;
+      const donationAmountAmt = order.donationAmount || 0;
+      
+      const tax = isTaxEnabled ? (subtotal - discount + shipping) * taxRateValue : 0;
       order.tax = parseFloat(tax.toFixed(2));
       
       // Recalculate total
-      const total = subtotal - order.discount + order.shipping + order.shippingInsurance + order.tax + (order.donationAmount || 0);
+      const taxAmt = order.tax || 0;
+      const total = subtotal - discount + shipping + shippingInsurance + taxAmt + donationAmountAmt;
       order.total = parseFloat(total.toFixed(2));
     }
 
@@ -1064,7 +1070,8 @@ router.post('/admin', protect, staffOrAdmin, async (req: AuthRequest, res: Respo
     // Send Notification
     try {
       const { sendNotification } = await import('../services/notificationService');
-      await sendNotification(`Manual Order Created: ${orderNumber}\nTotal: $${total.toFixed(2)}\nCustomer: ${shippingAddress.firstName} ${shippingAddress.lastName} (${shippingAddress.email})\nPayment Method: ${paymentMethod}`);
+      const safeTotal = typeof total === 'number' && !isNaN(total) ? total : 0;
+      await sendNotification(`Manual Order Created: ${orderNumber}\nTotal: $${safeTotal.toFixed(2)}\nCustomer: ${shippingAddress.firstName} ${shippingAddress.lastName} (${shippingAddress.email})\nPayment Method: ${paymentMethod}`);
     } catch (notifErr) {
       console.error('Failed to send notification for admin order:', notifErr);
     }
