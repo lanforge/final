@@ -107,6 +107,76 @@ router.get('/search', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+// GET /api/products/feed/google-merchant — public xml feed
+router.get('/feed/google-merchant', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const products = await Product.find({ isActive: true })
+      .select('name slug description shortDescription price images category sku stock');
+
+    // Get FRONTEND_URL from environment or fallback to localhost
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+    let xml = '<?xml version="1.0"?>\n';
+    xml += '<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">\n';
+    xml += '  <channel>\n';
+    xml += '    <title>LANForge Products</title>\n';
+    xml += `    <link>${baseUrl}</link>\n`;
+    xml += '    <description>LANForge Custom PCs and Accessories</description>\n';
+
+    const escapeXml = (unsafe: string) => {
+      if (!unsafe) return '';
+      let escaped = '';
+      for (let i = 0; i < unsafe.length; i++) {
+        const c = unsafe[i];
+        if (c === '<') escaped += '&' + 'lt;';
+        else if (c === '>') escaped += '&' + 'gt;';
+        else if (c === '&') escaped += '&' + 'amp;';
+        else if (c === "'") escaped += '&' + 'apos;';
+        else if (c === '"') escaped += '&' + 'quot;';
+        else escaped += c;
+      }
+      return escaped;
+    };
+
+    for (const p of products) {
+      const link = `${baseUrl}/products/${p.slug}`;
+      let imageLink = '';
+      if (p.images && p.images.length > 0) {
+        imageLink = p.images[0].startsWith('http') ? p.images[0] : `${baseUrl}${p.images[0]}`;
+      }
+        
+      const availability = p.stock > 0 ? 'in_stock' : 'out_of_stock';
+      
+      xml += '    <item>\n';
+      xml += `      <g:id>${p._id}</g:id>\n`;
+      xml += `      <g:title>${escapeXml(p.name)}</g:title>\n`;
+      const desc = p.description || p.shortDescription || p.name;
+      xml += `      <g:description>${escapeXml(desc)}</g:description>\n`;
+      xml += `      <g:link>${link}</g:link>\n`;
+      if (imageLink) {
+        xml += `      <g:image_link>${escapeXml(imageLink)}</g:image_link>\n`;
+      }
+      xml += `      <g:condition>new</g:condition>\n`;
+      xml += `      <g:availability>${availability}</g:availability>\n`;
+      xml += `      <g:price>${p.price.toFixed(2)} USD</g:price>\n`;
+      xml += `      <g:brand>LANForge</g:brand>\n`;
+      if (p.sku) {
+        xml += `      <g:mpn>${escapeXml(p.sku)}</g:mpn>\n`;
+      }
+      xml += '    </item>\n';
+    }
+
+    xml += '  </channel>\n';
+    xml += '</rss>';
+
+    res.header('Content-Type', 'application/xml');
+    res.send(xml);
+  } catch (error) {
+    console.error('Error generating Google Merchant feed:', error);
+    res.status(500).json({ message: 'Server error generating feed' });
+  }
+});
+
 // ─── ADMIN ROUTES ─────────────────────────────────────────────────────────────
 
 // GET /api/products/admin/all — admin/staff, includes cost and stock
