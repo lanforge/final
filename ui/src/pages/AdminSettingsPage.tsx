@@ -259,8 +259,8 @@ const AdminSettingsPage: React.FC = () => {
     <div className="space-y-6 max-w-5xl h-full flex flex-col">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Settings</h1>
-          <p className="text-gray-400 mt-1">Manage global business details, pages content, and store modes</p>
+          <h1 className="text-xl font-medium text-white">Settings</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage global business details, pages content, and store modes</p>
         </div>
         {activeTab !== 'pages' && (
           <button 
@@ -298,7 +298,7 @@ const AdminSettingsPage: React.FC = () => {
 
         {/* GENERAL TAB */}
         {activeTab === 'general' && (
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-lg font-bold text-white flex items-center space-x-2">
                 <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,7 +313,7 @@ const AdminSettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-400 mb-2">Store Name</label>
                   <input
                     type="text"
-                    className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                    className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                     value={settings.storeName || ''}
                     onChange={e => handleChange('storeName', e.target.value)}
                   />
@@ -322,7 +322,7 @@ const AdminSettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-400 mb-2">Support Email</label>
                   <input
                     type="email"
-                    className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                    className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                     value={settings.email || ''}
                     onChange={e => handleChange('email', e.target.value)}
                   />
@@ -331,7 +331,7 @@ const AdminSettingsPage: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-400 mb-2">Contact Phone</label>
                   <input
                     type="tel"
-                    className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                    className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                     value={settings.phone || ''}
                     onChange={e => handleChange('phone', e.target.value)}
                   />
@@ -339,7 +339,7 @@ const AdminSettingsPage: React.FC = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">Currency</label>
                   <select
-                    className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                    className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                     value={settings.currency || 'USD'}
                     onChange={e => handleChange('currency', e.target.value)}
                   >
@@ -356,23 +356,23 @@ const AdminSettingsPage: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
                       <label className="block text-xs font-medium text-gray-400 mb-1">Street Address</label>
-                      <input type="text" className="input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.street || ''} onChange={e => handleChange('address.street', e.target.value)} />
+                      <input type="text" className="admin-input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.street || ''} onChange={e => handleChange('address.street', e.target.value)} />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-400 mb-1">City</label>
-                      <input type="text" className="input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.city || ''} onChange={e => handleChange('address.city', e.target.value)} />
+                      <input type="text" className="admin-input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.city || ''} onChange={e => handleChange('address.city', e.target.value)} />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-400 mb-1">State/Province</label>
-                      <input type="text" className="input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.state || ''} onChange={e => handleChange('address.state', e.target.value)} />
+                      <input type="text" className="admin-input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.state || ''} onChange={e => handleChange('address.state', e.target.value)} />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-400 mb-1">Zip/Postal Code</label>
-                      <input type="text" className="input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.zipCode || ''} onChange={e => handleChange('address.zipCode', e.target.value)} />
+                      <input type="text" className="admin-input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.zipCode || ''} onChange={e => handleChange('address.zipCode', e.target.value)} />
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-400 mb-1">Country</label>
-                      <input type="text" className="input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.country || 'US'} onChange={e => handleChange('address.country', e.target.value)} />
+                      <input type="text" className="admin-input w-full bg-gray-900 border-gray-700 rounded-lg" value={settings.address?.country || 'US'} onChange={e => handleChange('address.country', e.target.value)} />
                     </div>
                   </div>
                 </div>
@@ -539,7 +539,7 @@ const AdminSettingsPage: React.FC = () => {
 
         {/* MAINTENANCE TAB */}
         {activeTab === 'maintenance' && (
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-lg font-bold text-white flex items-center space-x-2">
                 <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -573,7 +573,7 @@ const AdminSettingsPage: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-400 mb-2">Auto-Reopen Time (EST)</label>
                     <input
                       type="datetime-local"
-                      className="input bg-gray-900 border-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 rounded-xl text-white"
+                      className="admin-input bg-gray-900 border-gray-700 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 rounded-xl text-white"
                       value={maintenance?.reopenAt ? (() => {
                         try {
                           const estString = new Date(maintenance.reopenAt).toLocaleString("sv-SE", { timeZone: "America/New_York" });
@@ -644,7 +644,7 @@ const AdminSettingsPage: React.FC = () => {
 
         {/* TAX & SHIPPING TAB */}
         {activeTab === 'tax' && (
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-lg font-bold text-white flex items-center space-x-2">
                 <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -661,7 +661,7 @@ const AdminSettingsPage: React.FC = () => {
                     <span className="absolute left-4 top-2.5 text-gray-500">$</span>
                     <input
                       type="number"
-                      className="input w-full pl-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
+                      className="admin-input w-full pl-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
                       value={settings.flatShippingRate || 0}
                       onChange={e => handleChange('flatShippingRate', parseFloat(e.target.value))}
                     />
@@ -673,7 +673,7 @@ const AdminSettingsPage: React.FC = () => {
                     <span className="absolute left-4 top-2.5 text-gray-500">$</span>
                     <input
                       type="number"
-                      className="input w-full pl-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
+                      className="admin-input w-full pl-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
                       value={settings.freeShippingThreshold || 0}
                       onChange={e => handleChange('freeShippingThreshold', parseFloat(e.target.value))}
                     />
@@ -684,7 +684,7 @@ const AdminSettingsPage: React.FC = () => {
                   <div className="relative">
                     <input
                       type="number"
-                      className="input w-full pr-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
+                      className="admin-input w-full pr-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
                       value={settings.buildFeePercentage || 0}
                       onChange={e => handleChange('buildFeePercentage', parseFloat(e.target.value))}
                     />
@@ -697,7 +697,7 @@ const AdminSettingsPage: React.FC = () => {
                     <input
                       type="number"
                       step="0.01"
-                      className="input w-full pr-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
+                      className="admin-input w-full pr-8 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-white"
                       value={settings.taxRate || 0}
                       onChange={e => handleChange('taxRate', parseFloat(e.target.value))}
                     />

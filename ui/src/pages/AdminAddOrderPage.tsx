@@ -407,7 +407,7 @@ const AdminAddOrderPage: React.FC = () => {
             </svg>
             <span>Back to Orders</span>
           </button>
-          <h1 className="text-2xl font-bold text-white">Create Manual Order</h1>
+          <h1 className="text-xl font-medium text-white">Create Manual Order</h1>
         </div>
       </div>
 
@@ -417,14 +417,14 @@ const AdminAddOrderPage: React.FC = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="card p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="admin-card p-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-400 mb-2">Select Customer *</label>
             <select
               name="customerId"
               required
-              className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+              className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
               value={formData.customerId}
               onChange={handleChange}
             >
@@ -479,7 +479,7 @@ const AdminAddOrderPage: React.FC = () => {
               <select
                 name="productId"
                 required={productType === 'standard'}
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.productId}
                 onChange={handleChange}
               >
@@ -498,7 +498,7 @@ const AdminAddOrderPage: React.FC = () => {
                     type="text"
                     name="customProductName"
                     required={productType === 'custom-product'}
-                    className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                    className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                     value={formData.customProductName}
                     onChange={handleChange}
                     placeholder="e.g. Special Keyboard"
@@ -512,7 +512,7 @@ const AdminAddOrderPage: React.FC = () => {
                     min="0"
                     step="0.01"
                     required={productType === 'custom-product'}
-                    className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                    className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                     value={formData.customProductPrice}
                     onChange={handleChange}
                     placeholder="0.00"
@@ -531,7 +531,7 @@ const AdminAddOrderPage: React.FC = () => {
                       <input
                         type="text"
                         name="customBuildId"
-                        className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                        className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                         value={formData.customBuildId}
                         onChange={handleChange}
                         placeholder="e.g. A1B2C3D4"
@@ -591,7 +591,7 @@ const AdminAddOrderPage: React.FC = () => {
                           <div key={category}>
                             <label className="block text-sm font-medium text-gray-400 mb-1">{category}</label>
                             <select
-                              className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                              className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                               value={selectedParts[category.toLowerCase()] || ''}
                               onChange={(e) => setSelectedParts({...selectedParts, [category.toLowerCase()]: e.target.value})}
                             >
@@ -620,7 +620,7 @@ const AdminAddOrderPage: React.FC = () => {
                           {selectedCaseFans.map((fanId, idx) => (
                             <div key={idx} className="flex gap-2 items-center">
                               <select
-                                className="input flex-1 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                                className="admin-input flex-1 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                                 value={fanId}
                                 onChange={(e) => {
                                   const newFans = [...selectedCaseFans];
@@ -741,7 +741,7 @@ const AdminAddOrderPage: React.FC = () => {
               name="quantity"
               min="1"
               required
-              className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+              className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
               value={formData.quantity}
               onChange={handleChange}
             />
@@ -750,13 +750,13 @@ const AdminAddOrderPage: React.FC = () => {
           <div className="md:col-span-2 border-t border-gray-800 pt-4 mt-2">
             <h3 className="text-sm font-medium text-gray-400 mb-4">Shipping Address</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input type="text" placeholder="Name" value={shippingAddress.name} onChange={(e) => setShippingAddress({...shippingAddress, name: e.target.value})} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
-              <input type="text" placeholder="Street 1" value={shippingAddress.street1} onChange={(e) => setShippingAddress({...shippingAddress, street1: e.target.value})} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
-              <input type="text" placeholder="Street 2 (Opt)" value={shippingAddress.street2} onChange={(e) => setShippingAddress({...shippingAddress, street2: e.target.value})} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
-              <input type="text" placeholder="City" value={shippingAddress.city} onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
-              <input type="text" placeholder="State" value={shippingAddress.state} onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
-              <input type="text" placeholder="Zip" value={shippingAddress.zip} onChange={(e) => setShippingAddress({...shippingAddress, zip: e.target.value})} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
-              <input type="text" placeholder="Country" value={shippingAddress.country} onChange={(e) => setShippingAddress({...shippingAddress, country: e.target.value})} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
+              <input type="text" placeholder="Name" value={shippingAddress.name} onChange={(e) => setShippingAddress({...shippingAddress, name: e.target.value})} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
+              <input type="text" placeholder="Street 1" value={shippingAddress.street1} onChange={(e) => setShippingAddress({...shippingAddress, street1: e.target.value})} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
+              <input type="text" placeholder="Street 2 (Opt)" value={shippingAddress.street2} onChange={(e) => setShippingAddress({...shippingAddress, street2: e.target.value})} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
+              <input type="text" placeholder="City" value={shippingAddress.city} onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
+              <input type="text" placeholder="State" value={shippingAddress.state} onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
+              <input type="text" placeholder="Zip" value={shippingAddress.zip} onChange={(e) => setShippingAddress({...shippingAddress, zip: e.target.value})} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
+              <input type="text" placeholder="Country" value={shippingAddress.country} onChange={(e) => setShippingAddress({...shippingAddress, country: e.target.value})} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl" />
             </div>
           </div>
 

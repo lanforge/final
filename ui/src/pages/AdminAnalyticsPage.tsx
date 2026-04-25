@@ -38,7 +38,7 @@ const AdminAnalyticsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">Analytics Dashboard</h1>
+        <h1 className="text-xl font-medium text-white">Analytics Dashboard</h1>
         <button 
           onClick={() => window.location.reload()}
           className="btn btn-outline"
@@ -54,7 +54,7 @@ const AdminAnalyticsPage: React.FC = () => {
           </div>
           <div className="relative z-10">
             <p className="text-gray-400 text-sm font-medium mb-1">Total Page Views</p>
-            <p className="text-2xl font-bold text-white">{stats.pageViews}</p>
+            <p className="text-xl font-medium text-white">{stats.pageViews}</p>
           </div>
         </div>
 
@@ -64,7 +64,7 @@ const AdminAnalyticsPage: React.FC = () => {
           </div>
           <div className="relative z-10">
             <p className="text-gray-400 text-sm font-medium mb-1">Add to Carts</p>
-            <p className="text-2xl font-bold text-white">{stats.addCarts}</p>
+            <p className="text-xl font-medium text-white">{stats.addCarts}</p>
           </div>
         </div>
       </div>

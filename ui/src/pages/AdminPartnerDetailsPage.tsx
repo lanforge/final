@@ -145,7 +145,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
               <img src={partner.logo} alt={partner.name} className="w-10 h-10 object-contain bg-white rounded p-1" />
             )}
             <div>
-              <h1 className="text-2xl font-bold text-white">{partner.name}</h1>
+              <h1 className="text-xl font-medium text-white">{partner.name}</h1>
               <p className="text-gray-400 text-sm">Creator Code: <span className="text-emerald-400 font-mono">{partner.creatorCode}</span></p>
             </div>
           </div>
@@ -176,7 +176,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Details */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="card p-6 space-y-6">
+          <div className="admin-card p-6 space-y-6">
             <h2 className="text-lg font-bold text-white mb-4">Partner Details</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -187,7 +187,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                   name="name"
                   value={formData.name || ''}
                   onChange={handleChange}
-                  className="input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-gray-900/50"
                 />
               </div>
               <div>
@@ -197,7 +197,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                   name="email"
                   value={formData.email || ''}
                   onChange={handleChange}
-                  className="input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-gray-900/50"
                 />
               </div>
               <div>
@@ -207,7 +207,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                   name="creatorCode"
                   value={formData.creatorCode || ''}
                   onChange={handleChange}
-                  className="input w-full bg-gray-900/50 uppercase"
+                  className="admin-input w-full bg-gray-900/50 uppercase"
                 />
               </div>
               <div>
@@ -217,7 +217,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                   name="commissionRate"
                   value={formData.commissionRate || 0}
                   onChange={handleChange}
-                  className="input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-gray-900/50"
                 />
               </div>
               <div>
@@ -227,7 +227,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                   name="website"
                   value={formData.website || ''}
                   onChange={handleChange}
-                  className="input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-gray-900/50"
                 />
               </div>
               <div>
@@ -237,7 +237,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                   name="logo"
                   value={formData.logo || ''}
                   onChange={handleChange}
-                  className="input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-gray-900/50"
                 />
               </div>
               <div>
@@ -250,7 +250,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                     partnerType: e.target.value as 'brand' | 'individual' | 'affiliate',
                     isPartner: e.target.value !== 'affiliate' 
                   }))}
-                  className="input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-gray-900/50"
                 >
                   <option value="brand">Brand Partner</option>
                   <option value="individual">Individual Partner</option>
@@ -263,7 +263,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                   name="customerDiscountType"
                   value={formData.customerDiscountType || ''}
                   onChange={handleChange}
-                  className="input w-full bg-gray-900/50"
+                  className="admin-input w-full bg-gray-900/50"
                 >
                   <option value="">None</option>
                   <option value="percentage">Percentage (%)</option>
@@ -280,7 +280,7 @@ const AdminPartnerDetailsPage: React.FC = () => {
                     name="customerDiscountValue"
                     value={formData.customerDiscountValue || 0}
                     onChange={handleChange}
-                    className="input w-full bg-gray-900/50"
+                    className="admin-input w-full bg-gray-900/50"
                   />
                 </div>
               )}
@@ -312,38 +312,38 @@ const AdminPartnerDetailsPage: React.FC = () => {
                 value={formData.description || ''}
                 onChange={handleChange}
                 rows={3}
-                className="input w-full bg-gray-900/50"
+                className="admin-input w-full bg-gray-900/50"
               />
             </div>
           </div>
 
-          <div className="card p-6 space-y-6">
+          <div className="admin-card p-6 space-y-6">
             <h2 className="text-lg font-bold text-white mb-4">Social Links</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Twitter</label>
-                <input type="text" name="twitter" value={formData.twitter || ''} onChange={handleChange} className="input w-full bg-gray-900/50" />
+                <input type="text" name="twitter" value={formData.twitter || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Twitch</label>
-                <input type="text" name="twitch" value={formData.twitch || ''} onChange={handleChange} className="input w-full bg-gray-900/50" />
+                <input type="text" name="twitch" value={formData.twitch || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">YouTube</label>
-                <input type="text" name="youtube" value={formData.youtube || ''} onChange={handleChange} className="input w-full bg-gray-900/50" />
+                <input type="text" name="youtube" value={formData.youtube || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Instagram</label>
-                <input type="text" name="instagram" value={formData.instagram || ''} onChange={handleChange} className="input w-full bg-gray-900/50" />
+                <input type="text" name="instagram" value={formData.instagram || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">TikTok</label>
-                <input type="text" name="tiktok" value={formData.tiktok || ''} onChange={handleChange} className="input w-full bg-gray-900/50" />
+                <input type="text" name="tiktok" value={formData.tiktok || ''} onChange={handleChange} className="admin-input w-full bg-gray-900/50" />
               </div>
             </div>
           </div>
 
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-lg font-bold text-white">Orders Using Code</h2>
             </div>
@@ -392,13 +392,13 @@ const AdminPartnerDetailsPage: React.FC = () => {
 
         {/* Right Column - Stats */}
         <div className="space-y-6">
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-6">Performance Stats</h2>
             
             <div className="space-y-4">
               <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">
                 <p className="text-sm text-gray-400 mb-1">Total Referrals</p>
-                <p className="text-2xl font-bold text-white">{partner.stats?.referrals || orders.length}</p>
+                <p className="text-xl font-medium text-white">{partner.stats?.referrals || orders.length}</p>
               </div>
               
               <div className="p-4 bg-gray-900/50 rounded-lg border border-gray-800">

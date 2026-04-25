@@ -350,7 +350,7 @@ const AdminBuildRequestDetailsPage: React.FC = () => {
             </svg>
             Back
           </button>
-          <h1 className="text-2xl font-bold text-white">Build Request Details</h1>
+          <h1 className="text-xl font-medium text-white">Build Request Details</h1>
         </div>
         <div className="flex items-center gap-3">
           {request.status !== 'unbuildable' && request.status !== 'completed' && (

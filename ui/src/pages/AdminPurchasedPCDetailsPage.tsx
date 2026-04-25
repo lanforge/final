@@ -118,12 +118,12 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
             </svg>
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white">{pc.name}</h1>
+            <h1 className="text-xl font-medium text-white">{pc.name}</h1>
             <p className="text-gray-400 mt-1 font-mono">
               S/N: {pc.serialNumber}
             </p>
             {pc.color && (
-              <p className="text-gray-400 mt-1">
+              <p className="text-gray-500 text-sm mt-1">
                 Color: <span className="text-emerald-400">{pc.color}</span>
               </p>
             )}
@@ -145,7 +145,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Specs */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Specifications / Parts</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {pc.parts && pc.parts.length > 0 ? (
@@ -177,7 +177,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Notes</h2>
             <textarea
               value={notes}
@@ -190,7 +190,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
 
         {/* Right Column: Status & References */}
         <div className="space-y-6">
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Status & Details</h2>
             <div className="space-y-4">
               <div>
@@ -198,7 +198,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                 >
                   <option value="building">Building</option>
                   <option value="benchmarking">Benchmarking</option>
@@ -216,7 +216,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Linked Order</h2>
             {pc.order ? (
               <div className="space-y-3">
@@ -240,7 +240,7 @@ const AdminPurchasedPCDetailsPage: React.FC = () => {
           </div>
 
           {pc.customer && (
-            <div className="card p-6">
+            <div className="admin-card p-6">
               <h2 className="text-lg font-bold text-white mb-4">Customer</h2>
               <div className="space-y-2 text-sm">
                 <div className="text-white font-medium">{pc.customer.firstName} {pc.customer.lastName}</div>

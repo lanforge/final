@@ -116,7 +116,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
             <h1 className="text-2xl font-bold text-white flex items-center gap-4">
               Build {build.buildId}
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-gray-500 text-sm mt-1">
               Created on {new Date(build.createdAt).toLocaleString()}
             </p>
           </div>
@@ -135,7 +135,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Parts */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Configuration Details</h2>
             <div className="space-y-4">
               {build.parts.map((item, idx) => (
@@ -178,7 +178,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
 
         {/* Right Column: Customer & Totals */}
         <div className="space-y-6">
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Customer Details</h2>
             {build.customer ? (
               <div className="space-y-2">
@@ -211,7 +211,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
             )}
           </div>
 
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Status & Link</h2>
             
             <div className="mb-4">
@@ -219,7 +219,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
               <select
                 value={build.status}
                 onChange={(e) => handleUpdateStatus(e.target.value)}
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-lg text-white"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-lg text-white"
               >
                 <option value="draft">Draft</option>
                 <option value="saved">Saved</option>
@@ -248,7 +248,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
                   type="text" 
                   readOnly 
                   value={`${window.location.origin}/build/${build.buildId}`}
-                  className="input w-full bg-gray-900 border-gray-700 rounded-l-lg text-xs text-gray-400 font-mono"
+                  className="admin-input w-full bg-gray-900 border-gray-700 rounded-l-lg text-xs text-gray-400 font-mono"
                 />
                 <button 
                   onClick={() => {
@@ -264,7 +264,7 @@ const AdminCustomBuildDetailsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Pricing Summary</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-gray-400">

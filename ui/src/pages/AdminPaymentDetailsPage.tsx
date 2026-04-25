@@ -175,7 +175,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment Info */}
-        <div className="card p-6 space-y-4">
+        <div className="admin-card p-6 space-y-4">
           <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Transaction Information</h2>
           
           <div className="flex justify-between items-center py-2">
@@ -207,7 +207,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
         </div>
 
         {/* Associated Entities */}
-        <div className="card p-6 space-y-4">
+        <div className="admin-card p-6 space-y-4">
           <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Associated Records</h2>
           
           {payment.order && (
@@ -258,7 +258,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
 
         {/* Refund History */}
         {payment.metadata?.refunds && payment.metadata.refunds.length > 0 && (
-          <div className="card p-6 lg:col-span-2">
+          <div className="admin-card p-6 lg:col-span-2">
             <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2 mb-4">Refund History</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
@@ -313,7 +313,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
                     max={remainingBalance}
                     value={refundAmount}
                     onChange={(e) => setRefundAmount(e.target.value ? Number(e.target.value) : '')}
-                    className="input w-full pl-8 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                    className="admin-input w-full pl-8 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                     placeholder={remainingBalance.toString()}
                   />
                 </div>
@@ -324,7 +324,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
                 <select
                   value={refundReason}
                   onChange={(e) => setRefundReason(e.target.value)}
-                  className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                 >
                   <option value="requested_by_customer">Requested by Customer</option>
                   <option value="duplicate">Duplicate Charge</option>

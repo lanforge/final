@@ -344,7 +344,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                 <option value="cancelled" className="text-red-400 bg-gray-900">Cancelled</option>
               </select>
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-gray-500 text-sm mt-1">
               Placed on {new Date(order.createdAt).toLocaleString()}
             </p>
           </div>
@@ -366,7 +366,7 @@ const AdminOrderDetailsPage: React.FC = () => {
         {/* Left Column: Items & Totals */}
         <div className="lg:col-span-2 space-y-6">
           {/* Items */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-white">Order Items</h2>
               <button 
@@ -387,7 +387,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                           type="text" 
                           value={item.name} 
                           onChange={(e) => handleItemChange(idx, 'name', e.target.value)}
-                          className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                         />
                         {item.notes && <div className="text-xs text-emerald-400 mt-1">{item.notes}</div>}
                       </div>
@@ -397,7 +397,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                           type="text" 
                           value={item.sku} 
                           onChange={(e) => handleItemChange(idx, 'sku', e.target.value)}
-                          className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                         />
                       </div>
                     </div>
@@ -409,7 +409,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                           step="0.01"
                           value={item.price} 
                           onChange={(e) => handleItemChange(idx, 'price', parseFloat(e.target.value))}
-                          className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                         />
                       </div>
                       <div className="w-1/3">
@@ -419,7 +419,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                           min="1"
                           value={item.quantity} 
                           onChange={(e) => handleItemChange(idx, 'quantity', parseInt(e.target.value))}
-                          className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+                          className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
                         />
                       </div>
                       <div className="w-1/3 flex items-end">
@@ -449,7 +449,7 @@ const AdminOrderDetailsPage: React.FC = () => {
 
           {/* Purchased PCs section */}
           {purchasedPCs.length > 0 && (
-            <div className="card p-6">
+            <div className="admin-card p-6">
               <h2 className="text-lg font-bold text-white mb-4">Purchased PCs</h2>
               <div className="space-y-4">
                 {purchasedPCs.map((pc: any, idx: number) => (
@@ -487,7 +487,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           )}
 
           {/* Totals */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Order Totals</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-gray-400">
@@ -503,7 +503,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                     step="0.01"
                     value={shipping}
                     onChange={(e) => setShipping(parseFloat(e.target.value) || 0)}
-                    className="input w-24 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-right"
+                    className="admin-input w-24 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-right"
                   />
                 </div>
               </div>
@@ -526,7 +526,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                     step="0.01"
                     value={donationAmount}
                     onChange={(e) => setDonationAmount(parseFloat(e.target.value) || 0)}
-                    className="input w-24 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-right"
+                    className="admin-input w-24 px-2 py-1 bg-gray-800 border border-gray-700 rounded-lg text-white text-right"
                   />
                 </div>
               </div>
@@ -544,7 +544,7 @@ const AdminOrderDetailsPage: React.FC = () => {
         {/* Right Column: Customer, Addresses, Payment */}
         <div className="space-y-6">
           {/* Customer Details */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Customer Details</h2>
             {order.customer ? (
               <div className="space-y-2">
@@ -573,7 +573,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Payment Details */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Payment Information</h2>
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
@@ -769,7 +769,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Shipping Labels / Purchase Label */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Shipping Actions</h2>
             
             {order.status !== 'shipped' && order.status !== 'out-for-delivery' && order.status !== 'delivered' && (
@@ -846,7 +846,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Shipping Address */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Shipping Address</h2>
             {shippingAddress && (
               <div className="space-y-3">
@@ -857,7 +857,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       type="text" 
                       value={shippingAddress.firstName} 
                       onChange={(e) => setShippingAddress({...shippingAddress, firstName: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
@@ -866,7 +866,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       type="text" 
                       value={shippingAddress.lastName} 
                       onChange={(e) => setShippingAddress({...shippingAddress, lastName: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                 </div>
@@ -876,7 +876,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                     type="text" 
                     value={shippingAddress.address} 
                     onChange={(e) => setShippingAddress({...shippingAddress, address: e.target.value})}
-                    className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -886,7 +886,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       type="text" 
                       value={shippingAddress.city} 
                       onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
@@ -896,13 +896,13 @@ const AdminOrderDetailsPage: React.FC = () => {
                         type="text" 
                         value={shippingAddress.state} 
                         onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
-                        className="input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                       />
                       <input 
                         type="text" 
                         value={shippingAddress.zip} 
                         onChange={(e) => setShippingAddress({...shippingAddress, zip: e.target.value})}
-                        className="input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                       />
                     </div>
                   </div>
@@ -912,7 +912,7 @@ const AdminOrderDetailsPage: React.FC = () => {
           </div>
 
           {/* Billing Address */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Billing Address</h2>
             {billingAddress && (
               <div className="space-y-3">
@@ -923,7 +923,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       type="text" 
                       value={billingAddress.firstName} 
                       onChange={(e) => setBillingAddress({...billingAddress, firstName: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
@@ -932,7 +932,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       type="text" 
                       value={billingAddress.lastName} 
                       onChange={(e) => setBillingAddress({...billingAddress, lastName: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                 </div>
@@ -942,7 +942,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                     type="text" 
                     value={billingAddress.address} 
                     onChange={(e) => setBillingAddress({...billingAddress, address: e.target.value})}
-                    className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
@@ -952,7 +952,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                       type="text" 
                       value={billingAddress.city} 
                       onChange={(e) => setBillingAddress({...billingAddress, city: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
@@ -962,13 +962,13 @@ const AdminOrderDetailsPage: React.FC = () => {
                         type="text" 
                         value={billingAddress.state} 
                         onChange={(e) => setBillingAddress({...billingAddress, state: e.target.value})}
-                        className="input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                       />
                       <input 
                         type="text" 
                         value={billingAddress.zip} 
                         onChange={(e) => setBillingAddress({...billingAddress, zip: e.target.value})}
-                        className="input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
+                        className="admin-input w-1/2 px-2 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm"
                       />
                     </div>
                   </div>

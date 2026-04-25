@@ -29,41 +29,41 @@ const AdminSidebar: React.FC = () => {
   ];
 
   return (
-    <div className="w-64 bg-gray-900 border-r border-gray-800 h-full flex flex-col">
-      <div className="p-2">
+    <div className="w-56 bg-[#050505] border-r border-white/5 h-full flex flex-col">
+      <div className="p-4">
       </div>
 
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto pb-4">
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto pb-4 scrollbar-hide">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             end={item.path === '/admin'}
             className={({ isActive }) =>
-              `flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
+              `flex items-center space-x-2.5 px-3 py-2 rounded-md transition-colors text-sm ${
                 isActive
-                  ? 'bg-emerald-500/10 text-emerald-400'
-                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  ? 'bg-white/10 text-white font-medium'
+                  : 'text-gray-400 hover:bg-white/5 hover:text-gray-200'
               }`
             }
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
             </svg>
-            <span className="font-medium">{item.name}</span>
+            <span>{item.name}</span>
           </NavLink>
         ))}
       </nav>
 
-      <div className="p-4 border-t border-gray-800 shrink-0">
+      <div className="p-3 border-t border-white/5 shrink-0">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+          className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-md text-gray-400 hover:bg-white/5 hover:text-gray-200 transition-colors text-sm"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>
-          <span className="font-medium">Logout</span>
+          <span>Logout</span>
         </button>
       </div>
     </div>

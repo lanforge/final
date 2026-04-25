@@ -77,8 +77,8 @@ const AdminBuildRequestsPage: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Build Requests</h1>
-          <p className="text-gray-400 mt-1">Manage incoming custom build requests</p>
+          <h1 className="text-xl font-medium text-white">Build Requests</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage incoming custom build requests</p>
         </div>
       </div>
 

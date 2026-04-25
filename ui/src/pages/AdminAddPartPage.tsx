@@ -205,23 +205,23 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Cores</label>
-              <input type="number" name="cores" value={specs.cores || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="cores" value={specs.cores || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Threads</label>
-              <input type="number" name="threads" value={specs.threads || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="threads" value={specs.threads || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Base Clock (GHz)</label>
-              <input type="number" step="0.1" name="baseClock" value={specs.baseClock || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" step="0.1" name="baseClock" value={specs.baseClock || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Socket</label>
-              <input type="text" name="socket" placeholder="e.g. AM5" value={specs.socket || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="socket" placeholder="e.g. AM5" value={specs.socket || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">TDP (Watts)</label>
-              <input type="number" name="tdp" value={specs.tdp || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="tdp" value={specs.tdp || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -230,19 +230,19 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">VRAM (GB)</label>
-              <input type="number" name="vram" value={specs.vram || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="vram" value={specs.vram || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">VRAM Type</label>
-              <input type="text" name="vramType" value={specs.vramType || ''} placeholder="e.g. GDDR6X" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="vramType" value={specs.vramType || ''} placeholder="e.g. GDDR6X" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Length (mm)</label>
-              <input type="number" name="length" value={specs.length || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="length" value={specs.length || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">TDP (Watts)</label>
-              <input type="number" name="tdp" value={specs.tdp || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="tdp" value={specs.tdp || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -251,19 +251,19 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Total Capacity (GB)</label>
-              <input type="number" name="capacity" value={specs.capacity || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="capacity" value={specs.capacity || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Module Count</label>
-              <input type="number" name="modules" value={specs.modules || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="modules" value={specs.modules || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Speed (MT/s)</label>
-              <input type="number" name="speed" value={specs.speed || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="speed" value={specs.speed || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Type</label>
-              <input type="text" name="type" value={specs.type || ''} placeholder="e.g. DDR5" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="type" value={specs.type || ''} placeholder="e.g. DDR5" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -272,19 +272,19 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Socket</label>
-              <input type="text" name="socket" value={specs.socket || ''} placeholder="e.g. AM5" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="socket" value={specs.socket || ''} placeholder="e.g. AM5" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Form Factor</label>
-              <input type="text" name="formFactor" value={specs.formFactor || ''} placeholder="e.g. ATX" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="formFactor" value={specs.formFactor || ''} placeholder="e.g. ATX" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Chipset</label>
-              <input type="text" name="chipset" value={specs.chipset || ''} placeholder="e.g. X670E" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="chipset" value={specs.chipset || ''} placeholder="e.g. X670E" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Memory Type</label>
-              <input type="text" name="memoryType" value={specs.memoryType || ''} placeholder="e.g. DDR5" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="memoryType" value={specs.memoryType || ''} placeholder="e.g. DDR5" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -293,15 +293,15 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Capacity (GB)</label>
-              <input type="number" name="capacity" value={specs.capacity || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="capacity" value={specs.capacity || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Type</label>
-              <input type="text" name="type" value={specs.type || ''} placeholder="e.g. NVMe" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="type" value={specs.type || ''} placeholder="e.g. NVMe" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Interface</label>
-              <input type="text" name="interface" value={specs.interface || ''} placeholder="e.g. PCIe 4.0" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="interface" value={specs.interface || ''} placeholder="e.g. PCIe 4.0" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -310,15 +310,15 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Wattage</label>
-              <input type="number" name="wattage" value={specs.wattage || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="wattage" value={specs.wattage || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Efficiency Rating</label>
-              <input type="text" name="efficiency" value={specs.efficiency || ''} placeholder="e.g. 80+ Gold" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="efficiency" value={specs.efficiency || ''} placeholder="e.g. 80+ Gold" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Modular</label>
-              <input type="text" name="modular" value={specs.modular || ''} placeholder="e.g. Full" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="modular" value={specs.modular || ''} placeholder="e.g. Full" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -327,15 +327,15 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Form Factor</label>
-              <input type="text" name="formFactor" value={specs.formFactor || ''} placeholder="e.g. Mid Tower" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="formFactor" value={specs.formFactor || ''} placeholder="e.g. Mid Tower" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Max GPU Length (mm)</label>
-              <input type="number" name="maxGpuLength" value={specs.maxGpuLength || ''} className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="maxGpuLength" value={specs.maxGpuLength || ''} className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Side Panel</label>
-              <input type="text" name="sidePanelType" value={specs.sidePanelType || ''} placeholder="e.g. Tempered Glass" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="sidePanelType" value={specs.sidePanelType || ''} placeholder="e.g. Tempered Glass" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -344,19 +344,19 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Type</label>
-              <input type="text" name="type" value={specs.type || ''} placeholder="e.g. Air, AIO" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="type" value={specs.type || ''} placeholder="e.g. Air, AIO" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Radiator Size (mm, if AIO)</label>
-              <input type="number" name="radiatorSize" value={specs.radiatorSize || ''} placeholder="e.g. 240, 360" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="radiatorSize" value={specs.radiatorSize || ''} placeholder="e.g. 240, 360" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Height (mm, if Air)</label>
-              <input type="number" name="height" value={specs.height || ''} placeholder="e.g. 158" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="height" value={specs.height || ''} placeholder="e.g. 158" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">RPM</label>
-              <input type="text" name="rpm" value={specs.rpm || ''} placeholder="e.g. 500-2000" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="rpm" value={specs.rpm || ''} placeholder="e.g. 500-2000" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -365,19 +365,19 @@ const AdminAddPartPage: React.FC = () => {
           <>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Size (mm)</label>
-              <input type="number" name="size" value={specs.size || ''} placeholder="e.g. 120, 140" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="size" value={specs.size || ''} placeholder="e.g. 120, 140" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">RPM</label>
-              <input type="text" name="rpm" value={specs.rpm || ''} placeholder="e.g. 500-2000" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="text" name="rpm" value={specs.rpm || ''} placeholder="e.g. 500-2000" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Airflow (CFM)</label>
-              <input type="number" name="airflow" value={specs.airflow || ''} placeholder="e.g. 65.4" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="airflow" value={specs.airflow || ''} placeholder="e.g. 65.4" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Noise Level (dBA)</label>
-              <input type="number" name="noiseLevel" value={specs.noiseLevel || ''} placeholder="e.g. 29.5" className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
+              <input type="number" name="noiseLevel" value={specs.noiseLevel || ''} placeholder="e.g. 29.5" className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 rounded-xl" onChange={handleSpecChange} />
             </div>
           </>
         );
@@ -403,7 +403,7 @@ const AdminAddPartPage: React.FC = () => {
             </svg>
             <span>Back to Parts</span>
           </button>
-          <h1 className="text-2xl font-bold text-white">{isEditing ? 'Edit PC Part' : 'Add New PC Part'}</h1>
+          <h1 className="text-xl font-medium text-white">{isEditing ? 'Edit PC Part' : 'Add New PC Part'}</h1>
         </div>
       </div>
 
@@ -414,14 +414,14 @@ const AdminAddPartPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="card p-6 space-y-6">
+        <div className="admin-card p-6 space-y-6">
           <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-4">General Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-400 mb-2">Category *</label>
               <select
                 name="category"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.category}
                 onChange={handleChange}
               >
@@ -444,7 +444,7 @@ const AdminAddPartPage: React.FC = () => {
                 type="text"
                 name="sku"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl uppercase"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl uppercase"
                 value={formData.sku}
                 onChange={handleChange}
               />
@@ -457,7 +457,7 @@ const AdminAddPartPage: React.FC = () => {
                 name="brand"
                 required
                 placeholder="e.g. AMD, NVIDIA, Corsair"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.brand}
                 onChange={handleChange}
               />
@@ -470,7 +470,7 @@ const AdminAddPartPage: React.FC = () => {
                 name="model"
                 required
                 placeholder="e.g. Ryzen 9 7950X"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.model}
                 onChange={handleChange}
               />
@@ -483,7 +483,7 @@ const AdminAddPartPage: React.FC = () => {
                 name="price"
                 step="0.01"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.price}
                 onChange={handleChange}
               />
@@ -495,7 +495,7 @@ const AdminAddPartPage: React.FC = () => {
                 type="number"
                 name="cost"
                 step="0.01"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.cost}
                 onChange={handleChange}
               />
@@ -507,7 +507,7 @@ const AdminAddPartPage: React.FC = () => {
                 type="number"
                 name="stock"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.stock}
                 onChange={handleChange}
               />
@@ -518,7 +518,7 @@ const AdminAddPartPage: React.FC = () => {
               <input
                 type="text"
                 name="tags"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 placeholder={['motherboard', 'case', 'cpu-cooler', 'fan'].includes(formData.category) ? "e.g. White, Black, RGB, ARGB" : "e.g. RGB, Low-Profile"}
                 value={formData.tags}
                 onChange={handleChange}
@@ -534,7 +534,7 @@ const AdminAddPartPage: React.FC = () => {
                 <input
                   type="url"
                   name="productUrl"
-                  className="input flex-1 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                  className="admin-input flex-1 bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                   placeholder="https://www.amazon.com/dp/B0..."
                   value={formData.productUrl}
                   onChange={handleChange}
@@ -605,7 +605,7 @@ const AdminAddPartPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="card p-6 space-y-6">
+        <div className="admin-card p-6 space-y-6">
           <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-4 uppercase tracking-wider text-emerald-500">
             {formData.category} Specifications
           </h2>

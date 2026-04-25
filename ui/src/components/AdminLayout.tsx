@@ -29,31 +29,31 @@ const AdminLayout: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-[#050505] text-gray-300 font-sans">
       {/* Admin Header */}
-      <header className="bg-gray-900 border-b border-gray-800 px-6 py-4">
+      <header className="bg-[#050505] border-b border-white/5 px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img 
               src="/logo-2.png" 
               alt="LANForge" 
-              className="h-10 w-auto object-contain"
+              className="h-7 w-auto object-contain opacity-80"
             />
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative" ref={quickActionsRef}>
               <button 
                 onClick={() => setIsQuickActionsOpen(!isQuickActionsOpen)}
-                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center space-x-2"
+                className="px-3 py-1.5 text-xs font-medium bg-white/10 hover:bg-white/20 text-white rounded-md transition-colors flex items-center space-x-2 border border-white/5"
               >
                 <span>Quick Actions</span>
-                <svg className={`w-4 h-4 transition-transform ${isQuickActionsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className={`w-3.5 h-3.5 transition-transform ${isQuickActionsOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               
               {isQuickActionsOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-xl shadow-lg border border-gray-700 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-0 mt-2 w-48 bg-[#0a0a0a] rounded-md shadow-lg border border-white/10 py-1 z-50 animate-in fade-in slide-in-from-top-2">
                   {quickActions.map(action => (
                     <button
                       key={action.path}
@@ -73,19 +73,19 @@ const AdminLayout: React.FC = () => {
             <div className="relative" ref={userMenuRef}>
               <button 
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 text-gray-300 hover:text-white transition-colors"
+                className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors text-sm"
               >
-                <div className="w-8 h-8 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center border border-emerald-500/30">
-                  <span className="text-sm font-medium">AD</span>
+                <div className="w-6 h-6 bg-white/10 text-white rounded-full flex items-center justify-center border border-white/5">
+                  <span className="text-xs font-medium">AD</span>
                 </div>
-                <span className="font-medium">Admin User</span>
-                <svg className={`w-4 h-4 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span className="font-medium text-xs">Admin</span>
+                <svg className={`w-3.5 h-3.5 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-xl shadow-lg border border-gray-700 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-0 mt-2 w-48 bg-[#0a0a0a] rounded-md shadow-lg border border-white/10 py-1 z-50 animate-in fade-in slide-in-from-top-2">
                   <button
                     onClick={() => {
                       navigate('/admin/settings');
@@ -120,10 +120,12 @@ const AdminLayout: React.FC = () => {
       </header>
 
       {/* Main Content with Sidebar - Fixed height for independent scrolling */}
-      <div className="flex h-[calc(100vh-73px)]">
+      <div className="flex h-[calc(100vh-53px)]">
         <AdminSidebar />
-        <main className="flex-1 p-6 overflow-y-auto scrollbar-hide hover:scrollbar-default">
-          <Outlet />
+        <main className="flex-1 p-8 overflow-y-auto scrollbar-hide hover:scrollbar-default bg-[#050505]">
+          <div className="max-w-6xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

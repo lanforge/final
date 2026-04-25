@@ -262,7 +262,7 @@ const AdminAddProductPage: React.FC = () => {
             </svg>
             <span>Back to Products</span>
           </button>
-          <h1 className="text-2xl font-bold text-white">{isEditing ? 'Edit Product' : 'Add New Product'}</h1>
+          <h1 className="text-xl font-medium text-white">{isEditing ? 'Edit Product' : 'Add New Product'}</h1>
         </div>
       </div>
 
@@ -275,7 +275,7 @@ const AdminAddProductPage: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Parts Selection */}
-        <div className="card p-6 space-y-6">
+        <div className="admin-card p-6 space-y-6">
           <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Included Parts</h2>
           <p className="text-sm text-gray-400">Select one component for each core category, and as many fans as needed. Cost is auto-calculated.</p>
           
@@ -294,7 +294,7 @@ const AdminAddProductPage: React.FC = () => {
               <div key={category.id}>
                 <label className="block text-sm font-medium text-gray-400 mb-2">{category.label}</label>
                 <select
-                  className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                  className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                   value={selectedCoreParts[category.id]}
                   onChange={e => handleCorePartSelect(category.id, e.target.value)}
                 >
@@ -348,7 +348,7 @@ const AdminAddProductPage: React.FC = () => {
         </div>
 
         {/* General Details */}
-        <div className="card p-6 space-y-6">
+        <div className="admin-card p-6 space-y-6">
           <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-2">Product Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="md:col-span-2">
@@ -357,7 +357,7 @@ const AdminAddProductPage: React.FC = () => {
                 type="text"
                 name="name"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.name}
                 onChange={handleChange}
                 onBlur={generateSlug}
@@ -370,7 +370,7 @@ const AdminAddProductPage: React.FC = () => {
                 type="text"
                 name="slug"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.slug}
                 onChange={handleChange}
               />
@@ -382,7 +382,7 @@ const AdminAddProductPage: React.FC = () => {
                 type="text"
                 name="sku"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl uppercase"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl uppercase"
                 value={formData.sku}
                 onChange={handleChange}
               />
@@ -392,7 +392,7 @@ const AdminAddProductPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2">Category *</label>
               <select
                 name="category"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.category}
                 onChange={handleChange}
               >
@@ -412,7 +412,7 @@ const AdminAddProductPage: React.FC = () => {
                 name="price"
                 step="0.01"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-bold text-emerald-400"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-bold text-emerald-400"
                 value={formData.price}
                 onChange={handleChange}
               />
@@ -424,7 +424,7 @@ const AdminAddProductPage: React.FC = () => {
                 type="number"
                 name="cost"
                 step="0.01"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-gray-400"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl text-gray-400"
                 value={formData.cost}
                 onChange={handleChange}
               />
@@ -436,7 +436,7 @@ const AdminAddProductPage: React.FC = () => {
                 type="number"
                 name="stock"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.stock}
                 onChange={handleChange}
               />
@@ -446,7 +446,7 @@ const AdminAddProductPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2">Product Tag</label>
               <select
                 name="tags"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.tags}
                 onChange={handleChange}
               >
@@ -464,7 +464,7 @@ const AdminAddProductPage: React.FC = () => {
               <input
                 type="text"
                 name="shortDescription"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.shortDescription}
                 onChange={handleChange}
               />
@@ -475,7 +475,7 @@ const AdminAddProductPage: React.FC = () => {
               <textarea
                 name="description"
                 rows={4}
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.description}
                 onChange={handleChange}
               />

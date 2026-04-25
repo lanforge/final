@@ -106,8 +106,8 @@ const AdminPartnersPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Partners & Affiliates</h1>
-          <p className="text-gray-400 mt-1">Manage brand partners and affiliate applications</p>
+          <h1 className="text-xl font-medium text-white">Partners & Affiliates</h1>
+          <p className="text-gray-500 text-sm mt-1">Manage brand partners and affiliate applications</p>
         </div>
         {activeTab === 'partners' && (
           <div className="flex items-center space-x-4">
@@ -150,7 +150,7 @@ const AdminPartnersPage: React.FC = () => {
       {activeTab === 'partners' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
           {/* Partners list */}
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-800 bg-gray-900/50">
@@ -239,14 +239,14 @@ const AdminPartnersPage: React.FC = () => {
       {activeTab === 'affiliates' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
           {/* Filters */}
-          <div className="card p-4">
+          <div className="admin-card p-4">
             <div className="flex flex-col space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
                   <select
                     value={affiliateStatus}
                     onChange={(e) => setAffiliateStatus(e.target.value)}
-                    className="input px-3 py-2 bg-gray-900/70 border-gray-700 text-sm rounded-lg"
+                    className="admin-input px-3 py-2 bg-gray-900/70 border-gray-700 text-sm rounded-lg"
                   >
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
@@ -264,7 +264,7 @@ const AdminPartnersPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-800 bg-gray-900/50">

@@ -227,7 +227,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
           >
             &larr; Back to Showcases
           </button>
-          <h1 className="text-2xl font-bold text-white">Edit Showcase</h1>
+          <h1 className="text-xl font-medium text-white">Edit Showcase</h1>
         </div>
         <button
           onClick={handleSave}
@@ -246,7 +246,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
               <label className="block text-sm text-gray-400 mb-1">Showcase Name</label>
               <input
                 type="text"
-                className="input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
               />
@@ -255,7 +255,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
               <label className="block text-sm text-gray-400 mb-1">Creator Name</label>
               <input
                 type="text"
-                className="input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
                 value={formData.creatorName}
                 onChange={e => setFormData({ ...formData, creatorName: e.target.value })}
               />
@@ -264,7 +264,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
               <label className="block text-sm text-gray-400 mb-1">Creator Code (URL slug)</label>
               <input
                 type="text"
-                className="input w-full bg-gray-800 border-gray-700 rounded-lg text-white lowercase"
+                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white lowercase"
                 value={formData.creatorCode}
                 onChange={e => setFormData({ ...formData, creatorCode: e.target.value })}
               />
@@ -275,7 +275,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
                 <input
                   type="number"
                   step="0.01"
-                  className="input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
                   value={formData.laborFee}
                   onChange={e => setFormData({ ...formData, laborFee: e.target.value })}
                 />
@@ -291,7 +291,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
             <div className="md:col-span-2">
               <label className="block text-sm text-gray-400 mb-1">Description</label>
               <textarea
-                className="input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
                 rows={3}
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
@@ -351,7 +351,7 @@ const AdminShowcaseDetailsPage: React.FC = () => {
               <div key={category.id}>
                 <label className="block text-sm font-medium text-gray-400 mb-1">{category.label}</label>
                 <select
-                  className="input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
+                  className="admin-input w-full bg-gray-800 border-gray-700 rounded-lg text-white"
                   value={selectedCoreParts[category.id]}
                   onChange={e => handleCorePartSelect(category.id, e.target.value)}
                 >

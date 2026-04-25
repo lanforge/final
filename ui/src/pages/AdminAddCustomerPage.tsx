@@ -58,7 +58,7 @@ const AdminAddCustomerPage: React.FC = () => {
             </svg>
             <span>Back to Customers</span>
           </button>
-          <h1 className="text-2xl font-bold text-white">Add New Customer</h1>
+          <h1 className="text-xl font-medium text-white">Add New Customer</h1>
         </div>
       </div>
 
@@ -69,7 +69,7 @@ const AdminAddCustomerPage: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="card p-6 space-y-6">
+        <div className="admin-card p-6 space-y-6">
           <h2 className="text-lg font-bold text-white border-b border-gray-800 pb-4">Customer Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -78,7 +78,7 @@ const AdminAddCustomerPage: React.FC = () => {
                 type="text"
                 name="firstName"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.firstName}
                 onChange={handleChange}
               />
@@ -90,7 +90,7 @@ const AdminAddCustomerPage: React.FC = () => {
                 type="text"
                 name="lastName"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.lastName}
                 onChange={handleChange}
               />
@@ -102,7 +102,7 @@ const AdminAddCustomerPage: React.FC = () => {
                 type="email"
                 name="email"
                 required
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.email}
                 onChange={handleChange}
               />
@@ -113,7 +113,7 @@ const AdminAddCustomerPage: React.FC = () => {
               <input
                 type="tel"
                 name="phone"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.phone}
                 onChange={handleChange}
               />
@@ -123,7 +123,7 @@ const AdminAddCustomerPage: React.FC = () => {
               <label className="block text-sm font-medium text-gray-400 mb-2">Loyalty Tier</label>
               <select
                 name="loyaltyTier"
-                className="input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                className="admin-input w-full bg-gray-900 border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.loyaltyTier}
                 onChange={handleChange}
               >

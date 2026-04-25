@@ -178,7 +178,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                 </span>
               )}
             </h1>
-            <p className="text-gray-400 mt-1">
+            <p className="text-gray-500 text-sm mt-1">
               Customer since {new Date(customer.createdAt).toLocaleDateString()}
             </p>
           </div>
@@ -218,7 +218,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
         {/* Left Column: Details & Addresses */}
         <div className="space-y-6 lg:col-span-1">
           {/* Customer Overview */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <h2 className="text-lg font-bold text-white mb-4">Overview</h2>
             {isEditing ? (
               <div className="space-y-4">
@@ -229,7 +229,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                       type="text" 
                       value={editForm.firstName || ''} 
                       onChange={(e) => setEditForm({...editForm, firstName: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                   <div>
@@ -238,7 +238,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                       type="text" 
                       value={editForm.lastName || ''} 
                       onChange={(e) => setEditForm({...editForm, lastName: e.target.value})}
-                      className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                      className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
                     />
                   </div>
                 </div>
@@ -248,7 +248,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                     type="email" 
                     value={editForm.email || ''} 
                     onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                    className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
                   />
                 </div>
                 <div>
@@ -257,7 +257,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                     type="text" 
                     value={editForm.phone || ''} 
                     onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                    className="input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    className="admin-input w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
                   />
                 </div>
               </div>
@@ -315,7 +315,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
           </div>
 
           {/* Addresses */}
-          <div className="card p-6">
+          <div className="admin-card p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-bold text-white">Saved Addresses</h2>
               {isEditing && (
@@ -347,7 +347,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                         <select 
                           value={address.type}
                           onChange={(e) => updateAddress(idx, 'type', e.target.value)}
-                          className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                          className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
                         >
                           <option value="shipping">Shipping</option>
                           <option value="billing">Billing</option>
@@ -363,7 +363,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                             value={address.firstName || ''} 
                             onChange={(e) => updateAddress(idx, 'firstName', e.target.value)}
                             placeholder={editForm.firstName}
-                            className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
                           />
                         </div>
                         <div>
@@ -373,7 +373,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                             value={address.lastName || ''} 
                             onChange={(e) => updateAddress(idx, 'lastName', e.target.value)}
                             placeholder={editForm.lastName}
-                            className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
                           />
                         </div>
                       </div>
@@ -384,7 +384,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                           type="text" 
                           value={address.street || ''} 
                           onChange={(e) => updateAddress(idx, 'street', e.target.value)}
-                          className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                          className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
                         />
                       </div>
                       
@@ -395,7 +395,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                             type="text" 
                             value={address.city || ''} 
                             onChange={(e) => updateAddress(idx, 'city', e.target.value)}
-                            className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                            className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
                           />
                         </div>
                         <div className="flex gap-2">
@@ -405,7 +405,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                               type="text" 
                               value={address.state || ''} 
                               onChange={(e) => updateAddress(idx, 'state', e.target.value)}
-                              className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                              className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
                             />
                           </div>
                           <div className="w-1/2">
@@ -414,7 +414,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
                               type="text" 
                               value={address.zip || ''} 
                               onChange={(e) => updateAddress(idx, 'zip', e.target.value)}
-                              className="input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
+                              className="admin-input w-full px-2 py-1.5 bg-gray-800 border border-gray-700 rounded text-white text-xs"
                             />
                           </div>
                         </div>
@@ -455,7 +455,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
         <div className="space-y-6 lg:col-span-2">
 
           {/* Orders History */}
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-lg font-bold text-white">Recent Orders</h2>
             </div>
@@ -508,7 +508,7 @@ const AdminCustomerDetailsPage: React.FC = () => {
           </div>
 
           {/* Payment History */}
-          <div className="card overflow-hidden">
+          <div className="admin-card overflow-hidden">
             <div className="p-6 border-b border-gray-800">
               <h2 className="text-lg font-bold text-white">Payment History</h2>
             </div>

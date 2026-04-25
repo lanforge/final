@@ -74,7 +74,7 @@ const AdminShowcasesPage: React.FC = () => {
         </div>
       )}
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-white">Creator Showcases</h1>
+        <h1 className="text-xl font-medium text-white">Creator Showcases</h1>
         <button
           onClick={handleCreate}
           className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors"

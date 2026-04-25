@@ -78,14 +78,14 @@ const AdminUsersPage: React.FC = () => {
       </div>
 
       {/* Search and filters */}
-      <div className="card p-4 shrink-0">
+      <div className="admin-card p-4 shrink-0">
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <div className="relative flex-1">
               <input
                 type="text"
                 placeholder="Search users..."
-                className="input pl-12 pr-4 w-full bg-gray-900/70 border-gray-700 text-sm focus:border-emerald-500 rounded-lg py-2"
+                className="admin-input pl-12 pr-4 w-full bg-gray-900/70 border-gray-700 text-sm focus:border-emerald-500 rounded-lg py-2"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -105,7 +105,7 @@ const AdminUsersPage: React.FC = () => {
             <select 
               value={roleFilter}
               onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-              className="input px-3 py-2 bg-gray-900/70 border-gray-700 text-sm rounded-lg"
+              className="admin-input px-3 py-2 bg-gray-900/70 border-gray-700 text-sm rounded-lg"
             >
               <option value="all">All Roles</option>
               <option value="admin">Admin</option>
@@ -122,7 +122,7 @@ const AdminUsersPage: React.FC = () => {
       </div>
 
       {/* Users table */}
-      <div className="card overflow-hidden flex-1 flex flex-col">
+      <div className="admin-card overflow-hidden flex-1 flex flex-col">
         <div className="overflow-x-auto flex-1">
           <table className="w-full">
             <thead>

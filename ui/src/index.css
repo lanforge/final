@@ -165,6 +165,19 @@
     @apply card relative before:absolute before:inset-0 before:pointer-events-none before:rounded-2xl before:bg-gradient-to-r before:from-emerald-400/20 before:to-blue-500/20 before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-10;
   }
 
+  /* Admin specific styles */
+  .admin-card {
+    @apply bg-[#0a0a0a] border border-white/5 rounded-md transition-all duration-200;
+  }
+
+  .admin-input {
+    @apply w-full px-3 py-2 text-sm bg-white/5 border border-white/10 rounded-md text-gray-200 placeholder:text-gray-600 focus:outline-none focus:border-white/20 transition-all;
+  }
+
+  .admin-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] uppercase tracking-wider font-medium;
+  }
+
   /* Section containers */
   .section {
     @apply py-20 md:py-32;

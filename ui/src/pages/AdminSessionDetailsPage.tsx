@@ -62,7 +62,7 @@ const AdminSessionDetailsPage: React.FC = () => {
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-white">Session Details</h1>
+          <h1 className="text-xl font-medium text-white">Session Details</h1>
           <p className="text-sm text-gray-500">ID: {session.sessionId}</p>
         </div>
       </div>
