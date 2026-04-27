@@ -293,7 +293,7 @@ router.post(
         }];
 
         const { insurance } = req.body;
-        const extraPayload = insurance ? { insurance: { amount: String(order.total), currency: "USD" } } : undefined;
+        const extraPayload = insurance ? { insurance: { amount: String(order.total), currency: "USD", provider: "SHIPPO", content: "PC Build and Components" } } : undefined;
 
         const shipment: any = await createShipment(
           { ...defaultLineItems[0], name: 'LANForge', street1: '88 Sabal Creek Trl', city: 'Ponte Vedra', state: 'FL', zip: '32081', country: 'US' },

@@ -257,3 +257,7 @@ Error: listen EADDRINUSE: address already in use :::5001[Scraper] Successfully u
 [Scraper] Failed to fetch data for MONTECH CENTURY II 850W (Status: 403)
 [Scraper] Failed to fetch data for Lian Li LI LANCOOL 207 (Status: 403)
 [Scraper] Failed to fetch data for Team Group Xtreem 32GB 7200 CL34 (Status: 403)
+[Scraper] Failed to fetch data for Intel® Core™ i7-14700K (Status: 403)
+[Scraper] Failed to fetch data for Intel® Core™ i5-14600K (Status: 403)
+[Scraper] Failed to fetch data for ZOTAC SOLID CORE OC 5080 16GB (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG Ryujin III 360 (Status: 403)

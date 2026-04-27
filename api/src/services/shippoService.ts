@@ -85,7 +85,7 @@ export const purchaseLabel = async (rateObjectId: string, insuranceAmount?: numb
   try {
     const payload: any = {
       rate: rateObjectId,
-      label_file_type: 'PDF',
+      label_file_type: 'PDF_4x6',
       async: false,
     };
 
