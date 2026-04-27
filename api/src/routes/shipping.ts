@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import Order from '../models/Order';
-import { createShipment, getLiveRates, purchaseLabel, trackShipment, getRates } from '../services/shippoService';
+import { createShipment, getLiveRates, purchaseLabel, trackShipment, getRates, refundLabel } from '../services/shippoService';
 import { protect, staffOrAdmin, AuthRequest } from '../middleware/auth';
 import Settings from '../models/Settings';
 
@@ -292,10 +292,14 @@ router.post(
           massUnit: 'lb'
         }];
 
+        const { insurance } = req.body;
+        const extraPayload = insurance ? { insurance: { amount: String(order.total), currency: "USD" } } : undefined;
+
         const shipment: any = await createShipment(
           { ...defaultLineItems[0], name: 'LANForge', street1: '88 Sabal Creek Trl', city: 'Ponte Vedra', state: 'FL', zip: '32081', country: 'US' },
           cleanAddressTo,
-          parcels
+          parcels,
+          extraPayload
         );
 
         if (shipment && shipment.rates) {
@@ -324,12 +328,20 @@ router.post(
       const { insurance } = req.body;
       const transaction = await purchaseLabel(activeRateObjectId, insurance ? order.total : undefined, `Order ${order.orderNumber}`);
       
+      if (transaction.messages) {
+        const errorMessages = transaction.messages.filter((m: any) => m.source === 'Shippo');
+        if (errorMessages.length > 0) {
+           console.warn('Shippo transaction messages:', errorMessages);
+        }
+      }
+
       // Update order tracking
       order.trackingNumber = transaction.trackingNumber || (transaction as any).tracking_number;
       // Make sure we have tracking information available from transaction or shipping response
       order.carrier = (transaction as any).tracking_status?.provider || (transaction as any).trackingStatus?.provider || 'Unknown';
       order.carrierTrackingUrl = (transaction as any).tracking_url_provider || (transaction as any).trackingUrlProvider || '';
       order.labelUrl = transaction.labelUrl || (transaction as any).label_url;
+      order.shippoTransactionId = transaction.object_id || transaction.objectId;
       // Store our custom tracking URL
       if (process.env.FRONTEND_URL) {
         order.trackingUrl = `${process.env.FRONTEND_URL}/track/${order.orderNumber}`;
@@ -343,6 +355,63 @@ router.post(
       res.json({ transaction, order });
     } catch (error: any) {
       console.error('Purchase label error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  }
+);
+
+// POST /api/shipping/refund — admin/staff
+router.post(
+  '/refund',
+  protect,
+  staffOrAdmin,
+  [
+    body('orderId').notEmpty().withMessage('Order ID is required'),
+  ],
+  async (req: AuthRequest, res: Response): Promise<void> => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(400).json({ errors: errors.array() });
+      return;
+    }
+
+    try {
+      const { orderId } = req.body;
+      const order = await Order.findById(orderId);
+      
+      if (!order) {
+        res.status(404).json({ message: 'Order not found' });
+        return;
+      }
+
+      if (!order.trackingNumber && !order.carrierTrackingUrl) {
+        res.status(400).json({ message: 'Order does not have a generated label to refund' });
+        return;
+      }
+
+      if (!order.shippoTransactionId) {
+        res.status(400).json({ message: 'Stored transaction ID is missing' });
+        return;
+      }
+
+      await refundLabel(order.shippoTransactionId);
+
+      // Clear shipping tracking details from order
+      order.trackingNumber = '';
+      order.carrier = '';
+      order.carrierTrackingUrl = '';
+      order.trackingUrl = '';
+      order.labelUrl = '';
+      order.shippoTransactionId = '';
+      
+      // Optionally reset status to previous state or keep it as shipped since refunding doesn't automatically mean unshipped.
+      // We'll leave the status alone, or the admin can change it manually.
+
+      await order.save();
+
+      res.json({ message: 'Label refunded successfully', order });
+    } catch (error: any) {
+      console.error('Refund label error:', error);
       res.status(500).json({ message: error.message });
     }
   }

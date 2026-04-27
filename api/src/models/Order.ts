@@ -52,6 +52,7 @@ export interface IOrder extends Document {
   carrierTrackingUrl?: string;
   trackingUrl?: string;
   labelUrl?: string;
+  shippoTransactionId?: string;
   shippingRates?: any[];
   selectedShippingRate?: any;
   notes?: string;
@@ -132,6 +133,7 @@ const OrderSchema = new Schema<IOrder>(
     carrierTrackingUrl: { type: String },
     trackingUrl: { type: String },
     labelUrl: { type: String },
+    shippoTransactionId: { type: String },
     shippingRates: [{ type: Schema.Types.Mixed }],
     selectedShippingRate: { type: Schema.Types.Mixed },
     notes: { type: String },

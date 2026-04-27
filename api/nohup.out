@@ -22,25 +22,237 @@ node:events:496
       throw er; // Unhandled 'error' event
       ^
 
-Error: listen EADDRINUSE: address already in use :::5001
-    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
-    at listenInCluster (node:net:1997:12)
-    at Server.listen (node:net:2102:7)
-    at Function.listen (/Users/damian/Desktop/LANForge-Final/api/node_modules/express/lib/application.js:635:24)
-    at Object.<anonymous> (/Users/damian/Desktop/LANForge-Final/api/dist/index.js:205:5)
-    at Module._compile (node:internal/modules/cjs/loader:1730:14)
-    at Object..js (node:internal/modules/cjs/loader:1895:10)
-    at Module.load (node:internal/modules/cjs/loader:1465:32)
-    at Function._load (node:internal/modules/cjs/loader:1282:12)
-    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
-Emitted 'error' event on Server instance at:
-    at emitErrorNT (node:net:1976:8)
-    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
-  code: 'EADDRINUSE',
-  errno: -48,
-  syscall: 'listen',
-  address: '::',
-  port: 5001
-}
-
-Node.js v22.17.1
+Error: listen EADDRINUSE: address already in use :::5001[Scraper] Successfully updated XPG GAMMIX S70 Blade M.2 1TB: New Cost: $179.99, New Price: $197.99
+[Scraper] Synchronized 5 products with new part cost.
+[Scraper] Successfully updated ASUS ROG STRIX X870E-E: New Cost: $394, New Price: $433.99
+[Scraper] Successfully updated EVGA SuperNOVA 1600W: New Cost: $599, New Price: $658.99
+[Scraper] Synchronized 1 products with new part cost.
+[Scraper] Successfully updated ARCTIC Liquid Freezer III Pro 280mm: New Cost: $82.49, New Price: $90.99
+[Scraper] Successfully updated ASUS ROG Strix 1200W Platinum: New Cost: $256.98, New Price: $282.99
+[Scraper] Successfully updated Intel® Core™ i9-14900K: New Cost: $459, New Price: $504.99
+[Scraper] Successfully updated HAVN HS 420 VGPU: New Cost: $329.99, New Price: $362.99
+[Scraper] Synchronized 1 products with new part cost.
+[Scraper] Successfully updated MSI PRO Z790: New Cost: $244.89, New Price: $269.99
+[Scraper] Successfully updated ASUS ROG CROSSHAIR X870E: New Cost: $579.99, New Price: $637.99
+[Scraper] Successfully updated G.SKILL Trident Z5 64GB 6000 CL36: New Cost: $909.99, New Price: $1000.99
+[Scraper] Successfully updated AMD Ryzen™ 7 7800X3D: New Cost: $388.98, New Price: $427.99
+[Scraper] Synchronized 3 products with new part cost.
+[Scraper] Successfully updated LIAN LI O11 Dynamic: New Cost: $159.99, New Price: $175.99
+[Scraper] Successfully updated ASUS Prime GeForce RTX 5060 8GB: New Cost: $299.99, New Price: $329.99
+[Scraper] Synchronized 2 products with new part cost.
+[Scraper] Successfully updated MONTECH CENTURY II 850W: New Cost: $89.9, New Price: $98.99
+[Scraper] Synchronized 9 products with new part cost.
+[Scraper] Successfully updated ASUS ROG RYUO III 360: New Cost: $179.99, New Price: $197.99
+[Scraper] Successfully updated NZXT F240 RGB Core: New Cost: $34.99, New Price: $38.99
+[Scraper] Successfully updated Lian Li UNI Fan SL 120mm: New Cost: $30.13, New Price: $33.99
+[Scraper] Successfully updated GIGABYTE Z890I AORUS: New Cost: $289.99, New Price: $318.99
+[Scraper] Successfully updated ARCTIC Liquid Freezer III Pro 360mm: New Cost: $97.49, New Price: $107.99
+[Scraper] Synchronized 5 products with new part cost.
+[Scraper] Successfully updated Lian Li LI LANCOOL 207: New Cost: $82.99, New Price: $91.99
+[Scraper] Synchronized 2 products with new part cost.
+[Scraper] Successfully updated Team Group Xtreem 32GB 7200 CL34: New Cost: $559.99, New Price: $615.99
+[Scraper] Synchronized 1 products with new part cost.
+[Scraper] Could not parse a valid price for Intel® Core™ i7-14700K. ScraperAPI might have returned a captcha or unsupported format.
+[Scraper] Could not parse a valid price for Intel® Core™ i5-14600K. ScraperAPI might have returned a captcha or unsupported format.
+[Scraper] Successfully updated ZOTAC SOLID CORE OC 5080 16GB: New Cost: $1551.03, New Price: $1706.99
+[Scraper] Synchronized 3 products with new part cost.
+[Scraper] Successfully updated ASUS ROG Ryujin III 360: New Cost: $495.83, New Price: $545.99
+[Scraper] Successfully updated ASUS ROG STRIX B850: New Cost: $267, New Price: $293.99
+[Scraper] Synchronized 2 products with new part cost.
+[Scraper] Successfully updated GIGABYTE Z790 AORUS ELITE AX: New Cost: $183, New Price: $201.99
+[Scraper] Synchronized 1 products with new part cost.
+[Scraper] Successfully updated ASUS ROG Astral GeForce 5090 32GB: New Cost: $4499.99, New Price: $4949.99
+[Scraper] Successfully updated Cooler Master MasterLiquid 240L Core: New Cost: $69.99, New Price: $76.99
+[Scraper] Successfully updated LIAN LI A4: New Cost: $155.99, New Price: $171.99
+[Scraper] Synchronized 3 products with new part cost.
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+[Scraper] Successfully updated NZXT F360 RGB Core: New Cost: $49.99, New Price: $54.99
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+[Scraper] Successfully updated MONTECH CENTURY II 1200W: New Cost: $119.89, New Price: $131.99
+[Scraper] Synchronized 1 products with new part cost.
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+[Scraper] Successfully updated ASUS ROG CROSSHAIR X870E: New Cost: $579.99, New Price: $637.99
+[Scraper] Successfully updated G.SKILL Trident Z5 64GB 6000 CL36: New Cost: $909.99, New Price: $1000.99
+[Scraper] Successfully updated CORSAIR FRAME 5000D RS: New Cost: $169.99, New Price: $186.99
+[Scraper] Successfully updated AMD Ryzen™ 7 7800X3D: New Cost: $324.99, New Price: $357.99
+[Scraper] Synchronized 3 products with new part cost.
+[Scraper] Successfully updated MONTECH CENTURY II 850W: New Cost: $89.9, New Price: $98.99
+[Scraper] Synchronized 9 products with new part cost.
+[Scraper] Could not parse a valid price for Intel® Core™ i7-14700K. ScraperAPI might have returned a captcha or unsupported format.
+[Scraper] Successfully updated ZOTAC SOLID CORE OC 5080 16GB: New Cost: $1551.03, New Price: $1706.99
+[Scraper] Synchronized 3 products with new part cost.
+[Scraper] Successfully updated ASUS ROG STRIX B850: New Cost: $267, New Price: $293.99
+[Scraper] Synchronized 2 products with new part cost.
+[Scraper] Successfully updated ASUS ROG Astral GeForce 5090 32GB: New Cost: $4499.99, New Price: $4949.99
+[Scraper] Successfully updated G.SKILL Trident Z5 32GB 6400 CL30: New Cost: $488, New Price: $536.99
+[Scraper] Successfully updated Thermalright Peerless Assassin 120 SE: New Cost: $33.06, New Price: $36.99
+[Scraper] Synchronized 2 products with new part cost.
+[Scraper] Scheduling 101 parts to be scraped evenly over the next 12 hours...
+[Scraper] Successfully updated AMD Ryzen™ 7 9850X3D: New Cost: $499, New Price: $548.99
+[Scraper] Synchronized 2 products with new part cost.
+[Scraper] Successfully updated Corsair iCUE Link Titan 280: New Cost: $179.99, New Price: $197.99
+[Scraper] Successfully updated AMD Ryzen™ 7 9700X: New Cost: $309.99, New Price: $340.99
+[Scraper] Successfully updated V-COLOR Manta XSky 32GB 6000 CL36: New Cost: $429.99, New Price: $472.99
+[Scraper] Synchronized 4 products with new part cost.
+[Scraper] Successfully updated NZXT H5 Flow: New Cost: $99.99, New Price: $109.99
+[Scraper] Synchronized 2 products with new part cost.
+[Scraper] Successfully updated MSI MAG X870: New Cost: $236.39, New Price: $260.99
+[Scraper] Successfully updated MONTECH CENTURY II 1050W: New Cost: $99.9, New Price: $109.99
+[Scraper] Synchronized 3 products with new part cost.
+[Scraper] Successfully updated ASUS ROG STRIX Z890: New Cost: $288.99, New Price: $317.99
+[Scraper] Successfully updated Kingston Fury Renegade 32GB 8000 CL38: New Cost: $539.99, New Price: $593.99
+[Scraper] Successfully updated NZXT Kraken Elite 420 RGB: New Cost: $334.99, New Price: $368.99
+[Scraper] Successfully updated Corsair 360mm ARGB: New Cost: $34.99, New Price: $38.99
+[Scraper] Successfully updated Corsair RM850x: New Cost: $129.99, New Price: $142.99
+[Scraper] Successfully updated SAMSUNG 990 PRO 2TB: New Cost: $493.75, New Price: $543.99
+[Scraper] Synchronized 4 products with new part cost.
+[Scraper] Failed to fetch data for Corsair FRAME 4000D RS (Status: 403)
+[Scraper] Failed to fetch data for Corsair SF Series (2024) SF850 (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG Maximus Z890 Hero (Status: 403)
+[Scraper] Failed to fetch data for Silicon Power 1TB UD90 NVMe (Status: 403)
+[Scraper] Failed to fetch data for AMD Ryzen™ 9 9950X3D (Status: 403)
+[Scraper] Failed to fetch data for MSI SHADOW GeForce RTX 5060 (Status: 403)
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+[Scraper] Failed to fetch data for V-COLOR Manta XSky 32GB 6000 CL26 (Status: 403)
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+[Scraper] Failed to fetch data for Intel® Core™ Ultra 7 265K (Status: 403)
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+[Scraper] Failed to fetch data for Intel® Core™ Ultra 9 285K (Status: 403)
+[Scraper] Failed to fetch data for ASRock PG 1600G (Status: 403)
+[Scraper] Failed to fetch data for NZXT H7 Flow RGB (Status: 403)
+[Scraper] Failed to fetch data for ASUS PRIME GeForce RTX 5070 12GB (Status: 403)
+[Scraper] Failed to fetch data for Lian Li LANCOOL 217 (Status: 403)
+[Scraper] Failed to fetch data for GIGABYTE Z890 AORUS MASTER Ultra (Status: 403)
+[Scraper] Failed to fetch data for ASRock Z890I (Status: 403)
+[Scraper] Failed to fetch data for XPG GAMMIX S70 Blade M.2 1TB (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG STRIX X870E-E (Status: 403)
+[Scraper] Failed to fetch data for EVGA SuperNOVA 1600W (Status: 403)
+[Scraper] Failed to fetch data for Fractal Design North ATX (Status: 403)
+[Scraper] Failed to fetch data for Lian Li HydroShift II 360 (Status: 403)
+[Scraper] Failed to fetch data for HAVN BF 360 Flow (Status: 403)
+[Scraper] Failed to fetch data for Thermaltake Toughpower GT 850W (Status: 403)
+[Scraper] Failed to fetch data for G.SKILL Trident Z5 64GB 6000 CL36 (Status: 403)
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+✅ MongoDB reconnected
+[Scraper] Failed to fetch data for ASUS ROG RYUO III 360 (Status: 403)
+[Scraper] Failed to fetch data for NZXT F240 RGB Core (Status: 403)
+[Scraper] Failed to fetch data for Lian Li UNI Fan SL 120mm (Status: 403)
+[Scraper] Failed to fetch data for GIGABYTE Z890I AORUS (Status: 403)
+[Scraper] Failed to fetch data for ARCTIC Liquid Freezer III Pro 360mm (Status: 403)
+[Scraper] Failed to fetch data for Lian Li LI LANCOOL 207 (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG Strix B850I (Status: 403)
+[Scraper] Failed to fetch data for Team Group Xtreem 32GB 7200 CL34 (Status: 403)
+[Scraper] Failed to fetch data for ARCTIC Liquid Freezer III Pro 420mm (Status: 403)
+[Scraper] Failed to fetch data for Intel® Core™ i7-14700K (Status: 403)
+[Scraper] Failed to fetch data for LIAN LI A4 (Status: 403)
+[Scraper] Failed to fetch data for NZXT C1200 Gold (Status: 403)
+[Scraper] Failed to fetch data for AMD Ryzen™ 7 9850X3D (Status: 403)
+[Scraper] Failed to fetch data for AMD Ryzen™ 7 9700X (Status: 403)
+[Scraper] Failed to fetch data for Corsair SF Series (2024) SF1000 (Status: 403)
+[Scraper] Failed to fetch data for GIGABYTE AORUS GeForce RTX 5090 32GB (Status: 403)
+[Scraper] Failed to fetch data for G.SKILL Trident Z5 64GB 6000 CL30 (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG STRIX Z890 (Status: 403)
+[Scraper] Failed to fetch data for NZXT Kraken Elite 420 RGB (Status: 403)
+[Scraper] Failed to fetch data for Corsair RM850x (Status: 403)
+[Scraper] Failed to fetch data for Corsair FRAME 4000D RS (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG Maximus Z890 Hero (Status: 403)
+[Scraper] Failed to fetch data for MSI B850 TOMAHAWK (Status: 403)
+[Scraper] Failed to fetch data for AMD Ryzen™ 9 9950X3D (Status: 403)
+[Scraper] Failed to fetch data for MSI SHADOW GeForce RTX 5060 (Status: 403)
+[Scraper] Failed to fetch data for NZXT F360 RGB Core (Status: 403)
+[Scraper] Failed to fetch data for Lian Li UNI Fan SL 360mm (Status: 403)
+[Scraper] Failed to fetch data for V-COLOR Manta XSky 32GB 6000 CL30 (Status: 403)
+[Scraper] Failed to fetch data for ASUS ROG STRIX X870I (Status: 403)
+[Scraper] Failed to fetch data for GIGABYTE Z890 AORUS ELITE WIFI7 (Status: 403)
+[Scraper] Failed to fetch data for NZXT C850 Gold (Status: 403)
+[Scraper] Failed to fetch data for Thermaltake Toughpower GF A3 1200W (Status: 403)
+[Scraper] Failed to fetch data for V-COLOR Manta XSky 32GB 6000 CL26 (Status: 403)
+[Scraper] Failed to fetch data for MSI Ventus GeForce RTX 5070 12GB (Status: 403)
+[Scraper] Failed to fetch data for NZXT H7 Flow RGB (Status: 403)
+[Scraper] Failed to fetch data for Lian Li LANCOOL 217 (Status: 403)
+✅ MongoDB reconnected
+⚠️  MongoDB disconnected
+✅ MongoDB reconnected
+[Scraper] Failed to fetch data for HAVN BF 360 Flow (Status: 403)
+[Scraper] Failed to fetch data for MSI PRO Z790 (Status: 403)
+[Scraper] Failed to fetch data for Thermaltake Toughpower GT 850W (Status: 403)
+[Scraper] Failed to fetch data for ASUS Prime GeForce RTX 5060 8GB (Status: 403)
+[Scraper] Failed to fetch data for MONTECH CENTURY II 850W (Status: 403)
+[Scraper] Failed to fetch data for Lian Li LI LANCOOL 207 (Status: 403)

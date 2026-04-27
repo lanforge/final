@@ -816,7 +816,7 @@ const AdminOrderDetailsPage: React.FC = () => {
               </div>
             )}
             
-            {(order.status === 'shipped' || order.status === 'out-for-delivery' || order.status === 'delivered') && (
+            {(order.status === 'shipped' || order.status === 'out-for-delivery' || order.status === 'delivered') && order.trackingNumber && (
               <div className="space-y-4 border border-[#1f2233] rounded-lg p-4 bg-[#0a0c13]">
                 <div className="flex items-center gap-3 text-emerald-400">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -830,7 +830,7 @@ const AdminOrderDetailsPage: React.FC = () => {
                   </div>
                 )}
                 {order.labelUrl && (
-                  <div className="mt-3">
+                  <div className="mt-3 flex flex-col gap-2">
                     <a 
                       href={order.labelUrl} 
                       target="_blank" 
@@ -839,6 +839,29 @@ const AdminOrderDetailsPage: React.FC = () => {
                     >
                       Download Shipping Label (PDF)
                     </a>
+                    <button
+                      onClick={async () => {
+                        if (window.confirm('Are you sure you want to void and refund this shipping label? This cannot be undone.')) {
+                          try {
+                            setIsSaving(true);
+                            await api.post('/shipping/refund', { orderId: order._id });
+                            const orderResponse = await api.get(`/orders/admin/${id}`);
+                            setOrder(orderResponse.data.order);
+                            setSuccess('Shipping label voided and refunded successfully.');
+                            setTimeout(() => setSuccess(''), 3000);
+                          } catch (err: any) {
+                            console.error('Failed to void label:', err);
+                            setError(err.response?.data?.message || 'Failed to void shipping label.');
+                          } finally {
+                            setIsSaving(false);
+                          }
+                        }
+                      }}
+                      disabled={isSaving}
+                      className="text-sm text-center block w-full px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded border border-red-500/30 transition-colors"
+                    >
+                      Void / Refund Label
+                    </button>
                   </div>
                 )}
               </div>

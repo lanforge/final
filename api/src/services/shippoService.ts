@@ -2,40 +2,46 @@ import { Shippo } from 'shippo';
 
 const shippo = new Shippo({ apiKeyHeader: process.env.SHIPPO_API_TOKEN || '' });
 
-export const createShipment = async (addressFrom: any, addressTo: any, parcels: any[]) => {
+export const createShipment = async (addressFrom: any, addressTo: any, parcels: any[], extra?: any) => {
   try {
+    const payload: any = {
+      address_from: {
+        name: "LANForge",
+        street1: "88 Sabal Creek Trl",
+        city: "Ponte Vedra",
+        state: "FL",
+        zip: "32081",
+        country: "US"
+      },
+      address_to: addressTo,
+      parcels: parcels.map((p: any) => {
+        const parcelData = {
+          length: String(p.length || p.length_in || "5"),
+          width: String(p.width || p.width_in || "5"),
+          height: String(p.height || p.height_in || "5"),
+          distance_unit: String(p.distance_unit || p.distanceUnit || "in"),
+          weight: String(p.weight || "2"),
+          mass_unit: String(p.mass_unit || p.massUnit || "lb")
+        };
+        return parcelData;
+      }),
+      carrier_accounts: [
+        "f5af2b1f4fe54476b103493f3e76c27b"
+      ],
+      async: false
+    };
+
+    if (extra) {
+      payload.extra = extra;
+    }
+
     const response = await fetch('https://api.goshippo.com/shipments/', {
       method: 'POST',
       headers: {
         'Authorization': `ShippoToken ${process.env.SHIPPO_API_TOKEN}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        address_from: {
-          name: "LANForge",
-          street1: "88 Sabal Creek Trl",
-          city: "Ponte Vedra",
-          state: "FL",
-          zip: "32081",
-          country: "US"
-        },
-        address_to: addressTo,
-        parcels: parcels.map(p => {
-          const parcelData = {
-            length: String(p.length || p.length_in || "5"),
-            width: String(p.width || p.width_in || "5"),
-            height: String(p.height || p.height_in || "5"),
-            distance_unit: String(p.distance_unit || p.distanceUnit || "in"),
-            weight: String(p.weight || "2"),
-            mass_unit: String(p.mass_unit || p.massUnit || "lb")
-          };
-          return parcelData;
-        }),
-        carrier_accounts: [
-          "f5af2b1f4fe54476b103493f3e76c27b"
-        ],
-        async: false
-      })
+      body: JSON.stringify(payload)
     });
 
     const dataText = await response.text();
@@ -124,5 +130,31 @@ export const getRates = async (shipmentObjectId: string) => {
     return await shippo.shipments.get(shipmentObjectId);
   } catch (error: any) {
     throw new Error(`Failed to get rates: ${error.message}`);
+  }
+};
+
+export const refundLabel = async (transactionObjectId: string) => {
+  try {
+    const response = await fetch('https://api.goshippo.com/refunds/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `ShippoToken ${process.env.SHIPPO_API_TOKEN}`,
+        'Content-Type': 'application/json',
+        'Shippo-API-Version': '2018-02-08'
+      },
+      body: JSON.stringify({
+        transaction: transactionObjectId
+      })
+    });
+
+    const dataText = await response.text();
+
+    if (!response.ok) {
+      throw new Error(`Shippo API Error: ${dataText}`);
+    }
+
+    return JSON.parse(dataText);
+  } catch (error: any) {
+    throw new Error(`Failed to refund label: ${error.message}`);
   }
 };
