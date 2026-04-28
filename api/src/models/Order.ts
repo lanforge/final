@@ -45,7 +45,7 @@ export interface IOrder extends Document {
   total: number;
   status: 'order-confirmed' | 'building' | 'benchmarking' | 'shipped' | 'out-for-delivery' | 'delivered' | 'returned' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
-  paymentMethod: 'stripe' | 'paypal' | 'affirm' | 'none' | '';
+  paymentMethod: 'paypal' | 'affirm' | 'none' | '';
   paymentId?: string;
   trackingNumber?: string;
   carrier?: string;
@@ -126,7 +126,7 @@ const OrderSchema = new Schema<IOrder>(
       enum: ['pending', 'paid', 'failed', 'refunded'],
       default: 'pending',
     },
-    paymentMethod: { type: String, enum: ['stripe', 'paypal', 'affirm', 'none', ''], required: false },
+    paymentMethod: { type: String, enum: ['paypal', 'affirm', 'none', ''], required: false },
     paymentId: { type: String },
     trackingNumber: { type: String },
     carrier: { type: String },

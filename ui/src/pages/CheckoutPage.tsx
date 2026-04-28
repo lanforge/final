@@ -3,20 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldHalved, faCheck, faLock } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+// @ts-ignore
+import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 import '../App.css';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
-
 const libraries: ("places")[] = ["places"];
 
-interface CheckoutFormProps {
-  clientSecret: string;
-}
-
-const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
+const CheckoutPage: React.FC = () => {
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<'shipping' | 'billing' | 'shippingMethod' | 'donation' | 'payment'>('shipping');
   const [completedSections, setCompletedSections] = useState<Set<string>>(new Set());
   const [customerId, setCustomerId] = useState<string>('');
@@ -167,6 +162,10 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
     fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
       .then(res => res.json())
       .then(data => {
+        if (!data.cart || !data.cart.items || data.cart.items.length === 0) {
+          navigate('/cart');
+          return;
+        }
         if (data.cart && data.cart.items) {
           const mapped = data.cart.items.map((item: any) => {
             const product = item.product || item.pcPart || item.accessory;
@@ -338,64 +337,22 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
 
   const calculateTotal = () => Math.max(0, calculateSubtotal() + calculateTax() + displayShipping + displayInsurance + displayDonation - customDiscountAmount - getAppliedDiscountAmount());
 
-  const stripe = useStripe();
-  const elements = useElements();
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isProcessingBilling, setIsProcessingBilling] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!stripe || !elements) return;
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+  };
+
+  const handlePayPalApprove = async (data: any, actions: any) => {
     setIsProcessing(true);
+    setPaymentError(null);
 
-    // Ensure Stripe has the absolutely correct final total before confirming
-    try {
-      const finalTotal = calculateTotal();
-      if (finalTotal > 0 && clientSecret) {
-        await fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/update-intent`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            clientSecret,
-            amount: finalTotal
-          })
-        });
-      }
-    } catch (err) {
-      console.error('Failed to sync final amount to intent before confirm:', err);
-    }
-
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/order-status`,
-      },
-      redirect: 'if_required' // For mock purposes, don't actually redirect to Stripe
-    });
-
-    setIsProcessing(false);
-
-    if (error) {
-      setPaymentError(error.message || 'An error occurred during payment.');
-      return;
-    }
-
-    // Success - clear cart and navigate to order status page
     const sessionId = localStorage.getItem('cartSessionId');
     let orderId = '';
-    let finalOrderNumber = '';
-    // let paymentIntentId = '';
-    
-    // Retrieve Stripe payment intent ID
-    const intentRes = await stripe.retrievePaymentIntent(
-      new URLSearchParams(window.location.search).get('payment_intent_client_secret') || 
-      clientSecret
-    );
     
     try {
-      // Actually create the order in the database
       const finalBilling = useSameAddress ? shippingForm : billingForm;
       const orderPayload = {
         items: cartItems.map(i => ({ [i.type]: i.itemId, quantity: i.quantity })),
@@ -422,7 +379,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
           zip: finalBilling.zip,
           country: finalBilling.country
         },
-        paymentMethod: 'stripe',
+        paymentMethod: 'paypal',
         discountCode: discountCode || undefined,
         shippingAmount: calculateShipping(),
         shippingInsurance: calculateInsurance(),
@@ -441,22 +398,16 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
       const orderData = await res.json();
       if (orderData && orderData.order) {
         orderId = orderData.order._id;
-        finalOrderNumber = orderData.order.orderNumber;
         
-        // Also manually tell the backend that Stripe payment succeeded for this order ID
         try {
-          // If we had the paymentIntentId from before the request
-          const queryParams = new URLSearchParams(window.location.search);
-          const finalIntentId = queryParams.get('payment_intent') || intentRes.paymentIntent?.id || 'pi_manual_success';
-          
           await fetch(`${process.env.REACT_APP_API_URL}/payments`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               amount: calculateTotal(),
               currency: 'usd',
-              paymentMethod: 'stripe',
-              gatewayTransactionId: finalIntentId,
+              paymentMethod: 'paypal',
+              gatewayTransactionId: data.orderID,
               orderId: orderData.order._id,
               customerId: orderData.order.customer,
               status: 'completed'
@@ -584,16 +535,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
         const custData = await custRes.json();
         if (custData && custData.customer && custData.customer._id) {
           setCustomerId(custData.customer._id);
-          
-          // Also attach this new customer id to the payment intent BEFORE they check out
-          await fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/update-intent`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              clientSecret: clientSecret,
-              metadata: { customerId: custData.customer._id }
-            })
-          });
         }
       } catch (err) {
         console.error('Failed to init customer or update intent', err);
@@ -631,26 +572,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
 
   const isSectionCompleted = (section: string) => completedSections.has(section);
   const isSectionActive = (section: string) => activeSection === section;
-
-  React.useEffect(() => {
-    if (activeSection === 'payment') {
-      const total = calculateTotal();
-      if (total > 0 && clientSecret) {
-        fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/update-intent`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            clientSecret,
-            amount: total
-          })
-        }).catch(err => console.error('Failed to update payment intent amount:', err));
-      }
-    }
-  }, [
-    activeSection, clientSecret, cartItems, shippingMethod, 
-    customDonation, donationOption, appliedDiscount, 
-    customDiscountAmount, shippingInsurance, storeSettings
-  ]);
 
   return (
     <div className="checkout-page relative">
@@ -915,11 +836,57 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                     <h2>Payment Information</h2>
                   </div>
                   <div className="mb-6 p-4 bg-gray-900 rounded-lg border border-gray-700">
-                    <label className="block text-sm font-medium text-gray-300 mb-4">Payment Details</label>
-                    <PaymentElement />
+                    <label className="block text-sm font-medium text-gray-300 mb-4">Complete your payment securely with PayPal</label>
+                    <PayPalScriptProvider options={{ "clientId": process.env.REACT_APP_PAYPAL_CLIENT_ID || "sb", "currency": "USD" }}>
+                      <PayPalButtons 
+                        style={{ layout: "vertical", color: "blue", shape: "rect", label: "paypal" }}
+                        createOrder={(data, actions) => {
+                          const total = calculateTotal().toFixed(2);
+                          const finalBilling = useSameAddress ? shippingForm : billingForm;
+                          const payerPhone = finalBilling.phone.replace(/\D/g, '');
+                          
+                          const payer: any = {};
+                          if (finalBilling.email) payer.email_address = finalBilling.email;
+                          if (finalBilling.firstName || finalBilling.lastName) {
+                            payer.name = {};
+                            if (finalBilling.firstName) payer.name.given_name = finalBilling.firstName;
+                            if (finalBilling.lastName) payer.name.surname = finalBilling.lastName;
+                          }
+                          if (finalBilling.zip) {
+                            payer.address = {
+                              postal_code: finalBilling.zip,
+                              country_code: finalBilling.country || 'US'
+                            };
+                          }
+                          if (payerPhone) {
+                            payer.phone = {
+                              phone_type: 'MOBILE',
+                              phone_number: {
+                                national_number: payerPhone
+                              }
+                            };
+                          }
+
+                          return actions.order.create({
+                            intent: 'CAPTURE',
+                            payer: Object.keys(payer).length > 0 ? payer : undefined,
+                            purchase_units: [{
+                              amount: {
+                                currency_code: 'USD',
+                                value: total
+                              }
+                            }],
+                            application_context: {
+                              shipping_preference: 'NO_SHIPPING'
+                            }
+                          });
+                        }}
+                        onApprove={handlePayPalApprove}
+                      />
+                    </PayPalScriptProvider>
                     {paymentError && <div className="text-red-500 text-sm mt-4">{paymentError}</div>}
                   </div>
-                  <div className="payment-security"><span className="security-icon"><FontAwesomeIcon icon={faLock} /></span><span>Your payment information is encrypted and secure by Stripe</span></div>
+                  <div className="payment-security"><span className="security-icon"><FontAwesomeIcon icon={faLock} /></span><span>Your payment information is encrypted and secure by PayPal</span></div>
                 </motion.div>
               )}
             </div>
@@ -1029,18 +996,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
                   <p className="text-gray-400 text-sm mt-1">Please do not close or refresh this page.</p>
                 </div>
               )}
-              {activeSection === 'payment' && (
-                <button type="submit" className="btn btn-primary btn-large flex items-center justify-center gap-2" disabled={!stripe || isProcessing}>
-                  {isProcessing ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Processing...
-                    </>
-                  ) : (
-                    `Place Order • $${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                  )}
-                </button>
-              )}
             </motion.div>
           </div>
         </form>
@@ -1057,82 +1012,5 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret }) => {
   );
 };
 
-const CheckoutPageWrapper: React.FC = () => {
-  const [clientSecret, setClientSecret] = useState<string>('');
-  const initialized = useRef(false);
-  const navigate = useNavigate();
-
-  // We fetch the cart to initialize the intent with the real amount
-  // This intent is updated whenever the cart total changes later in the form.
-  React.useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-
-    let sessionId = localStorage.getItem('cartSessionId');
-    if (!sessionId) {
-      sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
-      localStorage.setItem('cartSessionId', sessionId);
-    }
-    
-    fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.cart || !data.cart.items || data.cart.items.length === 0) {
-          navigate('/cart');
-          return null;
-        }
-        
-        let initialAmount = 0;
-        if (data.cart && data.cart.items) {
-          initialAmount = data.cart.items.reduce((total: number, item: any) => {
-            const product = item.product || item.pcPart || item.accessory;
-            const customBuild = item.customBuild;
-            let price = item.price || 0;
-            if (customBuild) price = item.price || customBuild.total || 0;
-            else if (product) price = item.price || product.price || 0;
-            return total + (price * (item.quantity || 1));
-          }, 0);
-          initialAmount -= (data.cart.customDiscountAmount || 0);
-        }
-        
-        // Ensure we meet Stripe's minimum amount requirement
-        if (initialAmount < 0.5) initialAmount = 0.5;
-
-        return fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/create-checkout-intent`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: initialAmount })
-        });
-      })
-      .then(res => {
-        if (res) return res.json();
-        return null;
-      })
-      .then(data => {
-        if (data && data.clientSecret) {
-          setClientSecret(data.clientSecret);
-        }
-      })
-      .catch(err => console.error(err));
-  }, [navigate]);
-
-  if (!clientSecret) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-gradient-neon text-2xl font-bold mb-4">Loading Secure Checkout...</div>
-          <div className="w-16 h-16 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mx-auto"></div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night' } }}>
-      <CheckoutForm clientSecret={clientSecret} />
-    </Elements>
-  );
-};
-
-export default CheckoutPageWrapper;
+export default CheckoutPage;
 

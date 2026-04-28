@@ -97,9 +97,11 @@ app.use(
         allowedOrigins.push(...env.ALLOWED_ORIGINS.split(',').map(o => o.trim()));
       }
       
-      if (!origin || allowedOrigins.indexOf(origin) !== -1 || env.NODE_ENV === 'development') {
+      const isLocalhost = origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+      if (!origin || allowedOrigins.indexOf(origin) !== -1 || env.NODE_ENV === 'development' || isLocalhost) {
         callback(null, true);
       } else {
+        console.error(`CORS blocked request from origin: ${origin}`);
         callback(new Error('Not allowed by CORS'));
       }
     },
@@ -146,9 +148,6 @@ const publicSubmissionLimiter = rateLimit({
   max: 10,
   message: 'Too many submissions, please try again later.',
 });
-
-// Raw body for Stripe webhook (must come before express.json)
-app.use('/api/payments/webhook/stripe', express.raw({ type: 'application/json' }));
 
 // Body parsing
 app.use(express.json({ limit: '1mb' }));

@@ -2,126 +2,13 @@ import { Router, Request, Response } from 'express';
 import Order from '../models/Order';
 import Invoice from '../models/Invoice';
 import Payment from '../models/Payment';
-import stripeService, { createPaymentIntent, confirmPaymentIntent, constructWebhookEvent, createRefund } from '../services/stripeService';
-import { createPayPalOrder, capturePayPalOrder } from '../services/paypalService';
+import { createPayPalOrder, capturePayPalOrder, refundPayPalCapture } from '../services/paypalService';
 import { authorizeAffirmCharge, captureAffirmCharge } from '../services/affirmService';
 import { sendOrderConfirmation } from '../services/emailService';
 import { protect, staffOrAdmin } from '../middleware/auth';
 
 const router = Router();
 
-// POST /api/payments/stripe/create-checkout-intent
-router.post('/stripe/create-checkout-intent', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { amount, metadata } = req.body;
-    const intent = await createPaymentIntent(Math.max(1, amount), 'usd', metadata || {});
-    res.json({ clientSecret: intent.client_secret });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// POST /api/payments/stripe/update-intent
-router.post('/stripe/update-intent', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { clientSecret, metadata, amount } = req.body;
-    // Extract the intent ID from the client secret (format: pi_xxx_secret_yyy)
-    const paymentIntentId = clientSecret.split('_secret_')[0];
-    
-    const updateData: any = {};
-    if (metadata) updateData.metadata = metadata;
-    if (amount !== undefined) updateData.amount = Math.round(Math.max(0.5, amount) * 100);
-
-    await stripeService.paymentIntents.update(paymentIntentId, updateData);
-    
-    res.json({ success: true });
-  } catch (error: any) {
-    console.error('Update intent error:', error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// POST /api/payments/stripe/create-intent
-router.post('/stripe/create-intent', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { orderId } = req.body;
-    const order = await Order.findById(orderId);
-    if (!order) {
-      res.status(404).json({ message: 'Order not found' });
-      return;
-    }
-
-    const intent = await createPaymentIntent(order.total, 'usd', {
-      orderId: String(order._id),
-      orderNumber: order.orderNumber,
-    });
-
-    res.json({ clientSecret: intent.client_secret, paymentIntentId: intent.id });
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// POST /api/payments/stripe/confirm
-router.post('/stripe/confirm', async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { paymentIntentId, orderId } = req.body;
-    const intent = await confirmPaymentIntent(paymentIntentId);
-
-    if (intent.status === 'succeeded') {
-      const order = await Order.findByIdAndUpdate(
-        orderId,
-        { paymentStatus: 'paid', paymentId: paymentIntentId, status: 'order-confirmed' },
-        { new: true }
-      );
-      if (order) {
-        import('./orders').then(({ notifyOrderUpdated }) => {
-          notifyOrderUpdated(order._id.toString());
-          notifyOrderUpdated(order.orderNumber);
-        });
-      }
-
-      if (order) {
-        await Payment.create({
-          amount: intent.amount / 100,
-          currency: intent.currency,
-          paymentMethod: 'stripe',
-          gatewayTransactionId: intent.id,
-          order: orderId,
-          customer: order.customer,
-          status: 'completed',
-          metadata: intent.metadata
-        });
-
-        // Send confirmation email
-        try {
-          const emailData = {
-            orderNumber: order.orderNumber,
-            customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
-            email: order.shippingAddress.email,
-            items: order.items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
-            subtotal: order.subtotal,
-            shipping: order.shipping,
-            shippingInsurance: order.shippingInsurance,
-            tax: order.tax,
-            discount: order.discount,
-            total: order.total,
-            shippingAddress: order.shippingAddress,
-          };
-          await sendOrderConfirmation(emailData);
-        } catch (e) {
-          console.error('Order confirmation email failed:', e);
-        }
-      }
-
-      res.json({ success: true, order });
-    } else {
-      res.status(400).json({ message: 'Payment not completed', status: intent.status });
-    }
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
-  }
-});
 
 // POST /api/payments/paypal/create-order
 router.post('/paypal/create-order', async (req: Request, res: Response): Promise<void> => {
@@ -145,159 +32,107 @@ router.post('/paypal/create-order', async (req: Request, res: Response): Promise
   }
 });
 
-// POST /api/payments/webhook/stripe — raw body required
-router.post('/webhook/stripe', async (req: Request, res: Response): Promise<void> => {
-  const sig = req.headers['stripe-signature'] as string;
+// POST /api/payments/paypal/capture-order
+router.post('/paypal/capture-order', async (req: Request, res: Response): Promise<void> => {
   try {
-    const event = constructWebhookEvent(req.body as Buffer, sig);
+    const { orderId, orderNumber, invoiceId } = req.body;
+    const captureData = await capturePayPalOrder(req.body.paypalOrderId);
 
-    switch (event.type) {
-      case 'payment_intent.succeeded': {
-        const intent = event.data.object as any;
-        const orderId = intent.metadata?.orderId;
-        const isManualInvoice = intent.metadata?.type === 'manual_invoice';
-        
-        if (orderId) {
-          const order = await Order.findById(orderId);
-          
-          if (order && order.paymentStatus !== 'paid') {
-            order.paymentStatus = 'paid';
-            order.paymentId = intent.id;
-            order.status = 'order-confirmed';
-            await order.save();
-            
-            import('./orders').then(({ notifyOrderUpdated }) => {
-              notifyOrderUpdated(order._id.toString());
-              notifyOrderUpdated(order.orderNumber);
-            });
+    if (captureData.status === 'COMPLETED') {
+      const capture = captureData.purchase_units[0].payments.captures[0];
+      const gatewayTransactionId = capture.id;
 
-            await Payment.create({
-              amount: intent.amount / 100, // Stripe amount is in cents
-              currency: intent.currency,
-              paymentMethod: 'stripe',
-              gatewayTransactionId: intent.id,
-              order: orderId,
-              customer: order.customer,
-              status: 'completed',
-              metadata: intent.metadata
-            });
+      if (orderId) {
+        const order = await Order.findByIdAndUpdate(
+          orderId,
+          { paymentStatus: 'paid', paymentId: gatewayTransactionId, status: 'order-confirmed' },
+          { new: true }
+        );
 
-        // Send confirmation email
-        try {
-          const emailData = {
-            orderNumber: order.orderNumber,
-            customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
-            email: order.shippingAddress.email,
-            items: order.items.map((i: any) => ({ name: i.name, quantity: i.quantity, price: i.price })),
-            subtotal: order.subtotal,
-            shipping: order.shipping,
-            shippingInsurance: order.shippingInsurance,
-            tax: order.tax,
-            discount: order.discount,
-            total: order.total,
-            shippingAddress: order.shippingAddress,
-          };
-          await sendOrderConfirmation(emailData);
-        } catch (e) {
-          console.error('Order confirmation email failed (Webhook):', e);
+        if (order) {
+          import('./orders').then(({ notifyOrderUpdated }) => {
+            notifyOrderUpdated(order._id.toString());
+            notifyOrderUpdated(order.orderNumber);
+          });
+
+          await Payment.create({
+            amount: parseFloat(capture.amount.value),
+            currency: capture.amount.currency_code,
+            paymentMethod: 'paypal',
+            gatewayTransactionId,
+            order: orderId,
+            customer: order.customer,
+            status: 'completed',
+            metadata: { paypalOrderId: req.body.paypalOrderId }
+          });
+
+          try {
+            const emailData = {
+              orderNumber: order.orderNumber,
+              customerName: `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`,
+              email: order.shippingAddress.email,
+              items: order.items.map((i: any) => ({ name: i.name, quantity: i.quantity, price: i.price })),
+              subtotal: order.subtotal,
+              shipping: order.shipping,
+              shippingInsurance: order.shippingInsurance || 0,
+              tax: order.tax,
+              discount: order.discount,
+              total: order.total,
+              shippingAddress: order.shippingAddress,
+            };
+            await sendOrderConfirmation(emailData);
+          } catch (e) {
+            console.error('Order confirmation email failed:', e);
+          }
         }
-      }
-        } else if (isManualInvoice) {
-          const invoiceId = intent.metadata?.invoiceId;
-          if (invoiceId) {
-            const invoice = await Invoice.findByIdAndUpdate(invoiceId, {
-              status: 'paid',
-              paymentId: intent.id
-            });
-            
-            if (invoice) {
-              await Payment.create({
-                amount: intent.amount / 100,
-                currency: intent.currency,
-                paymentMethod: 'stripe',
-                gatewayTransactionId: intent.id,
-                invoice: invoiceId,
-                status: 'completed',
-                metadata: intent.metadata
-              });
+        res.json({ success: true, order });
+      } else if (invoiceId) {
+        const invoice = await Invoice.findByIdAndUpdate(invoiceId, {
+          status: 'paid',
+          paymentId: gatewayTransactionId
+        }, { new: true });
+        
+        if (invoice) {
+          await Payment.create({
+            amount: parseFloat(capture.amount.value),
+            currency: capture.amount.currency_code,
+            paymentMethod: 'paypal',
+            gatewayTransactionId,
+            invoice: invoiceId,
+            status: 'completed',
+            metadata: { paypalOrderId: req.body.paypalOrderId }
+          });
 
-              // Check if the related order needs its payment status updated
-              if (invoice.relatedOrderId) {
-                const order = await Order.findById(invoice.relatedOrderId);
-                if (order) {
-                  const payments = await Payment.find({ order: order._id, status: 'completed' });
-                  const totalPaidFromPayments = payments.reduce((sum, p) => sum + p.amount, 0);
-                  
-                  const invoices = await Invoice.find({ relatedOrderId: order._id, status: 'paid' });
-                  const totalPaidFromInvoices = invoices.reduce((sum, inv) => sum + inv.amount, 0);
-                  
-                  const totalPaid = totalPaidFromPayments + totalPaidFromInvoices;
-                  
-                  if (totalPaid >= order.total && order.paymentStatus !== 'paid') {
-                    order.paymentStatus = 'paid';
-                    await order.save();
-                  }
-                }
+          // Check if the related order needs its payment status updated
+          if (invoice.relatedOrderId) {
+            const order = await Order.findById(invoice.relatedOrderId);
+            if (order) {
+              const payments = await Payment.find({ order: order._id, status: 'completed' });
+              const totalPaidFromPayments = payments.reduce((sum, p) => sum + p.amount, 0);
+              
+              const invoices = await Invoice.find({ relatedOrderId: order._id, status: 'paid' });
+              const totalPaidFromInvoices = invoices.reduce((sum, inv) => sum + inv.amount, 0);
+              
+              const totalPaid = totalPaidFromPayments + totalPaidFromInvoices;
+              
+              if (totalPaid >= order.total && order.paymentStatus !== 'paid') {
+                order.paymentStatus = 'paid';
+                await order.save();
               }
             }
-          } else {
-            await Payment.create({
-              amount: intent.amount / 100,
-              currency: intent.currency,
-              paymentMethod: 'stripe',
-              gatewayTransactionId: intent.id,
-              status: 'completed',
-              metadata: intent.metadata
-            });
           }
+          res.json({ success: true, invoice });
+        } else {
+          res.status(404).json({ message: 'Invoice not found' });
         }
-        break;
+      } else {
+        res.status(400).json({ message: 'Neither orderId nor invoiceId provided' });
       }
-      case 'payment_intent.payment_failed': {
-        const intent = event.data.object as any;
-        const orderId = intent.metadata?.orderId;
-        const isManualInvoice = intent.metadata?.type === 'manual_invoice';
-        
-        if (orderId) {
-          const order = await Order.findByIdAndUpdate(orderId, { paymentStatus: 'failed' });
-          
-          if (order) {
-            await Payment.create({
-              amount: intent.amount / 100, // Stripe amount is in cents
-              currency: intent.currency,
-              paymentMethod: 'stripe',
-              gatewayTransactionId: intent.id,
-              order: orderId,
-              customer: order.customer,
-              status: 'failed',
-              metadata: { ...intent.metadata, error: intent.last_payment_error }
-            });
-          }
-        } else if (isManualInvoice) {
-          const invoiceId = intent.metadata?.invoiceId;
-          
-          if (invoiceId) {
-            const invoice = await Invoice.findById(invoiceId);
-            if (invoice) {
-              await Payment.create({
-                amount: intent.amount / 100,
-                currency: intent.currency,
-                paymentMethod: 'stripe',
-                gatewayTransactionId: intent.id,
-                invoice: invoiceId,
-                status: 'failed',
-                metadata: { ...intent.metadata, error: intent.last_payment_error }
-              });
-            }
-          }
-        }
-        break;
-      }
+    } else {
+      res.status(400).json({ message: 'Payment not completed', status: captureData.status });
     }
-
-    res.json({ received: true });
   } catch (error: any) {
-    res.status(400).json({ message: `Webhook error: ${error.message}` });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -399,16 +234,16 @@ router.post('/:id/refund', protect, async (req: Request, res: Response): Promise
       return;
     }
 
-    if (payment.paymentMethod === 'stripe' || forceLocal) {
+    if (payment.paymentMethod === 'paypal' || forceLocal) {
       let refundId = `local_refund_${Date.now()}`;
       let refundStatus = 'succeeded';
       let refundedAmount = amount || payment.amount;
 
-      if (payment.paymentMethod === 'stripe' && !forceLocal) {
-        const refund = await createRefund(payment.gatewayTransactionId, amount);
+      if (payment.paymentMethod === 'paypal' && !forceLocal) {
+        const refund = await refundPayPalCapture(payment.gatewayTransactionId, amount);
         refundId = refund.id;
-        refundStatus = refund.status || 'succeeded';
-        refundedAmount = refund.amount / 100;
+        refundStatus = refund.status === 'COMPLETED' ? 'succeeded' : refund.status;
+        refundedAmount = refund.amount ? parseFloat(refund.amount.value) : amount || payment.amount;
       }
       
       const refundMetadata = payment.metadata || {};

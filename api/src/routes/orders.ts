@@ -87,7 +87,7 @@ router.post(
     body('items').isArray({ min: 1 }).withMessage('Order must have at least one item'),
     body('shippingAddress').notEmpty().withMessage('Shipping address is required'),
     body('billingAddress').notEmpty().withMessage('Billing address is required'),
-    body('paymentMethod').isIn(['stripe', 'paypal', 'affirm']).withMessage('Invalid payment method'),
+    body('paymentMethod').isIn(['paypal', 'affirm']).withMessage('Invalid payment method'),
   ],
   async (req: Request, res: Response): Promise<void> => {
     const errors = validationResult(req);

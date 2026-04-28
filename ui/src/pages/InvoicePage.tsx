@@ -1,64 +1,82 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faShieldHalved } from '@fortawesome/free-solid-svg-icons';
 import { useLocation } from 'react-router-dom';
+import api from '../utils/api';
 import '../App.css';
 
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'pk_test_TYooMQauvdEDq54NiTphI7jx');
-
-const InvoiceCheckoutForm: React.FC<{ clientSecret: string, amount: number }> = ({ clientSecret, amount }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+const InvoiceCheckoutForm: React.FC<{ amount: number, invoiceId: string, email?: string, name?: string }> = ({ amount, invoiceId, email, name }) => {
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!stripe || !elements) return;
-
+  const handleApprove = async (data: any, actions: any) => {
     setIsProcessing(true);
+    setError(null);
+    try {
+      const res = await api.post(`/payments/paypal/capture-order`, {
+        paypalOrderId: data.orderID,
+        invoiceId,
+      });
 
-    const { error: paymentError } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        // Return URL where the user should be redirected after the payment
-        return_url: `${window.location.origin}/invoice?success=true`,
-      },
-    });
-
-    if (paymentError) {
-      setError(paymentError.message || 'An unexpected error occurred.');
+      if (res.data.success) {
+        window.location.href = '/invoice?success=true';
+      } else {
+        throw new Error(res.data.message || 'Payment capture failed');
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || err.message || 'Payment failed');
       setIsProcessing(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
-      <div className="mb-6 p-4 bg-gray-900 rounded-lg border border-gray-700">
-        <label className="block text-sm font-medium text-gray-300 mb-4">Payment Details</label>
-        <PaymentElement />
-        {error && <div className="text-red-500 text-sm mt-4">{error}</div>}
-      </div>
+    <div className="w-full max-w-md mx-auto">
+      {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
+      {isProcessing && <div className="text-emerald-500 text-sm mb-4">Processing payment... Please wait.</div>}
       
-      <button 
-        type="submit" 
-        className="btn btn-primary btn-large w-full" 
-        disabled={!stripe || isProcessing}
-      >
-        {isProcessing ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
-      </button>
+      <PayPalScriptProvider options={{ "clientId": process.env.REACT_APP_PAYPAL_CLIENT_ID || "sb", "currency": "USD" }}>
+        <PayPalButtons
+          style={{ layout: "vertical" }}
+          createOrder={(data, actions) => {
+             const payer: any = {};
+             if (email) payer.email_address = email;
+             if (name) {
+               const parts = name.trim().split(' ');
+               payer.name = {};
+               if (parts[0]) payer.name.given_name = parts[0];
+               if (parts.length > 1) payer.name.surname = parts.slice(1).join(' ');
+             }
+
+             return actions.order.create({
+                intent: 'CAPTURE',
+                payer: Object.keys(payer).length > 0 ? payer : undefined,
+                purchase_units: [
+                  {
+                    amount: {
+                      currency_code: 'USD',
+                      value: amount.toFixed(2),
+                    },
+                    description: `Invoice ${invoiceId}`,
+                  },
+                ],
+                application_context: {
+                  shipping_preference: 'NO_SHIPPING'
+                }
+              });
+          }}
+          onApprove={handleApprove}
+        />
+      </PayPalScriptProvider>
       
       <div className="security-info mt-6 text-sm text-gray-400 flex flex-col items-center gap-2">
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faLock} className="text-emerald-500" />
-          <span>Payments are processed securely via Stripe</span>
+          <span>Payments are processed securely via PayPal</span>
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 
@@ -71,38 +89,8 @@ const InvoicePage: React.FC = () => {
 
   const [invoice, setInvoice] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
-  const [clientSecret, setClientSecret] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(true);
-
-  const initializePayment = async (invoiceData: any) => {
-    try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/payments/stripe/create-checkout-intent`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          amount: invoiceData.amount,
-          metadata: {
-            type: 'manual_invoice',
-            invoiceId: invoiceData._id,
-            customerName: invoiceData.customerName,
-            customerEmail: invoiceData.customerEmail,
-            reason: invoiceData.description
-          }
-        })
-      });
-
-      const data = await res.json();
-      
-      if (res.ok && data.clientSecret) {
-        setClientSecret(data.clientSecret);
-      } else {
-        setErrorMsg(data.message || 'Failed to initialize payment.');
-      }
-    } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred. Please try again.');
-    }
-  };
 
   useEffect(() => {
     if (invoiceId) {
@@ -114,8 +102,6 @@ const InvoicePage: React.FC = () => {
             setInvoice(data);
             if (data.status === 'paid') {
               setErrorMsg('This invoice has already been paid.');
-            } else {
-              await initializePayment(data);
             }
             
             try {
@@ -279,15 +265,9 @@ const InvoicePage: React.FC = () => {
                 <h3 className="text-xl font-bold text-emerald-400 mb-2">Invoice Paid</h3>
                 <p className="text-emerald-500/80">Thank you for your business. This invoice has been successfully settled.</p>
               </div>
-            ) : clientSecret ? (
-              <div>
-                <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night' } }}>
-                  <InvoiceCheckoutForm clientSecret={clientSecret} amount={invoice.amount} />
-                </Elements>
-              </div>
             ) : (
-              <div className="text-gray-400 text-center py-6">
-                Initializing payment gateway...
+              <div>
+                <InvoiceCheckoutForm amount={invoice.amount} invoiceId={invoice._id} email={invoice.customerEmail} name={invoice.customerName} />
               </div>
             )}
           </motion.div>

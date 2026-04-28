@@ -82,7 +82,7 @@ router.post(
         const nameToMatch = (rate.title || rate.servicelevel?.name || '').toLowerCase();
 
         if (nameToMatch.includes('ground')) {
-          displayTitle = 'UPS GROUND (NO SAVER)';
+          displayTitle = 'UPS GROUND';
           estimatedDays = '3-5';
         } else if (nameToMatch.includes('2nd day') || nameToMatch.includes('2 day')) {
           displayTitle = 'UPS 2 Day Air';

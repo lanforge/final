@@ -18,7 +18,7 @@ const paymentSchema = new Schema<IPayment>(
   {
     amount: { type: Number, required: true },
     currency: { type: String, default: 'usd' },
-    paymentMethod: { type: String, default: 'stripe', required: true },
+    paymentMethod: { type: String, default: 'paypal', required: true },
     gatewayTransactionId: { type: String, required: true },
     order: { type: Schema.Types.ObjectId, ref: 'Order' },
     invoice: { type: Schema.Types.ObjectId, ref: 'Invoice' },

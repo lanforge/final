@@ -162,7 +162,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
         </div>
         <div className="flex items-center space-x-3">
           {refundSuccess && <span className="text-emerald-500">{refundSuccess}</span>}
-          {payment.status !== 'refunded' && payment.status === 'completed' && remainingBalance > 0 && payment.paymentMethod === 'stripe' && (
+          {payment.status !== 'refunded' && payment.status === 'completed' && remainingBalance > 0 && payment.paymentMethod === 'paypal' && (
             <button 
               onClick={() => setShowRefundModal(true)}
               className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg transition-colors font-medium"
@@ -343,7 +343,7 @@ const AdminPaymentDetailsPage: React.FC = () => {
                   className="w-4 h-4 bg-[#11141d] border-[#1f2233] rounded text-amber-500 focus:ring-amber-500 focus:ring-offset-gray-900"
                 />
                 <label htmlFor="forceLocal" className="text-sm text-slate-400">
-                  Force local refund (Bypass Stripe, useful for testing)
+                  Force local refund (Bypass PayPal, useful for testing)
                 </label>
               </div>
 
