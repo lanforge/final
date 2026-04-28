@@ -10,4 +10,7 @@ export const env = cleanEnv(process.env, {
   JWT_REFRESH_SECRET: str(),
   FRONTEND_URL: url({ default: 'http://localhost:3000' }),
   ALLOWED_ORIGINS: str({ default: '' }),
+  PAYPAL_CLIENT_ID: str(),
+  PAYPAL_CLIENT_SECRET: str(),
+  PAYPAL_MODE: str({ choices: ['live', 'sandbox'], default: 'sandbox' }),
 });

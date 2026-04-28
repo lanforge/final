@@ -36,7 +36,7 @@ const InvoiceCheckoutForm: React.FC<{ amount: number, invoiceId: string, email?:
       {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
       {isProcessing && <div className="text-emerald-500 text-sm mb-4">Processing payment... Please wait.</div>}
       
-      <PayPalScriptProvider options={{ "clientId": process.env.REACT_APP_PAYPAL_CLIENT_ID || "sb", "currency": "USD" }}>
+      <PayPalScriptProvider options={{ "clientId": process.env.REACT_APP_PAYPAL_CLIENT_ID || "", "currency": "USD" }}>
         <PayPalButtons
           style={{ layout: "vertical" }}
           createOrder={(data, actions) => {

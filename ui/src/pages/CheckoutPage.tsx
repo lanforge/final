@@ -837,7 +837,7 @@ const CheckoutPage: React.FC = () => {
                   </div>
                   <div className="mb-6 p-4 bg-gray-900 rounded-lg border border-gray-700">
                     <label className="block text-sm font-medium text-gray-300 mb-4">Complete your payment securely with PayPal</label>
-                    <PayPalScriptProvider options={{ "clientId": process.env.REACT_APP_PAYPAL_CLIENT_ID || "sb", "currency": "USD" }}>
+                    <PayPalScriptProvider options={{ "clientId": process.env.REACT_APP_PAYPAL_CLIENT_ID || "", "currency": "USD" }}>
                       <PayPalButtons 
                         style={{ layout: "vertical", color: "blue", shape: "rect", label: "paypal" }}
                         createOrder={(data, actions) => {

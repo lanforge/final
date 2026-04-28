@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { env } from '../config/env';
 
 const PAYPAL_BASE_URL =
-  process.env.PAYPAL_MODE === 'live'
+  env.PAYPAL_MODE === 'live'
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
@@ -11,8 +12,8 @@ const getAccessToken = async (): Promise<string> => {
     'grant_type=client_credentials',
     {
       auth: {
-        username: process.env.PAYPAL_CLIENT_ID as string,
-        password: process.env.PAYPAL_CLIENT_SECRET as string,
+        username: env.PAYPAL_CLIENT_ID,
+        password: env.PAYPAL_CLIENT_SECRET,
       },
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     }
