@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/analytics';
+import { getShortPerformanceSummary, LANFORGE_FPS_DISCLAIMER } from '../utils/lanforgePerformanceEngine';
 
 interface Product {
   id: number;
@@ -16,6 +17,9 @@ interface Product {
   imageColor: string;
   tags: string[];
   basePrice: number;
+  fortniteFPS?: number;
+  cpuName?: string;
+  gpuName?: string;
 }
 
 const PCsPage: React.FC = () => {
@@ -29,26 +33,40 @@ const PCsPage: React.FC = () => {
       .then(res => res.json())
       .then(data => {
         if (data.products) {
-          const mapped = data.products.map((p: any) => ({
-            id: p._id,
-            name: p.name,
-            description: p.shortDescription || p.description,
-            price: `$${p.price.toFixed(2)}`,
-            basePrice: p.price,
-            image: p.images?.[0] || null, // Primary photo
-            specs: p.parts && p.parts.length > 0 
-              ? [
-                  p.parts.find((part: any) => part.type === 'cpu'),
-                  p.parts.find((part: any) => part.type === 'gpu'),
-                  p.parts.find((part: any) => part.type === 'ram')
-                ].filter(Boolean).map((part: any) => {
-                  const modelStr = part.partModel || part.model || (part.name ? part.name.replace(new RegExp(`^${part.brand}\\s*`, 'i'), '') : '');
-                  return `${part.type.toUpperCase()}: ${part.brand} ${modelStr}`.trim();
-                })
-              : (p.specs ? Object.entries(p.specs).map(([k, v]) => `${k}: ${v}`).slice(0, 3) : []),
-            imageColor: '#10b981', // Fallback color
-            tags: p.tags || []
-          }));
+          const mapped = data.products.map((p: any) => {
+            const cpuPart = p.parts?.find((part: any) => part.type?.toLowerCase() === 'cpu');
+            const gpuPart = p.parts?.find((part: any) => part.type?.toLowerCase() === 'gpu' || part.type?.toLowerCase() === 'graphics card' || part.type?.toLowerCase() === 'graphics');
+            
+            const cpuName = cpuPart?.partModel || cpuPart?.model || cpuPart?.name || '';
+            const gpuName = gpuPart?.partModel || gpuPart?.model || gpuPart?.name || '';
+            
+            const perf = cpuName && gpuName ? getShortPerformanceSummary(cpuName, gpuName) : null;
+            const fortniteFPS = perf ? perf.highlights["1080p"].fortniteCompetitive.average : undefined;
+
+              return {
+                id: p._id,
+                name: p.name,
+                description: p.shortDescription || p.description,
+                price: `$${p.price.toFixed(2)}`,
+                basePrice: p.price,
+                image: p.images?.[0] || null, // Primary photo
+                cpuName: cpuName,
+                gpuName: gpuName,
+                specs: p.parts && p.parts.length > 0 
+                  ? [
+                      p.parts.find((part: any) => part.type === 'cpu'),
+                      p.parts.find((part: any) => part.type === 'gpu'),
+                      p.parts.find((part: any) => part.type === 'ram')
+                    ].filter(Boolean).map((part: any) => {
+                      const modelStr = part.partModel || part.model || (part.name ? part.name.replace(new RegExp(`^${part.brand}\\s*`, 'i'), '') : '');
+                      return `${part.type.toUpperCase()}: ${part.brand} ${modelStr}`.trim();
+                    })
+                  : (p.specs ? Object.entries(p.specs).map(([k, v]) => `${k}: ${v}`).slice(0, 3) : []),
+                imageColor: '#10b981', // Fallback color
+                tags: p.tags || [],
+                fortniteFPS
+              };
+          });
           setProducts(mapped);
         }
       })
@@ -139,7 +157,7 @@ const PCsPage: React.FC = () => {
               transition={{ duration: 0.5, delay: seriesIndex * 0.1 }}
               className="mb-16"
             >
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                 <div>
                   <h2 className="heading-2 mb-2">{series === 'Pre Configured' ? 'Preconfigured PCs' : series}</h2>
                   <p className="text-gray-400">
@@ -147,172 +165,124 @@ const PCsPage: React.FC = () => {
                     {series === 'LANForge Mini Series' && 'Compact powerhouses for space-conscious setups'}
                     {series === 'Pre Configured' && 'Pre-configured systems ready for immediate delivery'}
                   </p>
-                  <p className="text-gray-500 text-sm mt-1">{seriesProducts.length} models available</p>
                 </div>
-                <div className="badge-primary hidden md:inline-flex">
-                  {seriesProducts.length} PCs
+                <div className="flex flex-col items-end gap-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 shadow-[0_0_15px_rgba(52,211,153,0.15)]">
+                    <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    <span className="text-xs sm:text-sm font-bold text-emerald-400">All systems built & shipped in 3–5 days</span>
+                  </div>
+                  <span className="text-sm text-gray-500 hidden sm:block">{seriesProducts.length} models available</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {seriesProducts.map((product) => {
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+                {seriesProducts.map((product, productIndex) => {
                   return (
                     <motion.div
                       key={product.id}
-                      whileHover={{ y: -5 }}
-                      className="card-glow group"
+                      className={`bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 group transition-all duration-300 flex flex-col h-full ${
+                        series === 'LANForge Series' && productIndex === 1 
+                          ? 'lg:scale-[1.03] relative z-10 shadow-[0_0_60px_rgba(6,182,212,0.4)]' 
+                          : 'scale-100'
+                      }`}
                     >
-                      <div className="p-6">
+                      <div className="p-4 sm:p-5 lg:p-6 flex flex-col h-full">
+                        <div className="flex items-center justify-between mb-3 sm:mb-4 min-h-[32px]">
+                          <div className="flex flex-col">
+                            {/* Most Popular Badge */}
+                            {series === 'LANForge Series' && productIndex === 1 && (
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-500/30 w-fit shadow-[0_0_15px_rgba(249,115,22,0.15)]">
+                                <svg className="w-3.5 h-3.5 text-orange-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
+                                <span className="text-[10px] sm:text-xs font-bold text-orange-400 uppercase tracking-wide">Most Popular</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
                         {/* Product Image */}
-                        <div className="mb-6">
+                        <div className="relative mb-4 sm:mb-6">
                           <div 
-                            className="relative h-48 rounded-xl overflow-hidden bg-gray-900"
-                            style={{ backgroundColor: !product.image ? product.imageColor : undefined }}
+                            className="w-full h-40 sm:h-44 lg:h-48 rounded-xl flex items-center justify-center relative overflow-hidden"
+                            style={{ backgroundColor: `${product.imageColor || '#10b981'}20` }}
                           >
                             {product.image ? (
                               <img 
                                 src={product.image} 
                                 alt={product.name} 
-                                className="w-full h-full object-contain p-2"
+                                className="w-full h-full object-contain p-2 relative z-10"
                               />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="text-6xl opacity-30"><FontAwesomeIcon icon={faDesktop} /></div>
+                                <div className="text-6xl opacity-30 relative z-10"><FontAwesomeIcon icon={faDesktop} /></div>
                               </div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                            <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-2">
-                              {product.tags.filter(t => seriesOrder.some(s => s.label.toLowerCase() === t.toLowerCase() || s.tag === t.toLowerCase())).map(tag => (
-                                  <div key={tag} className="badge-accent inline-block">
-                                    {tag === 'Pre Configured' ? 'Preconfigured' : tag}
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
+                            <div 
+                              className="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-20 blur-xl"
+                              style={{ backgroundColor: product.imageColor || '#10b981' }}
+                            />
                           </div>
+                          
+                        </div>
 
                         {/* Product Info */}
-                        <div>
-                          <div className="flex justify-between items-start mb-4">
-                            <div>
-                              <h3 className="text-xl font-bold text-white mb-2">{product.name}</h3>
+                        <div className="space-y-3 sm:space-y-4 flex flex-col flex-grow">
+                          <div className="flex flex-col gap-1">
+                            {/* Prominent FPS Display */}
+                            {product.fortniteFPS && (
+                              <>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h3 className="text-2xl sm:text-3xl font-black text-emerald-300 tracking-tight leading-none drop-shadow-[0_0_12px_rgba(52,211,153,0.5)]">{product.fortniteFPS}+ FPS</h3>
+                                </div>
+                                <div className="mb-1 flex flex-col gap-1.5">
+                                  <div>
+                                    <span className="text-[10px] sm:text-xs font-bold text-emerald-300 uppercase tracking-widest border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 rounded shadow-[0_0_15px_rgba(52,211,153,0.2)] leading-none inline-block">Competitive &bull; 1080p</span>
+                                  </div>
+                                  <div className="text-emerald-400/70">
+                                    <span className="text-xs sm:text-sm font-bold uppercase tracking-wider drop-shadow-[0_0_3px_rgba(52,211,153,0.1)] leading-none">
+                                      {product.fortniteFPS >= 300 ? '360Hz+' : product.fortniteFPS >= 200 ? '240–360Hz' : '144–240Hz'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                            
+                            <h4 className="text-xl sm:text-2xl font-bold text-white leading-tight mt-1">{product.name}</h4>
+                          </div>
+
+                          {/* Power Info */}
+                          <div className="pt-2 mb-4">
+                            <div className="text-xs sm:text-sm font-medium text-gray-400 mb-3">
+                              {product.cpuName && product.gpuName ? (
+                                <>
+                                  <span className="text-white">{product.cpuName}</span> &bull; <span className="text-white">{product.gpuName}</span>
+                                </>
+                              ) : 'Premium Components'}
                             </div>
-                            <div className="text-2xl font-bold text-gradient-neon">
+                          <div className="flex flex-col border-t border-gray-800/50 pt-3">
+                            <div className="text-xl sm:text-2xl font-bold text-emerald-400 mb-0.5">
                               {product.price}
                             </div>
+                            {product.basePrice && product.basePrice > 0 && (
+                              <div className="text-[11px] sm:text-xs text-gray-400 flex items-center gap-1">
+                                Starting at <span className="text-blue-400 font-medium">${Math.ceil((product.basePrice * 1.0999) / 24)}/mo</span> with <img src="https://cdn-assets.affirm.com/images/white_logo-transparent_bg.png" alt="Affirm" className="h-3.5 inline-block -mt-0.5" />
+                              </div>
+                            )}
+                          </div>
                           </div>
 
-                          {/* Specs */}
-                          <div className="mb-6">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="text-sm font-semibold text-gray-300">Key Specifications</h4>
-                              <Link
-                                to={`/products/${product.id}`}
-                                className="text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
-                              >
-                                View All Specs
-                              </Link>
-                            </div>
-                            <ul className="space-y-2">
-                              {product.specs.slice(0, 3).map((spec, idx) => (
-                                <li key={idx} className="flex items-start">
-                                  <svg className="w-4 h-4 text-emerald-400 mt-1 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                  <span className="text-gray-300 text-sm">{spec}</span>
-                                </li>
-                              ))}
-                            </ul>
+                          {/* Spacer to push actions to bottom */}
+                          <div className="flex-grow"></div>
+
+                          {/* Actions */}
+                          <div className="mt-auto pt-3 sm:pt-4 border-t border-gray-800/50 flex items-center justify-center">
+                            <Link to={`/products/${product.id}`} className="w-full">
+                              <div className="skew-x-[-10deg] bg-black/40 backdrop-blur-md border border-cyan-500/50 rounded-lg overflow-hidden shadow-[0_0_20px_rgba(6,182,212,0.25)] ring-1 ring-cyan-500/50 w-full text-center">
+                                <button className="skew-x-[10deg] px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/60 hover:from-cyan-300 hover:to-cyan-500 transition-all duration-300 w-full">
+                                  View Build
+                                </button>
+                              </div>
+                            </Link>
                           </div>
-
-                  {/* Color Selection */}
-                  <div className="mb-4 relative z-20">
-                    <div className="text-sm font-semibold text-gray-400 mb-2">Case Color</div>
-                    <div className="flex gap-2 relative z-20">
-                      <button
-                        type="button"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'Black' })); }}
-                        className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all ${(!selectedColors[product.id] || selectedColors[product.id] === 'Black') ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
-                        style={{ backgroundColor: '#111' }}
-                        title="Black"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedColors(prev => ({ ...prev, [product.id]: 'White' })); }}
-                        className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all ${(selectedColors[product.id] === 'White') ? 'border-emerald-400 scale-110' : 'border-gray-600 hover:border-gray-400'}`}
-                        style={{ backgroundColor: '#f3f4f6' }}
-                        title="White"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex flex-col gap-3">
-                    <Link 
-                      to={`/products/${product.id}`}
-                      className="btn btn-primary w-full"
-                    >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      View Details
-                    </Link>
-                    <button 
-                      id={`add-btn-${product.id}`}
-                      className="btn btn-secondary w-full transition-all duration-300"
-                      onClick={() => {
-                        let sessionId = localStorage.getItem('cartSessionId');
-                        if (!sessionId) {
-                          sessionId = 'session_' + Math.random().toString(36).substring(2, 15);
-                          localStorage.setItem('cartSessionId', sessionId);
-                        }
-                        fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`)
-                          .then(res => res.json())
-                          .then(data => {
-                            const existingItems = data.cart?.items || [];
-                            const mappedItems = existingItems.map((i: any) => ({
-                              product: i.product?._id || i.product,
-                              pcPart: i.pcPart?._id || i.pcPart,
-                              accessory: i.accessory?._id || i.accessory,
-                              customBuild: i.customBuild?._id || i.customBuild,
-                              quantity: i.quantity
-                            }));
-                            const color = selectedColors[product.id] || 'Black';
-                            mappedItems.push({
-                              product: product.id,
-                              quantity: 1,
-                              notes: `Case Color: ${color}`
-                            });
-                            trackEvent('add_to_cart', window.location.pathname + window.location.search, product.id.toString());
-                            return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
-                              method: 'PUT',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({ items: mappedItems })
-                            });
-                          })
-                          .then(() => {
-                            const btn = document.getElementById(`add-btn-${product.id}`);
-                            if (btn) {
-                              const originalText = btn.innerHTML;
-                              btn.innerHTML = '<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Added!';
-                              btn.classList.add('bg-emerald-600', 'text-white');
-                              setTimeout(() => {
-                                window.location.href = '/cart';
-                              }, 500);
-                            } else {
-                              window.location.href = '/cart';
-                            }
-                          })
-                          .catch(err => console.error(err));
-                      }}
-                    >
-                      <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      Add to Cart
-                    </button>
-                  </div>
                         </div>
                       </div>
                     </motion.div>
@@ -321,6 +291,13 @@ const PCsPage: React.FC = () => {
               </div>
             </motion.div>
           )})}
+
+          {/* Performance Disclaimer */}
+          <div className="mt-8 text-center px-4 pt-8 border-t border-white/10">
+            <p className="text-[10px] text-gray-500 max-w-4xl mx-auto leading-relaxed">
+              {LANFORGE_FPS_DISCLAIMER}
+            </p>
+          </div>
         </div>
       </section>
 

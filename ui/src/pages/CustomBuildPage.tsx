@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import Toast, { ToastType } from '../components/Toast';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/analytics';
+import { getShortPerformanceSummary } from '../utils/lanforgePerformanceEngine';
 
 const CustomBuildPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +14,7 @@ const CustomBuildPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [addingToCart, setAddingToCart] = useState(false);
   const [toast, setToast] = useState<{message: string, type: ToastType, isVisible: boolean, duration?: number}>({ message: '', type: 'info', isVisible: false });
+  const [selectedResolution, setSelectedResolution] = useState<"1080p" | "1440p" | "4k">("1080p");
 
   const showToast = (message: string, type: ToastType = 'info', duration: number = 3000) => {
     setToast({ message, type, isVisible: true, duration });
@@ -94,6 +96,16 @@ const CustomBuildPage: React.FC = () => {
     );
   }
 
+  const cpuItem = build?.parts?.find((item: any) => item.partType?.toLowerCase() === 'cpu' || item.part?.type?.toLowerCase() === 'cpu');
+  const gpuItem = build?.parts?.find((item: any) => {
+    const type = (item.partType || item.part?.type || '').toLowerCase();
+    return type === 'gpu' || type === 'graphics card' || type === 'graphics';
+  });
+
+  const cpuName = cpuItem?.part?.partModel || cpuItem?.part?.name || '';
+  const gpuName = gpuItem?.part?.partModel || gpuItem?.part?.name || '';
+  const performanceSummary = cpuName && gpuName ? getShortPerformanceSummary(cpuName, gpuName) : null;
+
   if (error || !build) {
     return (
       <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-6">
@@ -136,6 +148,88 @@ const CustomBuildPage: React.FC = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {performanceSummary && (
+              <div className="mb-6 pb-6 border-b border-white/10">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-bold text-white">{performanceSummary.title}</h3>
+                  <div className="flex gap-1 bg-[#222] rounded-md p-1 border border-white/5">
+                    {(["1080p", "1440p", "4k"] as const).map(res => (
+                      <button
+                        key={res}
+                        onClick={() => setSelectedResolution(res)}
+                        className={`px-2 py-1 text-[10px] font-bold rounded transition-all ${
+                          selectedResolution === res 
+                            ? 'bg-emerald-500 text-black shadow' 
+                            : 'text-gray-400 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        {res.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="mb-2">
+                  <div className="bg-[#111] border border-emerald-500/20 rounded-xl relative overflow-hidden group flex flex-col md:flex-row shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
+                    
+                    {/* Seamless Image */}
+                    <div className="w-full md:w-5/12 shrink-0 relative min-h-[160px] md:min-h-[140px] z-20 overflow-hidden rounded-t-xl md:rounded-l-xl md:rounded-tr-none flex flex-col items-center justify-center p-6">
+                      <img src="https://lanforge.nyc3.cdn.digitaloceanspaces.com/fortnite.png" alt="Fortnite Competitive" className="w-4/5 md:w-3/4 h-[80px] object-contain object-center opacity-100" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 w-full p-4 relative z-10 flex flex-col justify-center space-y-3">
+                      <div className="flex flex-wrap items-end justify-between border-b border-white/10 pb-3 gap-3">
+                          <div>
+                            <div className="text-2xl font-black text-white whitespace-nowrap">
+                              {performanceSummary.highlights[selectedResolution].fortniteCompetitive.min}-{performanceSummary.highlights[selectedResolution].fortniteCompetitive.max} <span className="text-sm font-bold text-emerald-400">FPS</span>
+                            </div>
+                            <div className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">
+                              Estimated Range • {selectedResolution === '1080p' ? '1080p Competitive Settings (Performance Mode)' : selectedResolution}
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-3">
+                            <div className="text-right">
+                              <div className="text-lg font-bold text-white">{performanceSummary.highlights[selectedResolution].fortniteCompetitive.average}</div>
+                              <div className="text-[9px] text-gray-500 uppercase tracking-wider">AVG FPS</div>
+                            </div>
+                            <div className="text-right border-l border-white/10 pl-3">
+                              <div className="text-lg font-bold text-white">{performanceSummary.highlights[selectedResolution].fortniteCompetitive.onePercentLow}</div>
+                              <div className="text-[9px] text-gray-500 uppercase tracking-wider">1% LOWS</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul className="space-y-1.5 text-xs text-gray-300">
+                          {performanceSummary.highlights[selectedResolution].fortniteCompetitive.average > 240 ? (
+                            <>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Flawless endgame fights</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Zero FPS drops in stacked lobbies</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Ideal for 240Hz+ competitive</span></li>
+                            </>
+                          ) : performanceSummary.highlights[selectedResolution].fortniteCompetitive.average > 144 ? (
+                            <>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Smooth endgame fights</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Minimal drops in stacked lobbies</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Ideal for 144Hz+ competitive</span></li>
+                            </>
+                          ) : (
+                            <>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Solid mid-game performance</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Playable competitive experience</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Best for casual ranked play</span></li>
+                            </>
+                          )}
+                        </ul>
+                      </div>
+                  </div>
+                </div>
+                <p className="text-[9px] text-gray-600 leading-tight mt-2">{performanceSummary.disclaimer}</p>
+              </div>
+            )}
+
             {build.parts.map((item: any, index: number) => {
               const part = item.part;
               if (!part) {

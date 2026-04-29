@@ -5,6 +5,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/analytics';
+import { getShortPerformanceSummary } from '../utils/lanforgePerformanceEngine';
 
 interface Part {
   _id: string;
@@ -35,6 +36,7 @@ const ProductsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string>('Black');
+  const [selectedResolution, setSelectedResolution] = useState<"1080p" | "1440p" | "4k">("1080p");
 
   useEffect(() => {
     if (!productId) {
@@ -115,6 +117,14 @@ const ProductsPage: React.FC = () => {
     : "https://lanforge.co/logo512.png";
 
   const absoluteImagesArray = (product.images || []).map(img => img.startsWith('http') ? img : `https://lanforge.co${img.startsWith('/') ? '' : '/'}${img}`);
+
+  const cpuPart = product.parts?.find(p => p.type.toLowerCase() === 'cpu');
+  const gpuPart = product.parts?.find(p => p.type.toLowerCase() === 'gpu' || p.type.toLowerCase() === 'graphics card' || p.type.toLowerCase() === 'graphics');
+  
+  const cpuName = cpuPart?.partModel || cpuPart?.name || '';
+  const gpuName = gpuPart?.partModel || gpuPart?.name || '';
+
+  const performanceSummary = cpuName && gpuName ? getShortPerformanceSummary(cpuName, gpuName) : null;
 
   return (
     <div className="min-h-screen bg-gray-950 text-white selection:bg-emerald-500/30 pt-24 pb-16">
@@ -213,8 +223,8 @@ const ProductsPage: React.FC = () => {
               {product.name}
             </h1>
 
-            <div className="flex items-end gap-4 mb-8">
-              <span className="text-3xl font-bold text-white">
+            <div className="flex items-end gap-4 mb-2">
+              <span className="text-3xl font-bold text-emerald-400">
                 ${product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
               {product.compareAtPrice && product.compareAtPrice > product.price && (
@@ -223,6 +233,99 @@ const ProductsPage: React.FC = () => {
                 </span>
               )}
             </div>
+
+            {product.price && product.price > 0 && (
+              <div className="mb-8 flex items-center flex-wrap gap-1 mt-0.5 text-sm text-gray-400">
+                <span>Starting at</span> <span className="text-blue-400 font-medium">${Math.ceil((product.price * 1.0999) / 24)}/mo</span> <span>with</span> <img src="https://cdn-assets.affirm.com/images/white_logo-transparent_bg.png" alt="Affirm" className="h-[14px] inline-block -mt-0.5 translate-y-[1px]" />
+              </div>
+            )}
+
+            {/* Performance Estimates */}
+            {performanceSummary && (
+              <div className="mb-10">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold">{performanceSummary.title}</h3>
+                  <div className="flex gap-2 bg-gray-900 rounded-lg p-1 border border-gray-800">
+                    {(["1080p", "1440p", "4k"] as const).map(res => (
+                      <button
+                        key={res}
+                        onClick={() => setSelectedResolution(res)}
+                        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+                          selectedResolution === res 
+                            ? 'bg-emerald-500 text-black shadow-md' 
+                            : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                        }`}
+                      >
+                        {res.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <div className="bg-[#111] border border-emerald-500/20 rounded-xl relative overflow-hidden group flex flex-col md:flex-row shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none"></div>
+                    
+                    {/* Seamless Image */}
+                    <div className="w-full md:w-5/12 shrink-0 relative min-h-[160px] md:min-h-[140px] z-20 overflow-hidden rounded-t-xl md:rounded-l-xl md:rounded-tr-none flex items-center justify-center">
+                      <img src="https://lanforge.nyc3.cdn.digitaloceanspaces.com/fortnite.png" alt="Fortnite Competitive" className="absolute inset-0 w-full h-full object-contain object-center p-6 opacity-100 z-0" />
+                      <div className="absolute bottom-4 left-0 right-0 text-center z-10 pointer-events-none">
+                         <div className="text-white font-bold tracking-wider text-sm drop-shadow-lg">FORTNITE COMPETITIVE</div>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 w-full p-4 sm:p-6 relative z-10 flex flex-col justify-center space-y-4">
+                      <div className="flex flex-wrap items-end justify-between border-b border-white/10 pb-4 gap-4">
+                          <div>
+                            <div className="text-3xl font-black text-white whitespace-nowrap">
+                              {performanceSummary.highlights[selectedResolution].fortniteCompetitive.min}-{performanceSummary.highlights[selectedResolution].fortniteCompetitive.max} <span className="text-lg font-bold text-emerald-400">FPS</span>
+                            </div>
+                            <div className="text-[11px] text-gray-400 uppercase tracking-widest mt-1">
+                              Estimated Range • {selectedResolution === '1080p' ? '1080p Competitive Settings (Performance Mode)' : selectedResolution}
+                            </div>
+                          </div>
+                          
+                          <div className="flex gap-4">
+                            <div className="text-right">
+                              <div className="text-xl font-bold text-white">{performanceSummary.highlights[selectedResolution].fortniteCompetitive.average}</div>
+                              <div className="text-[10px] text-gray-500 uppercase tracking-wider">AVG FPS</div>
+                            </div>
+                            <div className="text-right border-l border-white/10 pl-4">
+                              <div className="text-xl font-bold text-white">{performanceSummary.highlights[selectedResolution].fortniteCompetitive.onePercentLow}</div>
+                              <div className="text-[10px] text-gray-500 uppercase tracking-wider">1% LOWS</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <ul className="space-y-2 text-sm text-gray-300">
+                          {performanceSummary.highlights[selectedResolution].fortniteCompetitive.average > 240 ? (
+                            <>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Flawless endgame fights</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Stable FPS in stacked endgames</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Ideal for 240Hz+ competitive tournaments</span></li>
+                            </>
+                          ) : performanceSummary.highlights[selectedResolution].fortniteCompetitive.average > 144 ? (
+                            <>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Smooth endgame fights</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Minimal drops in stacked lobbies</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Ideal for 144Hz+ competitive ranked</span></li>
+                            </>
+                          ) : (
+                            <>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Solid mid-game performance</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Playable competitive experience</span></li>
+                              <li className="flex items-start gap-2"><span className="text-emerald-400 shrink-0">✔</span> <span>Best for casual ranked play</span></li>
+                            </>
+                          )}
+                        </ul>
+                      </div>
+
+                    </div>
+                  </div>
+                <p className="text-[10px] text-gray-600 leading-tight mt-4">{performanceSummary.disclaimer}</p>
+              </div>
+            )}
 
             {/* Color Selection */}
             <div className="mb-6">
@@ -243,8 +346,37 @@ const ProductsPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-10 border-b border-gray-800 pb-10">
+            {/* Specs List */}
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-4">Technical Specifications</h3>
+              <div className="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden text-sm">
+                
+                {product.parts && product.parts.length > 0 && product.parts.map((part, index) => (
+                  <div key={part._id || index} className="flex border-b border-gray-800 last:border-0 p-4 hover:bg-gray-800/50 transition-colors">
+                    <span className="w-1/3 text-gray-400 font-medium uppercase tracking-wider text-xs flex items-center">
+                      {part.type}
+                    </span>
+                    <span className="w-2/3 text-white font-medium">
+                      {formatPart(part)}
+                    </span>
+                  </div>
+                ))}
+
+                {product.specs && Object.entries(product.specs).map(([key, value]) => (
+                  <div key={key} className="flex border-b border-gray-800 last:border-0 p-4 hover:bg-gray-800/50 transition-colors">
+                    <span className="w-1/3 text-gray-400 font-medium uppercase tracking-wider text-xs flex items-center">
+                      {key}
+                    </span>
+                    <span className="w-2/3 text-white font-medium">
+                      {value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions (Sticky) */}
+            <div className="sticky bottom-0 z-40 bg-gray-950/95 backdrop-blur-md pt-4 pb-4 border-t border-gray-800 mt-auto flex flex-col sm:flex-row gap-4">
               <button 
                 onClick={addToCart}
                 className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-3.5 rounded-lg font-bold text-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
@@ -277,35 +409,6 @@ const ProductsPage: React.FC = () => {
                 </svg>
                 Customize
               </button>
-            </div>
-
-            {/* Specs List */}
-            <div>
-              <h3 className="text-xl font-bold mb-4">Technical Specifications</h3>
-              <div className="bg-gray-900/50 rounded-xl border border-gray-800 overflow-hidden text-sm">
-                
-                {product.parts && product.parts.length > 0 && product.parts.map((part, index) => (
-                  <div key={part._id || index} className="flex border-b border-gray-800 last:border-0 p-4 hover:bg-gray-800/50 transition-colors">
-                    <span className="w-1/3 text-gray-400 font-medium uppercase tracking-wider text-xs flex items-center">
-                      {part.type}
-                    </span>
-                    <span className="w-2/3 text-white font-medium">
-                      {formatPart(part)}
-                    </span>
-                  </div>
-                ))}
-
-                {product.specs && Object.entries(product.specs).map(([key, value]) => (
-                  <div key={key} className="flex border-b border-gray-800 last:border-0 p-4 hover:bg-gray-800/50 transition-colors">
-                    <span className="w-1/3 text-gray-400 font-medium uppercase tracking-wider text-xs flex items-center">
-                      {key}
-                    </span>
-                    <span className="w-2/3 text-white font-medium">
-                      {value}
-                    </span>
-                  </div>
-                ))}
-              </div>
             </div>
 
           </motion.div>

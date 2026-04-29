@@ -2,13 +2,13 @@
 <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
   <channel>
     <title>LANForge Products</title>
-    <link>http://localhost:3000</link>
+    <link>https://lanforge.co</link>
     <description>LANForge Custom PCs and Accessories</description>
     <item>
       <g:id>69bd7348500944cc71f0f3a2</g:id>
       <g:title>LANForge Silver</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-silver</g:link>
+      <g:link>https://lanforge.co/products/lanforge-silver</g:link>
       <g:image_link>https://cdn.lanforge.co/PCs/series/1774306730687-220628478.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>
@@ -20,7 +20,7 @@
       <g:id>69bd7405500944cc71f0f3cc</g:id>
       <g:title>LANForge Platinum</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-platinum</g:link>
+      <g:link>https://lanforge.co/products/lanforge-platinum</g:link>
       <g:image_link>https://cdn.lanforge.co/PCs/series/1774307164169-362890247.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>
@@ -32,7 +32,7 @@
       <g:id>69bd967d2fae674a0adb0104</g:id>
       <g:title>LANForge Mini Platinum</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-mini-platinum</g:link>
+      <g:link>https://lanforge.co/products/lanforge-mini-platinum</g:link>
       <g:image_link>https://cdn.lanforge.co/PCs/mini-series/1774400860280-903717867.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>
@@ -44,7 +44,7 @@
       <g:id>69bd99eefd61b02a7fc25048</g:id>
       <g:title>LANForge Mini Gold</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-mini-gold</g:link>
+      <g:link>https://lanforge.co/products/lanforge-mini-gold</g:link>
       <g:image_link>https://cdn.lanforge.co/PCs/mini-series/1774306391033-542225346.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>
@@ -56,7 +56,7 @@
       <g:id>69bd9a16fd61b02a7fc25050</g:id>
       <g:title>LANForge Mini Silver</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-mini-silver</g:link>
+      <g:link>https://lanforge.co/products/lanforge-mini-silver</g:link>
       <g:image_link>https://cdn.lanforge.co/PCs/mini-series/1774400850801-790520164.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>
@@ -68,7 +68,7 @@
       <g:id>69d5bac56b2a6fcc7d1fb1ee</g:id>
       <g:title>LANForge 9850X3D // 5080</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-9850x3d-5080</g:link>
+      <g:link>https://lanforge.co/products/lanforge-9850x3d-5080</g:link>
       <g:image_link>https://cdn.lanforge.co/misc/c8f43581-b01e-4157-8a24-66036cdadbb7.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>
@@ -80,7 +80,7 @@
       <g:id>69d5bb056b2a6fcc7d1fb233</g:id>
       <g:title>LANForge Ultra 7 265K // 5070</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-ultra-7-265k-5070</g:link>
+      <g:link>https://lanforge.co/products/lanforge-ultra-7-265k-5070</g:link>
       <g:image_link>https://cdn.lanforge.co/misc/94b12932-632c-435d-ba7c-f3af7cc86828.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>
@@ -92,7 +92,7 @@
       <g:id>69d6b0da06e3d9aaf79ba6a1</g:id>
       <g:title>LANForge Core Ultra 250K // 5060</g:title>
       <g:description>No description provided.</g:description>
-      <g:link>http://localhost:3000/products/lanforge-core-ultra-250k-5060</g:link>
+      <g:link>https://lanforge.co/products/lanforge-core-ultra-250k-5060</g:link>
       <g:image_link>https://cdn.lanforge.co/misc/cd9b1aee-d258-469a-b1c6-ba39002782a8.png</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>out_of_stock</g:availability>

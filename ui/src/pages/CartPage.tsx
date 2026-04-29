@@ -358,10 +358,15 @@ const CartPage: React.FC = () => {
                 </div>
               )}
               <div className="h-px bg-white/10 my-4" />
-              <div className="flex justify-between items-center text-xl font-bold text-white">
+              <div className="flex justify-between items-center text-xl font-bold text-white mb-1">
                 <span>Total</span>
                 <span>${calculateTotal().toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
+              {calculateTotal() > 0 && (
+                <div className="flex justify-end items-center flex-wrap text-xs gap-1">
+                  <span className="text-gray-400">or</span> <span className="text-blue-400 font-medium">${Math.ceil((calculateTotal() * 1.0999) / 24)}/mo</span> <span className="text-gray-400">with</span> <img src="https://cdn-assets.affirm.com/images/white_logo-transparent_bg.png" alt="Affirm" className="h-[12px] inline-block -mt-0.5 translate-y-[1px]" />
+                </div>
+              )}
             </div>
 
             <div className="summary-actions">

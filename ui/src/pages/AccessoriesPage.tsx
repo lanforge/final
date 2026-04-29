@@ -255,10 +255,17 @@ const AccessoriesPage: React.FC = () => {
                     </div>
 
                     {/* Price & Actions */}
-                    <div className="flex items-center justify-between">
-                      <div className="text-2xl font-bold text-gradient-neon">
-                        {accessory.price}
-                      </div>
+                    <div className="flex items-center justify-between border-t border-gray-800/50 pt-4">
+                      <div className="flex flex-col">
+                        <div className="text-2xl font-bold text-emerald-400 mb-0.5">
+                          {accessory.price}
+                        </div>
+                            {parseFloat(accessory.price.replace('$', '')) > 0 && (
+                              <div className="text-[11px] sm:text-xs text-gray-400 flex items-center flex-wrap gap-1 mt-0.5">
+                                <span>Starting at</span> <span className="text-blue-400 font-medium">${Math.ceil((parseFloat(accessory.price.replace('$', '')) * 1.0999) / 24)}/mo</span> <span>with</span> <img src="https://cdn-assets.affirm.com/images/white_logo-transparent_bg.png" alt="Affirm" className="h-[14px] inline-block -mt-0.5 translate-y-[1px]" />
+                              </div>
+                            )}
+                          </div>
                       <div className="flex gap-2">
                         <button 
                           className="btn btn-outline"

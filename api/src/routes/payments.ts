@@ -136,6 +136,43 @@ router.post('/paypal/capture-order', async (req: Request, res: Response): Promis
   }
 });
 
+// POST /api/payments/affirm/confirm
+router.post('/affirm/confirm', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { checkout_token } = req.body;
+    
+    if (!checkout_token) {
+      res.redirect(`${process.env.STORE_URL || 'http://localhost:3000'}/checkout?error=missing_token`);
+      return;
+    }
+
+    // Capture the Affirm charge
+    // We ideally need the orderId here, but Affirm only gives us the checkout_token.
+    // In a full implementation, you'd authorize first to get the Affirm order details or pass order ID.
+    // For now, we authorize it and see if we can get the order ID from Affirm's payload.
+    const authData = await authorizeAffirmCharge(checkout_token, `LANForge_${Date.now()}`);
+    
+    if (authData && authData.id) {
+       // Ideally we would trigger the order processing here or match it to a pending order in DB.
+       // The frontend has sent order payload yet or we should have stored a pending order.
+       // Because the frontend only created an order on PayPal success, we need to adapt this.
+       // However, to keep it simple and functional for now based on the requested redirect:
+       
+       // Note: we just authorized the charge. We still need the frontend to create the order.
+       // Let's redirect to a success page that will handle finalizing the order using a stored cart,
+       // or pass the charge ID to the frontend so it can finalize.
+       res.redirect(`${process.env.STORE_URL || 'http://localhost:3000'}/checkout?payment_method=affirm&charge_id=${authData.id}`);
+    } else {
+       res.redirect(`${process.env.STORE_URL || 'http://localhost:3000'}/checkout?error=affirm_authorization_failed`);
+    }
+
+  } catch (error: any) {
+    console.error('Affirm confirmation error:', error);
+    res.redirect(`${process.env.STORE_URL || 'http://localhost:3000'}/checkout?error=affirm_failed`);
+  }
+});
+
+
 // POST /api/payments (Manual creation)
 router.post('/', async (req: Request, res: Response): Promise<void> => {
   try {
@@ -146,6 +183,17 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       const existingOrder = await Order.findById(orderId);
       if (existingOrder && existingOrder.paymentStatus === 'paid') {
         res.status(200).json({ message: 'Order already paid', order: existingOrder });
+        return;
+      }
+    }
+
+    // Capture Affirm charge immediately if this is an Affirm payment
+    if (paymentMethod === 'affirm' && gatewayTransactionId) {
+      try {
+        await captureAffirmCharge(gatewayTransactionId, orderId || `manual_${Date.now()}`);
+      } catch (err) {
+        console.error('Failed to capture Affirm charge:', err);
+        res.status(400).json({ message: 'Failed to capture Affirm payment' });
         return;
       }
     }

@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const AFFIRM_API_URL = process.env.AFFIRM_API_URL || 'https://sandbox.affirm.com/api/v2';
-const AFFIRM_PUBLIC_KEY = process.env.AFFIRM_PUBLIC_KEY || '';
-const AFFIRM_PRIVATE_KEY = process.env.AFFIRM_PRIVATE_KEY || '';
+const AFFIRM_API_URL = process.env.AFFIRM_URL ? `${process.env.AFFIRM_URL}/api/v2` : 'https://sandbox.affirm.com/api/v2';
+const AFFIRM_PUBLIC_KEY = process.env.AFFIRM_PUB_KEY || '';
+const AFFIRM_PRIVATE_KEY = process.env.AFFIRM_PRI_KEY || '';
 
 const getAuthHeader = () => {
   return 'Basic ' + Buffer.from(`${AFFIRM_PUBLIC_KEY}:${AFFIRM_PRIVATE_KEY}`).toString('base64');

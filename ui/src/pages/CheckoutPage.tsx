@@ -335,17 +335,24 @@ const CheckoutPage: React.FC = () => {
   const hasSelectedDonation = completedSections.has('donation') || activeSection === 'payment';
   const displayDonation = hasSelectedDonation ? calculateDonation() : 0;
 
-  const calculateTotal = () => Math.max(0, calculateSubtotal() + calculateTax() + displayShipping + displayInsurance + displayDonation - customDiscountAmount - getAppliedDiscountAmount());
-
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isProcessingBilling, setIsProcessingBilling] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<'paypal' | 'affirm'>('paypal');
+
+  const calculateTotal = () => {
+    let baseTotal = Math.max(0, calculateSubtotal() + calculateTax() + displayShipping + displayInsurance + displayDonation - customDiscountAmount - getAppliedDiscountAmount());
+    if (selectedPaymentMethod === 'affirm') {
+      baseTotal = baseTotal * 1.0699; // Add 6.99% surcharge silently
+    }
+    return baseTotal;
+  };
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
   };
 
-  const handlePayPalApprove = async (data: any, actions: any) => {
+  const processOrder = async (paymentMethodType: string, transactionId: string) => {
     setIsProcessing(true);
     setPaymentError(null);
 
@@ -379,7 +386,7 @@ const CheckoutPage: React.FC = () => {
           zip: finalBilling.zip,
           country: finalBilling.country
         },
-        paymentMethod: 'paypal',
+        paymentMethod: paymentMethodType,
         discountCode: discountCode || undefined,
         shippingAmount: calculateShipping(),
         shippingInsurance: calculateInsurance(),
@@ -406,8 +413,8 @@ const CheckoutPage: React.FC = () => {
             body: JSON.stringify({
               amount: calculateTotal(),
               currency: 'usd',
-              paymentMethod: 'paypal',
-              gatewayTransactionId: data.orderID,
+              paymentMethod: paymentMethodType,
+              gatewayTransactionId: transactionId,
               orderId: orderData.order._id,
               customerId: orderData.order.customer,
               status: 'completed'
@@ -430,6 +437,209 @@ const CheckoutPage: React.FC = () => {
     }
     
     window.location.href = `/order-status${orderId ? `?id=${orderId}` : ''}`;
+  };
+
+  const handleAffirmApprove = () => {
+    if (!window.affirm) {
+      setPaymentError("Affirm is not initialized. Please try refreshing the page.");
+      return;
+    }
+    
+    setIsProcessing(true);
+    setPaymentError(null);
+
+    const finalBilling = useSameAddress ? shippingForm : billingForm;
+
+    let isGround = shippingMethod === 'standard';
+    if (shippoRates.length > 0) {
+      const selectedRate = shippoRates.find(r => r.objectId === shippingMethod);
+      if (selectedRate) {
+        const title = (selectedRate.title || selectedRate.displayName || selectedRate.provider || '').toLowerCase();
+        isGround = title.includes('ground') || title.includes('standard');
+      }
+    }
+
+    // Store cart data so we can access it on the success redirect
+    localStorage.setItem('affirmPendingOrder', JSON.stringify({
+      items: cartItems.map(i => ({ [i.type]: i.itemId, quantity: i.quantity })),
+      customerId: customerId || undefined,
+      shippingAddress: {
+        firstName: shippingForm.firstName,
+        lastName: shippingForm.lastName,
+        email: shippingForm.email,
+        phone: shippingForm.phone,
+        address: shippingForm.address + (shippingForm.apartment ? ` ${shippingForm.apartment}` : ''),
+        city: shippingForm.city,
+        state: shippingForm.state,
+        zip: shippingForm.zip,
+        country: shippingForm.country
+      },
+      billingAddress: {
+        firstName: finalBilling.firstName,
+        lastName: finalBilling.lastName,
+        email: finalBilling.email,
+        phone: finalBilling.phone,
+        address: finalBilling.address + (finalBilling.apartment ? ` ${finalBilling.apartment}` : ''),
+        city: finalBilling.city,
+        state: finalBilling.state,
+        zip: finalBilling.zip,
+        country: finalBilling.country
+      },
+      paymentMethod: 'affirm',
+      discountCode: discountCode || undefined,
+      shippingAmount: calculateShipping(),
+      shippingInsurance: calculateInsurance(),
+      shippingRates: shippoRates,
+      selectedShippingRate: shippoRates.find(r => r.objectId === shippingMethod) || null,
+      donationCause: selectedCauseId || undefined,
+      donationAmount: calculateDonation(),
+      totalAmount: calculateTotal(),
+    }));
+
+    // Convert cart items to Affirm format
+    const affirmItems = cartItems.map(item => ({
+      display_name: item.name,
+      sku: item.id.toString(),
+      unit_price: Math.round(item.price * 100), // in cents
+      qty: item.quantity,
+      item_image_url: item.image,
+      item_url: `${window.location.origin}/product/${item.id}`
+    }));
+
+    const totalAmount = Math.round(calculateTotal() * 100);
+    const taxAmount = Math.round(calculateTax() * 100);
+    const shippingAmount = Math.round(calculateShipping() * 100);
+
+    const checkoutObject = {
+      merchant: {
+        user_confirmation_url: `${process.env.REACT_APP_API_URL}/payments/affirm/confirm`,
+        user_cancel_url: `${window.location.origin}/checkout`,
+        user_confirmation_url_action: "POST"
+      },
+      shipping: {
+        name: {
+          first: shippingForm.firstName,
+          last: shippingForm.lastName
+        },
+        address: {
+          line1: shippingForm.address,
+          line2: shippingForm.apartment || '',
+          city: shippingForm.city,
+          state: shippingForm.state,
+          zipcode: shippingForm.zip,
+          country: shippingForm.country || 'USA'
+        },
+        phone_number: shippingForm.phone,
+        email: shippingForm.email
+      },
+      billing: {
+        name: {
+          first: finalBilling.firstName,
+          last: finalBilling.lastName
+        },
+        address: {
+          line1: finalBilling.address,
+          line2: finalBilling.apartment || '',
+          city: finalBilling.city,
+          state: finalBilling.state,
+          zipcode: finalBilling.zip,
+          country: finalBilling.country || 'USA'
+        },
+        phone_number: finalBilling.phone,
+        email: finalBilling.email
+      },
+      items: affirmItems,
+      metadata: {
+        shipping_type: isGround ? "Ground" : "Expedited"
+      },
+      order_id: `LANForge_${Date.now()}`,
+      currency: "USD",
+      financing_program: "",
+      tax_amount: taxAmount,
+      shipping_amount: shippingAmount,
+      total: totalAmount
+    };
+
+    // @ts-ignore
+    window.affirm.checkout(checkoutObject);
+    
+    // @ts-ignore
+    window.affirm.checkout.open({
+      onFail: (error: any) => {
+        setIsProcessing(false);
+        setPaymentError(error?.reason || "Affirm checkout failed.");
+      },
+      onSuccess: async (data: any) => {
+         // Affirm calls user_confirmation_url on success, but just in case we can also process it here if it's set to not redirect.
+         // Wait for redirect to handle order processing
+      }
+    });
+  };
+
+  React.useEffect(() => {
+    // Check if we came back from Affirm success redirect
+    const params = new URLSearchParams(window.location.search);
+    if (window.location.pathname.includes('/checkout') && params.get('payment_method') === 'affirm' && params.get('charge_id')) {
+      const storedOrder = localStorage.getItem('affirmPendingOrder');
+      if (storedOrder) {
+        setIsProcessing(true);
+        setActiveSection('payment');
+        const orderPayload = JSON.parse(storedOrder);
+        const chargeId = params.get('charge_id');
+        
+        // Remove it immediately to avoid duplicates on refresh
+        localStorage.removeItem('affirmPendingOrder');
+
+        fetch(`${process.env.REACT_APP_API_URL}/orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderPayload)
+        })
+        .then(res => {
+          if (!res.ok) throw new Error('Order creation failed');
+          return res.json();
+        })
+        .then(orderData => {
+          if (orderData && orderData.order) {
+            // Log the payment
+            return fetch(`${process.env.REACT_APP_API_URL}/payments`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                amount: orderPayload.totalAmount,
+                currency: 'usd',
+                paymentMethod: 'affirm',
+                gatewayTransactionId: chargeId,
+                orderId: orderData.order._id,
+                customerId: orderData.order.customer,
+                status: 'completed'
+              })
+            }).then(() => {
+              // Clear cart
+              const sessionId = localStorage.getItem('cartSessionId');
+              if (sessionId) {
+                return fetch(`${process.env.REACT_APP_API_URL}/carts/${sessionId}`, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ items: [], clearDiscount: true })
+                });
+              }
+            }).then(() => {
+              navigate(`/order-status?id=${orderData.order._id}`);
+            });
+          }
+        })
+        .catch(err => {
+          console.error("Error finalizing Affirm order:", err);
+          setPaymentError("There was an error finalizing your order. Please contact support.");
+          setIsProcessing(false);
+        });
+      }
+    }
+  }, [navigate]);
+
+  const handlePayPalApprove = async (data: any, actions: any) => {
+    await processOrder('paypal', data.orderID);
   };
 
   const fetchShippoRates = async () => {
@@ -835,6 +1045,33 @@ const CheckoutPage: React.FC = () => {
                   <div className="section-header">
                     <h2>Payment Information</h2>
                   </div>
+                  
+                  <div className="payment-method-selector mb-6 flex gap-4">
+                    <label className={`shipping-option flex-1 ${selectedPaymentMethod === 'paypal' ? 'selected border-emerald-500' : 'border-gray-700'} border p-4 rounded cursor-pointer`}>
+                      <input type="radio" name="paymentMethod" value="paypal" checked={selectedPaymentMethod === 'paypal'} onChange={() => setSelectedPaymentMethod('paypal')} className="hidden" />
+                      <div className="flex items-center gap-3">
+                        <div className={`w-4 h-4 rounded-full border ${selectedPaymentMethod === 'paypal' ? 'border-4 border-emerald-500' : 'border-gray-500'}`}></div>
+                        <span className="font-medium text-white">PayPal</span>
+                      </div>
+                    </label>
+                    <label className={`shipping-option flex-1 ${selectedPaymentMethod === 'affirm' ? 'selected border-emerald-500' : 'border-gray-700'} border p-4 rounded cursor-pointer`}>
+                      <input type="radio" name="paymentMethod" value="affirm" checked={selectedPaymentMethod === 'affirm'} onChange={() => setSelectedPaymentMethod('affirm')} className="hidden" />
+                      <div className="flex items-center gap-3">
+                        <div className={`w-4 h-4 rounded-full border ${selectedPaymentMethod === 'affirm' ? 'border-4 border-emerald-500' : 'border-gray-500'}`}></div>
+                        <span className="font-medium text-white">Affirm</span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1 ml-7">Pay over time</p>
+                    </label>
+                  </div>
+                  
+                  {selectedPaymentMethod === 'affirm' && (
+                    <div className="mb-4 text-xs text-amber-400 bg-amber-400/10 border border-amber-400/20 p-3 rounded flex items-start gap-2">
+                      <FontAwesomeIcon icon={faShieldHalved} className="mt-0.5" />
+                      <p><strong>Note:</strong> Pricing for PCs purchased using PayPal receives a discount. Checking out with Affirm prevents you from receiving PayPal payment discounts.</p>
+                    </div>
+                  )}
+
+                  {selectedPaymentMethod === 'paypal' ? (
                   <div className="mb-6 p-4 bg-gray-900 rounded-lg border border-gray-700">
                     <label className="block text-sm font-medium text-gray-300 mb-4">Complete your payment securely with PayPal</label>
                     <PayPalScriptProvider options={{ "clientId": process.env.REACT_APP_PAYPAL_CLIENT_ID || "", "currency": "USD" }}>
@@ -886,7 +1123,17 @@ const CheckoutPage: React.FC = () => {
                     </PayPalScriptProvider>
                     {paymentError && <div className="text-red-500 text-sm mt-4">{paymentError}</div>}
                   </div>
-                  <div className="payment-security"><span className="security-icon"><FontAwesomeIcon icon={faLock} /></span><span>Your payment information is encrypted and secure by PayPal</span></div>
+                  ) : (
+                  <div className="mb-6 p-6 bg-white rounded-lg border border-gray-200 flex flex-col items-center">
+                    <img src="https://cdn-assets.affirm.com/images/blue_logo-transparent_bg.png" alt="Affirm" className="h-8 mb-4 object-contain" />
+                    <p className="text-center text-gray-700 text-sm mb-6 max-w-md">You will be redirected to Affirm to securely complete your purchase. Pay over time with flexible monthly payments.</p>
+                    <button type="button" className="btn bg-blue-600 hover:bg-blue-700 text-white border-none w-full max-w-xs py-3 rounded font-medium transition-colors" onClick={handleAffirmApprove} disabled={isProcessing}>
+                      {isProcessing ? 'Processing...' : 'Checkout with Affirm'}
+                    </button>
+                    {paymentError && <div className="text-red-500 text-sm mt-4">{paymentError}</div>}
+                  </div>
+                  )}
+                  <div className="payment-security"><span className="security-icon"><FontAwesomeIcon icon={faLock} /></span><span>Your payment information is encrypted and secure</span></div>
                 </motion.div>
               )}
             </div>
@@ -947,19 +1194,6 @@ const CheckoutPage: React.FC = () => {
               {hasSelectedDonation && displayDonation > 0 && (
                 <div className="total-row donation-row"><span>Your Donation</span><span>${displayDonation.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></div>
               )}
-              {hasSelectedDonation && (() => {
-                const selected = activeCauses.find(c => c._id === selectedCauseId);
-                if (!selected) return null;
-                const totalPCs = cartItems.reduce((acc, item) => item.type === 'customBuild' || item.type === 'product' ? acc + item.quantity : acc, 0);
-                const lanforgeDonationAmount = selected.lanforgeContributionPerPC * totalPCs;
-                if (lanforgeDonationAmount <= 0) return null;
-                return (
-                  <div className="total-row text-emerald-400">
-                    <span>LANForge Donates</span>
-                    <span>${lanforgeDonationAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                  </div>
-                );
-              })()}
               {appliedDiscount && appliedDiscount.type !== 'free_shipping' && (
                 <div className="total-row text-emerald-400">
                   <span>Discount ({appliedDiscount.code})</span>

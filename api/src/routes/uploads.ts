@@ -43,7 +43,7 @@ if (process.env.GCP_PROJECT_ID && process.env.GCP_CLIENT_EMAIL && process.env.GC
   storageClient = new Storage();
 }
 
-const bucketName = process.env.GCS_BUCKET_NAME || 'cdn.lanforge.co';
+const bucketName = process.env.GCS_BUCKET_NAME || 'lanforge.nyc3.cdn.digitaloceanspaces.com';
 const bucket = storageClient.bucket(bucketName);
 
 const uploadBufferToGCS = async (buffer: Buffer, originalname: string, mimetype: string, folder: string): Promise<string> => {

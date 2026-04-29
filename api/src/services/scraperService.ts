@@ -327,25 +327,25 @@ export const startPriceScrapingJob = async () => {
     
     if (totalParts === 0) return;
     
-    console.log(`[Scraper] Scheduling ${totalParts} parts to be scraped evenly over the next 12 hours...`);
+    console.log(`[Scraper] Starting to scrape ${totalParts} parts, processing 15 at a time...`);
     
-    const CYCLE_TIME_MS = 12 * 60 * 60 * 1000;
-    const intervalMs = Math.floor(CYCLE_TIME_MS / totalParts);
+    for (let i = 0; i < totalParts; i += 15) {
+      const batch = parts.slice(i, i + 15);
+      console.log(`[Scraper] Processing batch ${i / 15 + 1} of ${Math.ceil(totalParts / 15)}...`);
+      await Promise.all(batch.map(part => scrapeSinglePart(part)));
+    }
     
-    for (let i = 0; i < parts.length; i++) {
-      await agenda.schedule(new Date(Date.now() + i * intervalMs), 'scrape single part', { partId: parts[i]._id });
-    }
-  });
-
-  agenda.define('scrape single part', async (job) => {
-    const { partId } = job.attrs.data as any;
-    const part = await PCPart.findById(partId);
-    if (part) {
-      await scrapeSinglePart(part);
-    }
+    console.log(`[Scraper] Finished scraping all parts.`);
   });
 
   await agenda.start();
+  
+  // Clear any old individual jobs from previous implementation
+  try {
+    await agenda.cancel({ name: 'scrape single part' });
+  } catch (err) {
+    console.error('[Scraper] Error cancelling old jobs:', err);
+  }
   
   // Ensure the scheduler runs every 12 hours
   await agenda.every('12 hours', 'scrape pc parts scheduler');

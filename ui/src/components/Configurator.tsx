@@ -6,6 +6,7 @@ import { faCheck, faBox } from '@fortawesome/free-solid-svg-icons';
 import BuildRequestModal from './BuildRequestModal';
 import Toast, { ToastType } from './Toast';
 import { trackEvent } from '../utils/analytics';
+import { getShortPerformanceSummary } from '../utils/lanforgePerformanceEngine';
 
 interface ComponentOption {
   id: string | number;
@@ -355,6 +356,11 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
   }
   
   const totalPrice = subtotal + calculatedBuildFee;
+
+  const cpuName = selectedComponents.cpu && !String(selectedComponents.cpu.id).startsWith('no-part-') ? selectedComponents.cpu.name : null;
+  const gpuName = selectedComponents.gpu && !String(selectedComponents.gpu.id).startsWith('no-part-') ? selectedComponents.gpu.name : null;
+  const perf = cpuName && gpuName ? getShortPerformanceSummary(cpuName, gpuName) : null;
+  const fortniteFPS = perf ? perf.highlights["1080p"].fortniteCompetitive.average : undefined;
 
   // Automatically save draft custom build and sync to URL so state isn't lost
   const saveDraftBuild = async (newSelectedComponents: Record<string, any>, newColor: string = selectedCaseColor) => {
@@ -1118,6 +1124,29 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
           {/* Right Sidebar Summary */}
           <div className="lg:col-span-1">
             <div className="sticky top-48 space-y-6">
+              {/* FPS Estimation Card */}
+              {fortniteFPS && (
+                <div className="bg-[#111111] rounded-3xl border border-white/5 p-6 overflow-hidden relative text-center">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-400 opacity-50" />
+                  <div className="flex flex-col items-center justify-center gap-1">
+                    <h3 className="text-3xl font-black text-emerald-300 tracking-tight leading-none drop-shadow-[0_0_12px_rgba(52,211,153,0.5)] mb-2">
+                      {fortniteFPS}+ FPS
+                    </h3>
+                    <div className="flex flex-col items-center gap-1.5">
+                      <span className="text-[10px] sm:text-xs font-bold text-emerald-300 uppercase tracking-widest border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 rounded shadow-[0_0_15px_rgba(52,211,153,0.2)] leading-none inline-block">
+                        Competitive &bull; 1080p
+                      </span>
+                      <div className="text-emerald-400/70 text-xs sm:text-sm font-bold uppercase tracking-wider drop-shadow-[0_0_3px_rgba(52,211,153,0.1)] leading-none mt-1">
+                        {fortniteFPS >= 300 ? '360Hz+' : fortniteFPS >= 200 ? '240–360Hz' : '144–240Hz'}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-gray-500 mt-4 leading-relaxed">
+                    Estimated performance. Actual FPS may vary.
+                  </p>
+                </div>
+              )}
+
               {/* Build Summary Card */}
               <div className="bg-[#111111] rounded-3xl border border-white/5 p-6 overflow-hidden relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-emerald-400 opacity-50" />
@@ -1173,10 +1202,15 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
 
                 {/* Total */}
                 <div className="pt-4 border-t border-white/10">
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mb-1">
                     <span className="text-gray-400">Total Price</span>
-                    <span className="text-2xl font-bold text-white">${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    <span className="text-2xl font-bold text-emerald-400">${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
+                  {totalPrice > 0 && (
+                    <div className="flex justify-end items-center flex-wrap text-xs gap-1">
+                      <span className="text-gray-400">or</span> <span className="text-blue-400 font-medium">${Math.ceil((totalPrice * 1.0999) / 24)}/mo</span> <span className="text-gray-400">with</span> <img src="https://cdn-assets.affirm.com/images/white_logo-transparent_bg.png" alt="Affirm" className="h-[12px] inline-block -mt-0.5 translate-y-[1px]" />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1241,6 +1275,18 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {fortniteFPS && (
+                <div className="flex justify-between items-center bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4 mb-2">
+                  <div>
+                    <h4 className="text-sm font-bold text-emerald-400">Estimated Performance</h4>
+                    <span className="text-xs text-gray-400">Competitive &bull; 1080p</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xl font-black text-emerald-300 drop-shadow-[0_0_8px_rgba(52,211,153,0.3)]">{fortniteFPS}+ FPS</div>
+                  </div>
+                </div>
+              )}
+              
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Case</span>
                 <span className="font-medium text-white">{selectedCase.name} ({selectedCaseColor})</span>
@@ -1283,9 +1329,16 @@ const Configurator: React.FC<ConfiguratorProps> = (props) => {
                 <span className="font-medium text-emerald-400">Included</span>
               </div>
               
-              <div className="flex justify-between items-center text-lg pt-4 border-t border-white/10 font-bold">
-                <span className="text-white">Total</span>
-                <span className="text-emerald-400">${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <div className="flex flex-col pt-4 border-t border-white/10">
+                <div className="flex justify-between items-center text-lg font-bold">
+                  <span className="text-white">Total</span>
+                  <span className="text-emerald-400">${totalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+                {totalPrice > 0 && (
+                  <div className="flex justify-end items-center flex-wrap text-xs mt-1 gap-1">
+                    <span>or</span> <span className="text-blue-400 font-medium">${Math.ceil((totalPrice * 1.0999) / 24)}/mo</span> <span>with</span> <img src="https://cdn-assets.affirm.com/images/white_logo-transparent_bg.png" alt="Affirm" className="h-[12px] inline-block -mt-0.5 translate-y-[1px]" />
+                  </div>
+                )}
               </div>
             </div>
 

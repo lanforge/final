@@ -88,26 +88,38 @@ app.use(
     xFrameOptions: { action: 'deny' },
   })
 );
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      const allowedOrigins = [env.FRONTEND_URL || 'http://localhost:3000'];
-      
-      if (env.ALLOWED_ORIGINS) {
-        allowedOrigins.push(...env.ALLOWED_ORIGINS.split(',').map(o => o.trim()));
-      }
-      
-      const isLocalhost = origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-      if (!origin || allowedOrigins.indexOf(origin) !== -1 || env.NODE_ENV === 'development' || isLocalhost) {
-        callback(null, true);
-      } else {
-        console.error(`CORS blocked request from origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-  })
-);
+// We need to bypass strict CORS for Affirm webhooks because Affirm performs a cross-origin POST 
+// from their domain to ours, which can sometimes omit Origin or send 'null' or fail standard strict checks.
+const strictCors = cors({
+  origin: (origin, callback) => {
+    const allowedOrigins = [env.FRONTEND_URL || 'http://localhost:3000'];
+    
+    if (env.ALLOWED_ORIGINS) {
+      allowedOrigins.push(...env.ALLOWED_ORIGINS.split(',').map(o => o.trim()));
+    }
+    
+    const isLocalhost = origin && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+    const isAffirm = origin && /^https?:\/\/([^.]+\.)?affirm\.com$/.test(origin);
+
+    // Some cross-origin form POSTs send origin as 'null' (string)
+    if (!origin || origin === 'null' || allowedOrigins.indexOf(origin) !== -1 || env.NODE_ENV === 'development' || isLocalhost || isAffirm) {
+      callback(null, true);
+    } else {
+      console.error(`CORS blocked request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+});
+
+app.use((req, res, next) => {
+  if (req.path === '/api/payments/affirm/confirm') {
+    // Explicitly allow Affirm confirmation route to bypass strict CORS
+    cors()(req, res, next);
+  } else {
+    strictCors(req, res, next);
+  }
+});
 
 // Rate limiting — general
 const limiter = rateLimit({
