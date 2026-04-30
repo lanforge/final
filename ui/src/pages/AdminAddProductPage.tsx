@@ -41,6 +41,7 @@ const AdminAddProductPage: React.FC = () => {
     sku: '',
     category: 'Gaming PCs',
     price: '',
+    compareAtPrice: '',
     cost: '',
     stock: '0',
     description: '',
@@ -68,6 +69,7 @@ const AdminAddProductPage: React.FC = () => {
             sku: p.sku || '',
             category: p.category || 'Gaming PCs',
             price: p.price ? p.price.toString() : '0',
+            compareAtPrice: p.compareAtPrice ? p.compareAtPrice.toString() : '',
             cost: p.cost ? p.cost.toString() : '0',
             stock: p.stock ? p.stock.toString() : '0',
             description: p.description || '',
@@ -225,6 +227,7 @@ const AdminAddProductPage: React.FC = () => {
       const payload = {
         ...formData,
         price: parseFloat(formData.price) || 0,
+        compareAtPrice: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
         cost: parseFloat(formData.cost) || 0,
         stock: parseInt(formData.stock, 10) || 0,
         reorderPoint: parseInt(formData.reorderPoint, 10) || 0,
@@ -415,6 +418,19 @@ const AdminAddProductPage: React.FC = () => {
                 className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-medium text-emerald-400"
                 value={formData.price}
                 onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Compare at Price ($)</label>
+              <input
+                type="number"
+                name="compareAtPrice"
+                step="0.01"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl font-medium text-slate-400"
+                value={formData.compareAtPrice}
+                onChange={handleChange}
+                placeholder="Optional slash-through price"
               />
             </div>
 

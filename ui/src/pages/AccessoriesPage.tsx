@@ -11,6 +11,7 @@ interface Accessory {
   category: string;
   description: string;
   price: string;
+  compareAtPrice?: string;
   features: string[];
   imageColor: string;
   brand: string;
@@ -36,6 +37,7 @@ const AccessoriesPage: React.FC = () => {
             category: a.type || 'Other',
             description: a.description,
             price: `$${a.price.toFixed(2)}`,
+            compareAtPrice: a.compareAtPrice ? `$${a.compareAtPrice.toFixed(2)}` : undefined,
             features: a.features || [],
             imageColor: '#3a86ff',
             brand: a.brand || 'Unknown',
@@ -257,8 +259,15 @@ const AccessoriesPage: React.FC = () => {
                     {/* Price & Actions */}
                     <div className="flex items-center justify-between border-t border-gray-800/50 pt-4">
                       <div className="flex flex-col">
-                        <div className="text-2xl font-bold text-emerald-400 mb-0.5">
-                          {accessory.price}
+                        <div className="flex items-end gap-2 mb-0.5">
+                          <div className="text-2xl font-bold text-emerald-400">
+                            {accessory.price}
+                          </div>
+                          {accessory.compareAtPrice && (
+                            <div className="text-sm text-gray-500 line-through mb-1">
+                              {accessory.compareAtPrice}
+                            </div>
+                          )}
                         </div>
                             {parseFloat(accessory.price.replace('$', '')) > 0 && (
                               <div className="text-[11px] sm:text-xs text-gray-400 flex items-center flex-wrap gap-1 mt-0.5">
@@ -444,8 +453,15 @@ const AccessoriesPage: React.FC = () => {
                     style={{ backgroundColor: selectedAccessory.imageColor }}
                   />
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-gradient-neon mb-2">
-                      {selectedAccessory.price}
+                    <div className="flex items-center justify-center gap-3 mb-2">
+                      <div className="text-4xl font-bold text-gradient-neon">
+                        {selectedAccessory.price}
+                      </div>
+                      {selectedAccessory.compareAtPrice && (
+                        <div className="text-xl text-gray-500 line-through">
+                          {selectedAccessory.compareAtPrice}
+                        </div>
+                      )}
                     </div>
                     <div className={`inline-block px-4 py-2 rounded-lg font-medium ${
                       selectedAccessory.inStock 

@@ -12,6 +12,7 @@ interface Product {
   name: string;
   description: string;
   price: string;
+  compareAtPrice?: string;
   image?: string;
   specs: string[];
   imageColor: string;
@@ -48,6 +49,7 @@ const PCsPage: React.FC = () => {
                 name: p.name,
                 description: p.shortDescription || p.description,
                 price: `$${p.price.toFixed(2)}`,
+                compareAtPrice: p.compareAtPrice ? `$${p.compareAtPrice.toFixed(2)}` : undefined,
                 basePrice: p.price,
                 image: p.images?.[0] || null, // Primary photo
                 cpuName: cpuName,
@@ -259,8 +261,15 @@ const PCsPage: React.FC = () => {
                               ) : 'Premium Components'}
                             </div>
                           <div className="flex flex-col border-t border-gray-800/50 pt-3">
-                            <div className="text-xl sm:text-2xl font-bold text-emerald-400 mb-0.5">
-                              {product.price}
+                            <div className="flex items-end gap-2 mb-0.5">
+                              <div className="text-xl sm:text-2xl font-bold text-emerald-400">
+                                {product.price}
+                              </div>
+                              {product.compareAtPrice && (
+                                <div className="text-xs sm:text-sm text-gray-500 line-through mb-1">
+                                  {product.compareAtPrice}
+                                </div>
+                              )}
                             </div>
                             {product.basePrice && product.basePrice > 0 && (
                               <div className="text-[11px] sm:text-xs text-gray-400 flex items-center gap-1">

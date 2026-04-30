@@ -25,10 +25,21 @@ router.get('/active', async (req, res) => {
     const now = new Date();
     const activeCauses = await DonationCause.find({
       isActive: true,
-      $or: [
-        { endDate: { $exists: false } },
-        { endDate: null },
-        { endDate: { $gt: now } }
+      $and: [
+        {
+          $or: [
+            { startDate: { $exists: false } },
+            { startDate: null },
+            { startDate: { $lte: now } }
+          ]
+        },
+        {
+          $or: [
+            { endDate: { $exists: false } },
+            { endDate: null },
+            { endDate: { $gt: now } }
+          ]
+        }
       ]
     });
     res.json(activeCauses);
@@ -43,7 +54,7 @@ router.get('/active', async (req, res) => {
 // @access  Private/Admin
 router.post('/', protect, adminOnly, async (req, res) => {
   try {
-    const { name, description, imageUrl, isActive, lanforgeContributionPerPC, endDate } = req.body;
+    const { name, description, imageUrl, isActive, lanforgeContributionPerPC, startDate, endDate } = req.body;
 
     const causeExists = await DonationCause.findOne({ name });
 
@@ -57,6 +68,7 @@ router.post('/', protect, adminOnly, async (req, res) => {
       imageUrl,
       isActive,
       lanforgeContributionPerPC,
+      startDate,
       endDate,
     });
 
@@ -72,7 +84,7 @@ router.post('/', protect, adminOnly, async (req, res) => {
 // @access  Private/Admin
 router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
-    const { name, description, imageUrl, isActive, lanforgeContributionPerPC, endDate } = req.body;
+    const { name, description, imageUrl, isActive, lanforgeContributionPerPC, startDate, endDate } = req.body;
 
     const cause = await DonationCause.findById(req.params.id);
 
@@ -82,6 +94,7 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
       cause.imageUrl = imageUrl !== undefined ? imageUrl : cause.imageUrl;
       cause.isActive = isActive !== undefined ? isActive : cause.isActive;
       cause.lanforgeContributionPerPC = lanforgeContributionPerPC !== undefined ? lanforgeContributionPerPC : cause.lanforgeContributionPerPC;
+      if (startDate !== undefined) cause.startDate = startDate;
       if (endDate !== undefined) cause.endDate = endDate;
 
       const updatedCause = await cause.save();

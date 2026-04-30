@@ -6,6 +6,7 @@ export interface IDonationCause extends Document {
   imageUrl?: string;
   isActive: boolean;
   lanforgeContributionPerPC: number;
+  startDate?: Date;
   endDate?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -18,6 +19,7 @@ const DonationCauseSchema = new Schema<IDonationCause>(
     imageUrl: { type: String },
     isActive: { type: Boolean, default: true },
     lanforgeContributionPerPC: { type: Number, required: true, default: 0 },
+    startDate: { type: Date },
     endDate: { type: Date },
   },
   { timestamps: true }

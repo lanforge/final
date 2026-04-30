@@ -9,6 +9,7 @@ interface PCPart {
   partModel: string;
   sku: string;
   price: number;
+  compareAtPrice?: number;
   cost?: number;
   stock: number;
   isActive: boolean;
@@ -432,8 +433,13 @@ const AdminPartsPage: React.FC = () => {
                       <p className="text-slate-200">{part.type}</p>
                       <p className="text-slate-500 text-xs">{part.brand}</p>
                     </td>
-                    <td className="py-4 px-6 text-right text-slate-200 font-medium">
-                      ${part.price?.toFixed(2)}
+                    <td className="py-4 px-6 text-right">
+                      <div className="flex flex-col items-end">
+                        <span className="text-slate-200 font-medium">${part.price?.toFixed(2)}</span>
+                        {part.compareAtPrice && (
+                          <span className="text-slate-500 line-through text-xs">${part.compareAtPrice.toFixed(2)}</span>
+                        )}
+                      </div>
                     </td>
                     <td className="py-4 px-6 text-right text-emerald-500 font-medium">
                       {typeof part.cost === 'number' ? `$${part.cost.toFixed(2)}` : 'N/A'}

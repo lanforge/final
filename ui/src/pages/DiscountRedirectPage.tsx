@@ -22,6 +22,17 @@ const DiscountRedirectPage = () => {
 
     if (finalCode) {
       localStorage.setItem('autoDiscountCode', finalCode);
+      
+      // Notify backend if the discount code is VIPEROUS
+      if (finalCode.toUpperCase() === 'VIPEROUS') {
+        fetch(`${process.env.REACT_APP_API_URL}/discounts/notify-visit`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ code: finalCode })
+        }).catch(err => console.error('Failed to notify visit', err));
+      }
     }
 
     // Redirect to home page

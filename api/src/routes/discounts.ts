@@ -20,6 +20,20 @@ router.get('/', protect, staffOrAdmin, async (req: AuthRequest, res: Response): 
   }
 });
 
+// POST /api/discounts/notify-visit — public, trigger notification for specific discount codes
+router.post('/notify-visit', async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { code } = req.body;
+    if (code && code.toUpperCase() === 'VIPEROUS') {
+      const { sendNotification } = await import('../services/notificationService');
+      await sendNotification(`Someone visited the website with the VIPEROUS discount code!`);
+    }
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // POST /api/discounts/validate — public, validate a code
 router.post('/validate', async (req: AuthRequest, res: Response): Promise<void> => {
   try {

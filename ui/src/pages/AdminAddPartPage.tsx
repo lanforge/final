@@ -17,6 +17,7 @@ const AdminAddPartPage: React.FC = () => {
     model: '',
     sku: '',
     price: '',
+    compareAtPrice: '',
     cost: '',
     stock: '',
     isActive: true,
@@ -39,6 +40,7 @@ const AdminAddPartPage: React.FC = () => {
             model: part.partModel || part.model || '',
             sku: part.sku || '',
             price: part.price !== undefined ? part.price.toString() : '0',
+            compareAtPrice: part.compareAtPrice !== undefined ? part.compareAtPrice.toString() : '',
             cost: part.cost !== undefined ? part.cost.toString() : '0',
             stock: part.stock !== undefined ? part.stock.toString() : '0',
             isActive: part.isActive !== false,
@@ -170,6 +172,7 @@ const AdminAddPartPage: React.FC = () => {
         model: formData.model, // backend validator checks for 'model', then maps to partModel internally
         sku: formData.sku,
         price: parseFloat(formData.price),
+        compareAtPrice: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
         cost: parseFloat(formData.cost) || 0,
         stock: parseInt(formData.stock, 10),
         specs: Object.keys(cleanedSpecs).length > 0 ? cleanedSpecs : { _empty: true }, // Add dummy key if empty to satisfy required Mixed type
@@ -486,6 +489,19 @@ const AdminAddPartPage: React.FC = () => {
                 className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
                 value={formData.price}
                 onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-2">Compare at Price ($)</label>
+              <input
+                type="number"
+                name="compareAtPrice"
+                step="0.01"
+                className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                value={formData.compareAtPrice}
+                onChange={handleChange}
+                placeholder="Optional slash-through price"
               />
             </div>
 

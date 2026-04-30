@@ -71,6 +71,7 @@ import AdminReviewsPage from './pages/AdminReviewsPage';
 import AdminInvoicesPage from './pages/AdminInvoicesPage';
 import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 import AdminSessionDetailsPage from './pages/AdminSessionDetailsPage';
+import AdminDonationCausesPage from './pages/AdminDonationCausesPage';
 
 export const PageStatusContext = React.createContext<string[]>([]);
 
@@ -490,6 +491,7 @@ function App() {
             <Route path="/admin/reviews" element={<AdminReviewsPage />} />
             <Route path="/admin/invoices" element={<AdminInvoicesPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
+            <Route path="/admin/donation-causes" element={<AdminDonationCausesPage />} />
             <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
             <Route path="/admin/analytics/session/:id" element={<AdminSessionDetailsPage />} />
           </Route>

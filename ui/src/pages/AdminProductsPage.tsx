@@ -8,6 +8,7 @@ interface Product {
   sku: string;
   category: string;
   price: number;
+  compareAtPrice?: number;
   cost: number;
   stock: number;
   reorderPoint?: number;
@@ -350,7 +351,12 @@ const AdminProductsPage: React.FC = () => {
                   <td className="py-4 px-6 text-slate-400">{product.category}</td>
                   <td className="py-4 px-6">
                     <div className="flex flex-col">
-                      <span className="text-slate-200 font-medium">{formatCurrency(product.price)}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-slate-200 font-medium">{formatCurrency(product.price)}</span>
+                        {product.compareAtPrice && (
+                          <span className="text-slate-500 line-through text-xs">{formatCurrency(product.compareAtPrice)}</span>
+                        )}
+                      </div>
                       <span className={`text-xs ${product.price - (product.cost || 0) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
                         PnL: {formatCurrency(product.price - (product.cost || 0))}
                       </span>
