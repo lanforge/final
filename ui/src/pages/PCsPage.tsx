@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/analytics';
 import { getShortPerformanceSummary, LANFORGE_FPS_DISCLAIMER } from '../utils/lanforgePerformanceEngine';
+import WhyLanforge from '../components/WhyLanforge';
 
 interface Product {
   id: number;
@@ -310,49 +311,7 @@ const PCsPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-10">
-        <div className="container-narrow">
-          <div className="text-center mb-12">
-            <h2 className="heading-2 mb-4">Why Choose LANForge?</h2>
-            <p className="body-large max-w-3xl mx-auto">
-              Every PC is built with precision, tested for performance, and backed by our industry-leading warranty.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="card p-6 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                <div className="text-2xl"><FontAwesomeIcon icon={faWrench} /></div>
-              </div>
-              <h3 className="text-lg font-bold text-white mb-3">Hand-Built Quality</h3>
-              <p className="text-gray-400 text-sm">
-                Every system is meticulously assembled and tested by our expert technicians.
-              </p>
-            </div>
-
-            <div className="card p-6 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                <div className="text-2xl"><FontAwesomeIcon icon={faBolt} /></div>
-              </div>
-              <h3 className="text-lg font-bold text-white mb-3">Performance Optimized</h3>
-              <p className="text-gray-400 text-sm">
-                Fine-tuned for maximum FPS, low latency, and smooth gameplay across all titles.
-              </p>
-            </div>
-
-            <div className="card p-6 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-                <div className="text-2xl"><FontAwesomeIcon icon={faShieldHalved} /></div>
-              </div>
-              <h3 className="text-lg font-bold text-white mb-3">3-Year Warranty</h3>
-              <p className="text-gray-400 text-sm">
-                Comprehensive coverage including parts, labor, and lifetime technical support.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <WhyLanforge />
 
       {/* CTA Section */}
       <section className="py-10">

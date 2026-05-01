@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/analytics';
 import { getShortPerformanceSummary } from '../utils/lanforgePerformanceEngine';
+import WhyLanforge from '../components/WhyLanforge';
 
 interface Part {
   _id: string;
@@ -413,6 +414,9 @@ const ProductsPage: React.FC = () => {
 
           </motion.div>
         </div>
+      </div>
+      <div className="mt-16">
+        <WhyLanforge />
       </div>
     </div>
   );

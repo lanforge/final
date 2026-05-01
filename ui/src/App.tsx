@@ -7,6 +7,7 @@ import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ScrollProgress from './components/ScrollProgress';
+import AnnouncementBar from './components/AnnouncementBar';
 import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
 import ConfiguratorPage from './pages/ConfiguratorPage';
@@ -148,6 +149,24 @@ const AppContent = ({ children }: { children: React.ReactNode }) => {
   usePageTracking();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
+
+  // Global check for discount codes in URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const discountCode = searchParams.get('discount') || searchParams.get('ref');
+    
+    if (discountCode) {
+      localStorage.setItem('autoDiscountCode', discountCode);
+      
+      if (discountCode.toUpperCase() === 'VIPEROUS') {
+        fetch(`${process.env.REACT_APP_API_URL}/discounts/notify-visit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: discountCode })
+        }).catch(err => console.error('Failed to notify visit', err));
+      }
+    }
+  }, [location.search]);
   const [maintenance, setMaintenance] = useState<{enabled: boolean, reopenAt?: Date} | null>(null);
   const [disabledPages, setDisabledPages] = useState<string[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -239,7 +258,12 @@ const AppContent = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  return <PageStatusContext.Provider value={disabledPages}>{children}</PageStatusContext.Provider>;
+  return (
+    <PageStatusContext.Provider value={disabledPages}>
+      {!location.pathname.startsWith('/admin') && <AnnouncementBar />}
+      {children}
+    </PageStatusContext.Provider>
+  );
 };
 
 function App() {

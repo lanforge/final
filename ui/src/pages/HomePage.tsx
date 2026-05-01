@@ -5,6 +5,7 @@ import Reviews from '../components/Reviews';
 import FAQ from '../components/FAQ';
 import Warranty from '../components/Warranty';
 import SEO from '../components/SEO';
+import WhyLanforge from '../components/WhyLanforge';
 
 const HomePage: React.FC = () => {
   return (
@@ -28,6 +29,7 @@ const HomePage: React.FC = () => {
       />
       <Hero />
       <ProductShowcase />
+      <WhyLanforge />
       <Reviews />
       <FAQ />
       <Warranty />

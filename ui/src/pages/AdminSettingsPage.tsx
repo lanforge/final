@@ -15,7 +15,7 @@ interface Page {
 }
 
 const AdminSettingsPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'general' | 'users' | 'pages' | 'maintenance' | 'tax'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'users' | 'pages' | 'maintenance' | 'tax' | 'announcements'>('general');
 
   // --- Settings State ---
   const [settings, setSettings] = useState<Record<string, any>>({
@@ -34,6 +34,7 @@ const AdminSettingsPage: React.FC = () => {
 
   const [pageStatuses, setPageStatuses] = useState<any[]>([]);
   const [maintenance, setMaintenance] = useState<any>({ enabled: false });
+  const [announcementBar, setAnnouncementBar] = useState<any>({ announcements: [], rotationSpeed: 5, isVisible: true });
   
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -59,9 +60,10 @@ const AdminSettingsPage: React.FC = () => {
   const fetchSettings = async () => {
     setIsLoading(true);
     try {
-      const [businessRes, pageRes] = await Promise.all([
+      const [businessRes, pageRes, announcementRes] = await Promise.all([
         api.get('/business'),
-        api.get('/page-status')
+        api.get('/page-status'),
+        api.get('/announcement-bar')
       ]);
 
       if (businessRes.data.businessInfo) {
@@ -80,6 +82,10 @@ const AdminSettingsPage: React.FC = () => {
           setMaintenance(maint);
         }
         setPageStatuses(pages.filter((p: any) => p.path !== 'maintenance_mode'));
+      }
+
+      if (announcementRes.data.announcementBar) {
+        setAnnouncementBar(announcementRes.data.announcementBar);
       }
     } catch (error) {
       console.error('Failed to fetch info', error);
@@ -143,6 +149,9 @@ const AdminSettingsPage: React.FC = () => {
           enabled: p.enabled
         });
       }
+
+      // Save announcement bar
+      await api.put('/announcement-bar', announcementBar);
 
       await fetchSettings();
       
@@ -235,6 +244,14 @@ const AdminSettingsPage: React.FC = () => {
         }`}
       >
         <FontAwesomeIcon icon={faFileAlt} className="mr-2" /> Pages Content
+      </button>
+      <button
+        onClick={() => setActiveTab('announcements')}
+        className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
+          activeTab === 'announcements' ? 'bg-emerald-500/20 text-emerald-400' : 'text-slate-400 hover:text-white hover:bg-[#11141d]'
+        }`}
+      >
+        <FontAwesomeIcon icon={faFileAlt} className="mr-2" /> Announcements
       </button>
       <button
         onClick={() => setActiveTab('maintenance')}
@@ -636,6 +653,127 @@ const AdminSettingsPage: React.FC = () => {
                       </div>
                     );
                   })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ANNOUNCEMENTS TAB */}
+        {activeTab === 'announcements' && (
+          <div className="admin-card overflow-hidden">
+            <div className="p-6 border-b border-[#1f2233] flex justify-between items-center">
+              <h2 className="text-lg font-medium text-white flex items-center space-x-2">
+                <FontAwesomeIcon icon={faFileAlt} className="text-purple-400" />
+                <span>Announcement Bar</span>
+              </h2>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={announcementBar?.isVisible ?? true}
+                  onChange={(e) => {
+                    setAnnouncementBar((prev: any) => ({ ...prev, isVisible: e.target.checked }));
+                  }}
+                />
+                <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
+                <span className="ml-3 text-sm font-medium text-slate-300">Visible</span>
+              </label>
+            </div>
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-2">Rotation Speed (seconds)</label>
+                <input
+                  type="number"
+                  min="1"
+                  className="admin-input w-full bg-[#0a0c13] border-[#1f2233] focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 rounded-xl"
+                  value={announcementBar?.rotationSpeed || 5}
+                  onChange={(e) => setAnnouncementBar((prev: any) => ({ ...prev, rotationSpeed: parseInt(e.target.value) || 5 }))}
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-md font-medium text-white">Announcements</h3>
+                  <button
+                    onClick={() => {
+                      setAnnouncementBar((prev: any) => ({
+                        ...prev,
+                        announcements: [...(prev.announcements || []), { text: '', link: '', isActive: true }]
+                      }));
+                    }}
+                    className="px-3 py-1.5 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded-lg text-sm transition-colors"
+                  >
+                    + Add Announcement
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {(!announcementBar.announcements || announcementBar.announcements.length === 0) ? (
+                    <div className="text-center p-6 bg-[#0a0c13] rounded-xl border border-[#1f2233] text-slate-500">
+                      No announcements added yet.
+                    </div>
+                  ) : (
+                    announcementBar.announcements.map((ann: any, index: number) => (
+                      <div key={index} className="p-4 bg-[#0a0c13] rounded-xl border border-[#1f2233] space-y-4 relative group">
+                        <button
+                          onClick={() => {
+                            setAnnouncementBar((prev: any) => ({
+                              ...prev,
+                              announcements: prev.announcements.filter((_: any, i: number) => i !== index)
+                            }));
+                          }}
+                          className="absolute top-4 right-4 text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+
+                        <div>
+                          <label className="block text-xs font-medium text-slate-400 mb-1">Text</label>
+                          <input
+                            type="text"
+                            className="admin-input w-full bg-[#11141d] border-[#1f2233] focus:border-emerald-500 rounded-lg"
+                            value={ann.text}
+                            onChange={(e) => {
+                              const newAnn = [...announcementBar.announcements];
+                              newAnn[index].text = e.target.value;
+                              setAnnouncementBar({ ...announcementBar, announcements: newAnn });
+                            }}
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Link (optional)</label>
+                            <input
+                              type="text"
+                              className="admin-input w-full bg-[#11141d] border-[#1f2233] focus:border-emerald-500 rounded-lg"
+                              value={ann.link || ''}
+                              onChange={(e) => {
+                                const newAnn = [...announcementBar.announcements];
+                                newAnn[index].link = e.target.value;
+                                setAnnouncementBar({ ...announcementBar, announcements: newAnn });
+                              }}
+                            />
+                          </div>
+                          <div className="flex items-end pb-2">
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={ann.isActive}
+                                onChange={(e) => {
+                                  const newAnn = [...announcementBar.announcements];
+                                  newAnn[index].isActive = e.target.checked;
+                                  setAnnouncementBar({ ...announcementBar, announcements: newAnn });
+                                }}
+                                className="rounded bg-[#11141d] border-[#1f2233] text-emerald-500 focus:ring-emerald-500/20"
+                              />
+                              <span className="text-sm text-slate-300">Active</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </div>

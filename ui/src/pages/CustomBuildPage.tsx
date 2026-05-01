@@ -5,6 +5,7 @@ import Toast, { ToastType } from '../components/Toast';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/analytics';
 import { getShortPerformanceSummary } from '../utils/lanforgePerformanceEngine';
+import WhyLanforge from '../components/WhyLanforge';
 
 const CustomBuildPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -122,14 +123,15 @@ const CustomBuildPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-200 py-16 px-4 flex items-start justify-center">
+    <div className="min-h-screen bg-gray-950 text-gray-200 flex flex-col">
       <SEO 
         title={`Custom Build ${build.buildId} | LANForge`}
         description={`Check out this custom PC build configured on LANForge. Featuring ${build.parts.length} components for high-performance gaming.`}
         url={`https://lanforge.co/build/${id}`}
       />
-      <div className="w-full max-w-xl">
-        <motion.div
+      <div className="py-16 px-4 flex items-start justify-center flex-grow">
+        <div className="w-full max-w-xl">
+          <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-[#111] rounded-3xl border border-white/10 shadow-2xl overflow-hidden flex flex-col"
@@ -272,19 +274,22 @@ const CustomBuildPage: React.FC = () => {
           </div>
 
           <div className="p-6 bg-white/5 border-t border-white/10 rounded-b-3xl space-y-3">
-            <button
-              onClick={handleAddToCart}
-              disabled={addingToCart}
-              className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-bold rounded-xl transition-colors flex justify-center items-center gap-2"
-            >
-              {addingToCart ? (
-                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-              ) : null}
-              {addingToCart ? 'Adding to Cart...' : 'Add to Cart'}
-            </button>
-          </div>
-        </motion.div>
+              <button
+                onClick={handleAddToCart}
+                disabled={addingToCart}
+                className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-bold rounded-xl transition-colors flex justify-center items-center gap-2"
+              >
+                {addingToCart ? (
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                ) : null}
+                {addingToCart ? 'Adding to Cart...' : 'Add to Cart'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
       </div>
+      
+      <WhyLanforge />
 
       <Toast 
         message={toast.message} 
