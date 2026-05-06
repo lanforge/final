@@ -73,6 +73,8 @@ import AdminInvoicesPage from './pages/AdminInvoicesPage';
 import AdminAnalyticsPage from './pages/AdminAnalyticsPage';
 import AdminSessionDetailsPage from './pages/AdminSessionDetailsPage';
 import AdminDonationCausesPage from './pages/AdminDonationCausesPage';
+import AdminApiLogsPage from './pages/AdminApiLogsPage';
+
 
 export const PageStatusContext = React.createContext<string[]>([]);
 
@@ -518,7 +520,9 @@ function App() {
             <Route path="/admin/donation-causes" element={<AdminDonationCausesPage />} />
             <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
             <Route path="/admin/analytics/session/:id" element={<AdminSessionDetailsPage />} />
+            <Route path="/admin/api-logs" element={<AdminApiLogsPage />} />
           </Route>
+
 
           {/* 404 Not Found Route */}
           <Route path="*" element={

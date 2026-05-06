@@ -14,6 +14,8 @@ import { startAbandonedCartJob } from './services/cartSchedulerService';
 import { startGoogleMerchantCron } from './services/googleMerchantService';
 import { AppError } from './utils/AppError';
 import { env } from './config/env';
+import apiLogger from './middleware/apiLogger';
+
 
 // Routes
 import authRoutes from './routes/auth';
@@ -174,8 +176,21 @@ if (env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+// API request logging to database (captures origin, IP, status, etc.)
+app.use('/api/', apiLogger);
+
+
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
+// Static HTML injection for SEO
+import { seoMiddleware } from './middleware/seo';
+app.use(seoMiddleware);
+
+// Serve React App in Production (after SEO middleware)
+if (env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../../../ui/build'), { index: false }));
+}
 
 // ── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
@@ -223,6 +238,15 @@ app.use('/sitemap.xml', sitemapRoutes);
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Catch-all to serve React App for client-side routing
+if (env.NODE_ENV === 'production') {
+  app.get('*', (req: Request, res: Response) => {
+    // We don't send index.html directly here because seoMiddleware handles it
+    // But as a fallback:
+    res.sendFile(path.resolve(__dirname, '../../../ui/build/index.html'));
+  });
+}
 
 // 404 — unmatched routes
 app.use((_req: Request, res: Response) => {

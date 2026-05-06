@@ -6,8 +6,10 @@ import Customer from '../models/Customer';
 import Product from '../models/Product';
 import User from '../models/User';
 import AuditLog from '../models/AuditLog';
+import ApiLog from '../models/ApiLog';
 import Settings from '../models/Settings';
 import { protect, adminOnly, staffOrAdmin, AuthRequest } from '../middleware/auth';
+
 
 const router = Router();
 
@@ -827,4 +829,114 @@ router.post(
   }
 );
 
+// ─── API LOGS ────────────────────────────────────────────────────────────────
+
+// GET /api/admin/api-logs
+router.get(
+  '/api-logs',
+  protect,
+  staffOrAdmin,
+  async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 50;
+      const skip = (page - 1) * limit;
+      const source = req.query.source as string;
+      const statusCode = req.query.statusCode as string;
+      const method = req.query.method as string;
+      const path = req.query.path as string;
+      const ipAddress = req.query.ip as string;
+
+      const filter: any = {};
+      if (source && source !== 'all') filter.source = source;
+      if (statusCode) filter.statusCode = parseInt(statusCode);
+      if (method) filter.method = method.toUpperCase();
+      if (path) filter.path = { $regex: path, $options: 'i' };
+      if (ipAddress) filter.ipAddress = { $regex: ipAddress, $options: 'i' };
+
+      const [logs, total] = await Promise.all([
+        ApiLog.find(filter)
+          .skip(skip)
+          .limit(limit)
+          .sort({ createdAt: -1 }),
+        ApiLog.countDocuments(filter),
+      ]);
+
+      res.json({ logs, total, page, pages: Math.ceil(total / limit) });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+);
+
+// GET /api/admin/api-logs/stats
+router.get(
+  '/api-logs/stats',
+  protect,
+  staffOrAdmin,
+  async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const last7d = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+      const [
+        totalLast24h,
+        totalLast7d,
+        statusBreakdown,
+        sourceBreakdown,
+        topIps,
+        topPaths,
+        avgResponseTime,
+        errorCount,
+      ] = await Promise.all([
+        ApiLog.countDocuments({ createdAt: { $gte: last24h } }),
+        ApiLog.countDocuments({ createdAt: { $gte: last7d } }),
+        ApiLog.aggregate([
+          { $match: { createdAt: { $gte: last7d } } },
+          { $group: { _id: '$statusCode', count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+        ]),
+        ApiLog.aggregate([
+          { $match: { createdAt: { $gte: last7d } } },
+          { $group: { _id: '$source', count: { $sum: 1 } } },
+        ]),
+        ApiLog.aggregate([
+          { $match: { createdAt: { $gte: last7d } } },
+          { $group: { _id: '$ipAddress', count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 20 },
+        ]),
+        ApiLog.aggregate([
+          { $match: { createdAt: { $gte: last7d } } },
+          { $group: { _id: { path: '$path', method: '$method' }, count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 20 },
+        ]),
+        ApiLog.aggregate([
+          { $match: { createdAt: { $gte: last7d } } },
+          { $group: { _id: null, avg: { $avg: '$responseTime' } } },
+        ]),
+        ApiLog.countDocuments({
+          createdAt: { $gte: last7d },
+          statusCode: { $gte: 400 },
+        }),
+      ]);
+
+      res.json({
+        totalLast24h,
+        totalLast7d,
+        statusBreakdown,
+        sourceBreakdown,
+        topIps,
+        topPaths,
+        avgResponseTime: avgResponseTime[0]?.avg || 0,
+        errorCount,
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+);
+
 export default router;
+
