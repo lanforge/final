@@ -38,6 +38,7 @@ import PCServicesPage from './pages/PCServicesPage';
 import PartnersPage from './pages/PartnersPage';
 import AffiliateApplicationPage from './pages/AffiliateApplicationPage';
 import DiscountRedirectPage from './pages/DiscountRedirectPage';
+import TradeInPage from './pages/TradeInPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Admin Pages
@@ -478,6 +479,13 @@ function App() {
           } />
           <Route path="/discount/:code" element={<DiscountRedirectPage />} />
           <Route path="/ref" element={<DiscountRedirectPage />} />
+          <Route path="/trade-in" element={
+            <>
+              <Header />
+              <TradeInPage />
+              <Footer />
+            </>
+          } />
           <Route path="/partner/:code" element={
             <>
               <Header />

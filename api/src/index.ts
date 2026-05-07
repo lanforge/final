@@ -56,6 +56,8 @@ import invoicesRoutes from './routes/invoices';
 import sitemapRoutes from './routes/sitemap';
 import analyticsRoutes from './routes/analytics';
 import showcasesRoutes from './routes/showcases';
+import tradeInsRoutes from './routes/trade-ins';
+import usedPartsRoutes from './routes/used-parts';
 
 const app = express();
 
@@ -230,6 +232,8 @@ app.use('/api/announcement-bar', announcementBarRoutes);
 app.use('/api/invoices', invoicesRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/showcases', showcasesRoutes);
+app.use('/api/trade-ins', tradeInsRoutes);
+app.use('/api/used-parts', usedPartsRoutes);
 
 // Sitemap
 app.use('/sitemap.xml', sitemapRoutes);
